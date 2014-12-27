@@ -16,38 +16,34 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner;
-
-import rjc.jplanner.plan.DateTime;
-import rjc.jplanner.plan.DayWorkPeriod;
+package rjc.jplanner.plan;
 
 /*************************************************************************************************/
-// JPlanner by Richard Crook
-// Aims to be a project planner similar to M$Project with table entry of tasks & Gantt chart
-// Also aims to have automatic resource levelling and scheduling based on task priority
-// Also aims to have resource levels variable within single task
-// Also aims to have Gantt chart task bar thickness showing this variable resource usage
-// Based on work I started as early as 2005
+/**************************** Single working period within a day type ****************************/
 /*************************************************************************************************/
 
-public class jplanner
+public class DayWorkPeriod
 {
 
-  /******************************************** main *********************************************/
-  public static void main( String[] args )
-  {
-    // main entry point for application startup
-    trace( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JPlanner started ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
+  public Time m_start; // work period start time
+  public Time m_end;  // work period end time
 
-    DayWorkPeriod p1 = new DayWorkPeriod( 1.3, 12.5646786 );
-    trace( "" + p1 );
+  /**************************************** constructor ******************************************/
+  public DayWorkPeriod( double startHour, double endHour )
+  {
+    // construct work period from from start and end hour points
+    if ( startHour >= endHour )
+      throw new IllegalArgumentException( "startHour >= endHour" );
+
+    m_start = Time.fromHours( startHour );
+    m_end = Time.fromHours( endHour );
   }
 
-  /******************************************* debug *********************************************/
-  public static void trace( String txt )
+  /***************************************** toString ********************************************/
+  @Override
+  public String toString()
   {
-    // prints txt prefixed by date-time
-    System.out.println( DateTime.now() + " " + txt );
+    // convert to string
+    return "DayWorkPeriod[" + m_start + ", " + m_end + "]";
   }
-
 }

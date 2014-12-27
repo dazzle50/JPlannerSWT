@@ -16,38 +16,51 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner;
+package rjc.jplanner.plan;
 
-import rjc.jplanner.plan.DateTime;
-import rjc.jplanner.plan.DayWorkPeriod;
+import java.time.LocalDate;
 
 /*************************************************************************************************/
-// JPlanner by Richard Crook
-// Aims to be a project planner similar to M$Project with table entry of tasks & Gantt chart
-// Also aims to have automatic resource levelling and scheduling based on task priority
-// Also aims to have resource levels variable within single task
-// Also aims to have Gantt chart task bar thickness showing this variable resource usage
-// Based on work I started as early as 2005
+/******************** Time of day from 00:00:00.000 to 24:00:00.000 inclusive ********************/
 /*************************************************************************************************/
 
-public class jplanner
+public class Date
 {
+  private int m_epochday; // simple count of days where day 0 is 01-Jan-1970
 
-  /******************************************** main *********************************************/
-  public static void main( String[] args )
+  /*======================================== constructor ========================================*/
+  private Date( int epochday )
   {
-    // main entry point for application startup
-    trace( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JPlanner started ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
-
-    DayWorkPeriod p1 = new DayWorkPeriod( 1.3, 12.5646786 );
-    trace( "" + p1 );
+    // constructor (from pre-validated epochday)
+    m_epochday = epochday;
   }
 
-  /******************************************* debug *********************************************/
-  public static void trace( String txt )
+  /**************************************** epochday *****************************************/
+  public int epochday()
   {
-    // prints txt prefixed by date-time
-    System.out.println( DateTime.now() + " " + txt );
+    // return int count of days from day 0 is 01-Jan-1970
+    return m_epochday;
   }
 
+  /****************************************** toString *******************************************/
+  public String toString()
+  {
+    // convert to string in YYYY-MM-DD format
+    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
+    return ld.toString();
+  }
+
+  /********************************************* now *********************************************/
+  public static Date now()
+  {
+    // return a new Date from current system clock
+    return new Date( (int) LocalDate.now().toEpochDay() );
+  }
+
+  /**************************************** fromLocalDate ****************************************/
+  public static Date fromLocalDate( LocalDate localDate )
+  {
+    // return a new Date from LocalDate
+    return new Date( (int) localDate.toEpochDay() );
+  }
 }
