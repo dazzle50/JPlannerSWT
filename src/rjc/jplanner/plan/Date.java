@@ -21,21 +21,24 @@ package rjc.jplanner.plan;
 import java.time.LocalDate;
 
 /*************************************************************************************************/
-/******************** Time of day from 00:00:00.000 to 24:00:00.000 inclusive ********************/
+/************************************ Date (with no timezone) ************************************/
 /*************************************************************************************************/
 
 public class Date
 {
   private int m_epochday; // simple count of days where day 0 is 01-Jan-1970
 
-  /*======================================== constructor ========================================*/
+  // min int=-2^31 gives minimum date of approx 5,800,000 BC
+  // max int=2^31-1 gives maximum date of approx 5,800,000 AD
+
+  /* ======================================= constructor ======================================= */
   private Date( int epochday )
   {
     // constructor (from pre-validated epochday)
     m_epochday = epochday;
   }
 
-  /**************************************** epochday *****************************************/
+  /****************************************** epochday *******************************************/
   public int epochday()
   {
     // return int count of days from day 0 is 01-Jan-1970
@@ -43,9 +46,10 @@ public class Date
   }
 
   /****************************************** toString *******************************************/
+  @Override
   public String toString()
   {
-    // convert to string in YYYY-MM-DD format
+    // convert to string in "YYYY-MM-DD" format
     LocalDate ld = LocalDate.ofEpochDay( m_epochday );
     return ld.toString();
   }

@@ -30,7 +30,9 @@ public class Time
 
   static final int MAX = 24 * 3600 * 1000; // milliseconds in day
 
-  /************************************* PRIVATE constructor *************************************/
+  // anything between Zero and MAX inclusive is valid, anything else invalid
+
+  /* ======================================= constructor ======================================= */
   private Time( int milliseconds )
   {
     // constructor (from pre-validated milliseconds)
@@ -67,15 +69,16 @@ public class Time
   /**************************************** fromLocalTime ****************************************/
   public static Time fromLocalTime( LocalTime localTime )
   {
-    // TODO Auto-generated method stub
+    // return a new Time from a java.time.LocalTime
     return new Time( (int) ( localTime.toNanoOfDay() / 1_000_000L ) );
   }
 
   /****************************************** toString *******************************************/
+  @Override
   public String toString()
   {
-    // convert to string to hh:mm:ss.mmm format
-    StringBuilder buf = new StringBuilder( 12 );
+    // convert to string to "hh:mm:ss.mmm" format
+    StringBuilder buf = new StringBuilder( 16 );
     int hour = m_milliseconds / 3600_000;
     int minute = m_milliseconds / 60_000 % 60;
     int second = m_milliseconds / 1000 % 60;

@@ -48,7 +48,7 @@ public class DateTime
   /****************************************** toString *******************************************/
   public String toString()
   {
-    // convert to string to hh:mm:ss.mmm format
+    // convert to string to "YYYY-MM-DD hh:mm:ss.mmm" format
     return m_date.toString() + " " + m_time.toString();
   }
 
