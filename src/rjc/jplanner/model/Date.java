@@ -38,6 +38,14 @@ public class Date
     m_epochday = epochday;
   }
 
+  /**************************************** constructor ******************************************/
+  public Date( int year, int month, int day )
+  {
+    // constructor from specified year, month, day
+    LocalDate ld = LocalDate.of( year, month, day );
+    m_epochday = (int) ld.toEpochDay();
+  }
+
   /****************************************** epochday *******************************************/
   public int epochday()
   {

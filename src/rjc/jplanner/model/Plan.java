@@ -20,8 +20,11 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 
+import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
+import rjc.jplanner.model.DayType.DefaultDayTypes;
+
 /*************************************************************************************************/
-/********************************************* Plan **********************************************/
+/************************** Holds the complete data model for the plan ***************************/
 /*************************************************************************************************/
 
 public class Plan
@@ -57,11 +60,21 @@ public class Plan
   public void initialise()
   {
     // initialise plan with default settings and contents
-    m_resources.clear();
-    m_resources.add( new Resource() );
-    m_resources.add( new Resource() );
-    m_resources.add( new Resource() );
+    m_daytypes.clear();
+    for ( DefaultDayTypes type : DefaultDayTypes.values() )
+      m_daytypes.add( new DayType( type ) );
 
+    m_calendars.clear();
+    for ( DefaultCalendarTypes type : DefaultCalendarTypes.values() )
+      m_calendars.add( new Calendar( type ) );
+
+    m_resources.clear();
+    for ( int count = 0; count < 5; count++ )
+      m_resources.add( new Resource() );
+
+    m_tasks.clear();
+    for ( int count = 0; count < 10; count++ )
+      m_tasks.add( new Task() );
   }
 
   /******************************************* task **********************************************/
@@ -86,7 +99,7 @@ public class Plan
   }
 
   /****************************************** daytype ********************************************/
-  public DayType daytype( int index )
+  public DayType day( int index )
   {
     // return day-type corresponding to index
     return m_daytypes.get( index );

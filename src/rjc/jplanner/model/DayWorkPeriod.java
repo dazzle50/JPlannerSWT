@@ -24,7 +24,6 @@ package rjc.jplanner.model;
 
 public class DayWorkPeriod
 {
-
   public Time m_start; // work period start time
   public Time m_end;  // work period end time
 

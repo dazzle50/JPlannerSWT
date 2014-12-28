@@ -30,15 +30,17 @@ import rjc.jplanner.model.Plan;
 // Based on work I started as early as 2005
 /*************************************************************************************************/
 
-public class jplanner
+public class JPlanner
 {
+  public static Plan plan; // globally accessible plan
 
   /******************************************** main *********************************************/
   public static void main( String[] args )
   {
     // main entry point for application startup
     trace( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JPlanner started ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
-    Plan plan = new Plan();
+    trace( "" + plan );
+    plan = new Plan();
     trace( "" + plan );
     plan.initialise();
     trace( "" + plan );
