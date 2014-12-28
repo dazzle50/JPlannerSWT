@@ -16,34 +16,13 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.plan;
+package rjc.jplanner.model;
 
 /*************************************************************************************************/
-/**************************** Single working period within a day type ****************************/
+/******************************************* Resource ********************************************/
 /*************************************************************************************************/
 
-public class DayWorkPeriod
+public class Resource
 {
 
-  public Time m_start; // work period start time
-  public Time m_end;  // work period end time
-
-  /**************************************** constructor ******************************************/
-  public DayWorkPeriod( double startHour, double endHour )
-  {
-    // construct work period from from start and end hour points
-    if ( startHour >= endHour )
-      throw new IllegalArgumentException( "startHour >= endHour" );
-
-    m_start = Time.fromHours( startHour );
-    m_end = Time.fromHours( endHour );
-  }
-
-  /***************************************** toString ********************************************/
-  @Override
-  public String toString()
-  {
-    // convert to string
-    return "DayWorkPeriod[" + m_start + ", " + m_end + "]";
-  }
 }

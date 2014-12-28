@@ -16,55 +16,34 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.plan;
-
-import java.time.LocalDate;
+package rjc.jplanner.model;
 
 /*************************************************************************************************/
-/************************************ Date (with no timezone) ************************************/
+/**************************** Single working period within a day type ****************************/
 /*************************************************************************************************/
 
-public class Date
+public class DayWorkPeriod
 {
-  private int m_epochday; // simple count of days where day 0 is 01-Jan-1970
 
-  // min int=-2^31 gives minimum date of approx 5,800,000 BC
-  // max int=2^31-1 gives maximum date of approx 5,800,000 AD
+  public Time m_start; // work period start time
+  public Time m_end;  // work period end time
 
-  /* ======================================= constructor ======================================= */
-  private Date( int epochday )
+  /**************************************** constructor ******************************************/
+  public DayWorkPeriod( double startHour, double endHour )
   {
-    // constructor (from pre-validated epochday)
-    m_epochday = epochday;
+    // construct work period from from start and end hour points
+    if ( startHour >= endHour )
+      throw new IllegalArgumentException( "startHour >= endHour" );
+
+    m_start = Time.fromHours( startHour );
+    m_end = Time.fromHours( endHour );
   }
 
-  /****************************************** epochday *******************************************/
-  public int epochday()
-  {
-    // return int count of days from day 0 is 01-Jan-1970
-    return m_epochday;
-  }
-
-  /****************************************** toString *******************************************/
+  /***************************************** toString ********************************************/
   @Override
   public String toString()
   {
-    // convert to string in "YYYY-MM-DD" format
-    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
-    return ld.toString();
-  }
-
-  /********************************************* now *********************************************/
-  public static Date now()
-  {
-    // return a new Date from current system clock
-    return new Date( (int) LocalDate.now().toEpochDay() );
-  }
-
-  /**************************************** fromLocalDate ****************************************/
-  public static Date fromLocalDate( LocalDate localDate )
-  {
-    // return a new Date from LocalDate
-    return new Date( (int) localDate.toEpochDay() );
+    // convert to string
+    return "DayWorkPeriod[" + m_start + ", " + m_end + "]";
   }
 }

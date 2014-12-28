@@ -16,39 +16,46 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner;
+package rjc.jplanner.model;
 
-import rjc.jplanner.model.DateTime;
-import rjc.jplanner.model.Plan;
+import java.time.LocalDateTime;
 
 /*************************************************************************************************/
-// JPlanner by Richard Crook
-// Aims to be a project planner similar to M$Project with table entry of tasks & Gantt chart
-// Also aims to have automatic resource levelling and scheduling based on task priority
-// Also aims to have resource levels variable within single task
-// Also aims to have Gantt chart task bar thickness showing this variable resource usage
-// Based on work I started as early as 2005
+/********************************* Date-time (with no timezone) **********************************/
 /*************************************************************************************************/
 
-public class jplanner
+public class DateTime
 {
+  private Date m_date;
+  private Time m_time;
 
-  /******************************************** main *********************************************/
-  public static void main( String[] args )
+  /***************************************** constructor *****************************************/
+  public DateTime( Date date, Time time )
   {
-    // main entry point for application startup
-    trace( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JPlanner started ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
-    Plan plan = new Plan();
-    trace( "" + plan );
-    plan.initialise();
-    trace( "" + plan );
+    // constructor
+    m_date = date;
+    m_time = time;
   }
 
-  /******************************************* debug *********************************************/
-  public static void trace( String txt )
+  /***************************************** constructor *****************************************/
+  public DateTime( LocalDateTime dt )
   {
-    // prints txt prefixed by date-time
-    System.out.println( DateTime.now() + " " + txt );
+    // constructor
+    m_date = Date.fromLocalDate( dt.toLocalDate() );
+    m_time = Time.fromLocalTime( dt.toLocalTime() );
   }
 
+  /****************************************** toString *******************************************/
+  public String toString()
+  {
+    // convert to string to "YYYY-MM-DD hh:mm:ss.mmm" format
+    return m_date.toString() + " " + m_time.toString();
+  }
+
+  /********************************************* now *********************************************/
+  public static DateTime now()
+  {
+    // return a new DateTime from current system clock
+    return new DateTime( LocalDateTime.now() );
+  }
 }
