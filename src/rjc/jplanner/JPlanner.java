@@ -18,6 +18,7 @@
 
 package rjc.jplanner;
 
+import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
 
@@ -44,6 +45,8 @@ public class JPlanner
     trace( "" + plan );
     plan.initialise();
     trace( "" + plan );
+
+    MainWindow win = new MainWindow();
   }
 
   /******************************************* debug *********************************************/

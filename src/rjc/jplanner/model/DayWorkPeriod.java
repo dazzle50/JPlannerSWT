@@ -43,6 +43,8 @@ public class DayWorkPeriod
   public String toString()
   {
     // convert to string
-    return "DayWorkPeriod[" + m_start + ", " + m_end + "]";
+    String hash = super.toString();
+    String id = hash.substring( hash.lastIndexOf( '.' ) + 1 );
+    return id + "[" + m_start + ", " + m_end + "]";
   }
 }

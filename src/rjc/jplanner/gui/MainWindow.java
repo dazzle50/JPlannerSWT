@@ -16,25 +16,40 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.model;
+package rjc.jplanner.gui;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /*************************************************************************************************/
-/************************************* Single plan resource **************************************/
+/******************************* Main JPlanner application window ********************************/
 /*************************************************************************************************/
 
-public class Resource
+public class MainWindow
 {
-  private String   m_initials;    // must be unique across all resources in model
-  private String   m_name;        // free text
-  private String   m_org;         // free text
-  private String   m_group;       // free text
-  private String   m_role;        // free text
-  private String   m_alias;       // free text
-  private Date     m_start;       // date availability starts inclusive
-  private Date     m_end;         // date availability end inclusive
-  private double   m_availability; // number available
-  private double   m_cost;        // cost TODO
-  private Calendar m_calendar;    // calendar for resource
-  private String   m_comment;     // free text
+
+  /**************************************** constructor ******************************************/
+  public MainWindow()
+  {
+    // create main application display
+    Display display = new Display();
+    Shell shell = new Shell( display );
+    shell.open();
+
+    // run the event loop as long as the window is open
+    while ( !shell.isDisposed() )
+    {
+      // read the next OS event queue and transfer it to a SWT event 
+      if ( !display.readAndDispatch() )
+      {
+        // if there are currently no other OS event to process
+        // sleep until the next OS event is available 
+        display.sleep();
+      }
+    }
+
+    // disposes all associated windows and their components
+    display.dispose();
+  }
 
 }

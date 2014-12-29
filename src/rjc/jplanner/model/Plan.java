@@ -52,14 +52,18 @@ public class Plan
   public String toString()
   {
     // convert to string
-    return "Plan[" + m_title + ", " + m_start + ", " + m_tasks + ", " + m_resources + ", " + m_calendars + ", "
-        + m_daytypes + "]";
+    String hash = super.toString();
+    String id = hash.substring( hash.lastIndexOf( '.' ) + 1 );
+    return id + "[" + m_title + ", " + m_start + ", " + m_tasks.size() + " Tasks, " + m_resources.size()
+        + " Resources, " + m_calendars.size() + " Calendars, " + m_daytypes.size() + " DayTypes]";
   }
 
   /**************************************** initialise *******************************************/
   public void initialise()
   {
     // initialise plan with default settings and contents
+    m_start = DateTime.now();
+
     m_daytypes.clear();
     for ( DefaultDayTypes type : DefaultDayTypes.values() )
       m_daytypes.add( new DayType( type ) );

@@ -24,5 +24,11 @@ package rjc.jplanner.model;
 
 public class Task
 {
-
+  private String        m_title;       // free text title
+  private TimeSpan      m_duration;    // duration of task
+  private DateTime      m_start;       // start date-time of task
+  private DateTime      m_end;         // end date-time of task
+  private TimeSpan      m_work;        // work effort for task
+  private Predecessors  m_predecessors; // task predecessors
+  private TaskResources m_resources;   // resources allocated to task
 }

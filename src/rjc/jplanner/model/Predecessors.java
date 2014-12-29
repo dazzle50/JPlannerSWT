@@ -18,23 +18,7 @@
 
 package rjc.jplanner.model;
 
-/*************************************************************************************************/
-/************************************* Single plan resource **************************************/
-/*************************************************************************************************/
-
-public class Resource
+public class Predecessors
 {
-  private String   m_initials;    // must be unique across all resources in model
-  private String   m_name;        // free text
-  private String   m_org;         // free text
-  private String   m_group;       // free text
-  private String   m_role;        // free text
-  private String   m_alias;       // free text
-  private Date     m_start;       // date availability starts inclusive
-  private Date     m_end;         // date availability end inclusive
-  private double   m_availability; // number available
-  private double   m_cost;        // cost TODO
-  private Calendar m_calendar;    // calendar for resource
-  private String   m_comment;     // free text
 
 }
