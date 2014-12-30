@@ -19,7 +19,6 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -33,7 +32,7 @@ public class MainWindow
   {
     // create main application display
     Display display = new Display();
-    Shell shell = new Shell( display );
+    MainWindowShell shell = new MainWindowShell( display );
     shell.open();
 
     // run the event loop as long as the window is open
