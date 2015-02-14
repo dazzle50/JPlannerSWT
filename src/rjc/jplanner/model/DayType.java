@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright (C) 2014 by Richard Crook                                   *
+ *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *

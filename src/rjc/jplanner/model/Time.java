@@ -1,5 +1,5 @@
 /**************************************************************************
- *  Copyright (C) 2014 by Richard Crook                                   *
+ *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
@@ -87,7 +87,7 @@ public class Time
     buf.append( hour < 10 ? "0" : "" ).append( hour );
     buf.append( minute < 10 ? ":0" : ":" ).append( minute );
     buf.append( second < 10 ? ":0" : ":" ).append( second );
-    buf.append( milli < 10 ? ":0" : ":" ).append( milli < 100 ? "0" : "" ).append( milli );
+    buf.append( milli < 10 ? ".0" : "." ).append( milli < 100 ? "0" : "" ).append( milli );
 
     return buf.toString();
   }
