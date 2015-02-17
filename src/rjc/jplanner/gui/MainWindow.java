@@ -32,7 +32,7 @@ public class MainWindow
   {
     // create main application display
     Display display = new Display();
-    MainWindowShell shell = new MainWindowShell( display );
+    _MainWindowShell shell = new _MainWindowShell( display );
     shell.open();
 
     // run the event loop as long as the window is open

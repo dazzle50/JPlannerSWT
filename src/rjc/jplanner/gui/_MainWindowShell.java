@@ -1,5 +1,25 @@
+/**************************************************************************
+ *  ######## WRITTEN USING WindowBuilder Editor ########                  *
+ *  Copyright (C) 2015 by Richard Crook                                   *
+ *  http://code.google.com/p/jplanner/                                    *
+ *                                                                        *
+ *  This program is free software: you can redistribute it and/or modify  *
+ *  it under the terms of the GNU General Public License as published by  *
+ *  the Free Software Foundation, either version 3 of the License, or     *
+ *  (at your option) any later version.                                   *
+ *                                                                        *
+ *  This program is distributed in the hope that it will be useful,       *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *  GNU General Public License for more details.                          *
+ *                                                                        *
+ *  You should have received a copy of the GNU General Public License     *
+ *  along with this program.  If not, see http://www.gnu.org/licenses/    *
+ **************************************************************************/
+
 package rjc.jplanner.gui;
 
+import org.eclipse.nebula.widgets.nattable.style.theme.ModernNatTableThemeConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -7,40 +27,14 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public class MainWindowShell extends Shell
+public class _MainWindowShell extends Shell
 {
-
-  /**
-   * Launch the application.
-   * @param args
-   */
-  public static void main( String args[] )
-  {
-    try
-    {
-      Display display = Display.getDefault();
-      MainWindowShell shell = new MainWindowShell( display );
-      shell.open();
-      shell.layout();
-      while ( !shell.isDisposed() )
-      {
-        if ( !display.readAndDispatch() )
-        {
-          display.sleep();
-        }
-      }
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Create the shell.
    * @param display
    */
-  public MainWindowShell( Display display )
+  public _MainWindowShell( Display display )
   {
     super( display, SWT.SHELL_TRIM );
     setLayout( new FillLayout( SWT.HORIZONTAL ) );
@@ -188,7 +182,7 @@ public class MainWindowShell extends Shell
     actionAboutJplanner.setEnabled( false );
     actionAboutJplanner.setText( "About JPlanner" );
 
-    MainTabWidget mainTabWidget = new MainTabWidget( this, SWT.NONE );
+    _MainTabWidget mainTabWidget = new _MainTabWidget( this, new ModernNatTableThemeConfiguration() );
     createContents();
   }
 
