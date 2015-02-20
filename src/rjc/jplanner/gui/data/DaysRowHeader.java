@@ -16,25 +16,55 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.data;
 
-import org.eclipse.nebula.widgets.nattable.NatTable;
-import org.eclipse.nebula.widgets.nattable.style.theme.ThemeConfiguration;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /*************************************************************************************************/
-/*************************** Nebula NatTable to display plan day-types ***************************/
+/************************ Row header data provider for day-types NatTable ************************/
 /*************************************************************************************************/
 
-public class DaysNatTable extends NatTable
+public class DaysRowHeader implements IDataProvider
 {
+  private IDataProvider m_body; // data provider for the table body
 
   /**************************************** constructor ******************************************/
-  public DaysNatTable( Composite parent, ThemeConfiguration theme )
+  public DaysRowHeader( IDataProvider body )
   {
-    // construct NatTable and set theme
-    super( parent );
-    setTheme( theme );
+    // initialise variable
+    m_body = body;
+  }
+
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // must be one
+    return 1;
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int columnIndex, int rowIndex )
+  {
+    // TODO !!!!!!!!!!!!!!
+    return "rrr";
+  }
+
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // must be same as body
+    return m_body.getRowCount();
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  {
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }

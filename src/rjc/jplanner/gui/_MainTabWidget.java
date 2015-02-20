@@ -20,7 +20,6 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
-import org.eclipse.nebula.widgets.nattable.style.theme.ThemeConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -43,9 +42,10 @@ public class _MainTabWidget extends TabFolder
    * @param parent
    * @param style
    */
-  public _MainTabWidget( Composite parent, ThemeConfiguration theme )
+  public _MainTabWidget( Composite parent )
   {
     super( parent, SWT.NONE );
+    NatTableFactory factory = new NatTableFactory();
 
     TabItem tabPlan = new TabItem( this, SWT.NONE );
     tabPlan.setText( "Plan" );
@@ -64,7 +64,7 @@ public class _MainTabWidget extends TabFolder
     SashForm splitterTasksGantt = new SashForm( this, SWT.SMOOTH );
     tabTasksGantt.setControl( splitterTasksGantt );
 
-    tableTasks = new TasksNatTable( splitterTasksGantt, theme );
+    tableTasks = factory.newTasksTable( splitterTasksGantt );
 
     ScrolledComposite scrolledComposite = new ScrolledComposite( splitterTasksGantt, SWT.BORDER | SWT.H_SCROLL
         | SWT.V_SCROLL );
@@ -75,19 +75,19 @@ public class _MainTabWidget extends TabFolder
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
     tabResources.setText( "Resources" );
-    tableResources = new ResourcesNatTable( this, theme );
+    tableResources = factory.newResourcesTable( this );
     tabResources.setControl( tableResources );
 
     // Calendars tab
     TabItem tabCalendars = new TabItem( this, SWT.NONE );
     tabCalendars.setText( "Calendars" );
-    tableCalendars = new CalendarsNatTable( this, theme );
+    tableCalendars = factory.newCalendarsTable( this );
     tabCalendars.setControl( tableCalendars );
 
     // Days-type tab
     TabItem tabDays = new TabItem( this, SWT.NONE );
     tabDays.setText( "Days" );
-    tableDays = new DaysNatTable( this, theme );
+    tableDays = factory.newDaysTable( this );
     tabDays.setControl( tableDays );
   }
 

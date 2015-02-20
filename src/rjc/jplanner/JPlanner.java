@@ -46,7 +46,7 @@ public class JPlanner
     plan.initialise();
     trace( "" + plan );
 
-    MainWindow win = new MainWindow();
+    new MainWindow();
   }
 
   /******************************************* debug *********************************************/

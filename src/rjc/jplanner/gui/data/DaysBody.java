@@ -16,25 +16,53 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.data;
 
-import org.eclipse.nebula.widgets.nattable.NatTable;
-import org.eclipse.nebula.widgets.nattable.style.theme.ThemeConfiguration;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /*************************************************************************************************/
-/*************************** Nebula NatTable to display plan calendars ***************************/
+/************************** Body data provider for day-types NatTable ****************************/
 /*************************************************************************************************/
 
-public class CalendarsNatTable extends NatTable
+public class DaysBody implements IDataProvider
 {
 
   /**************************************** constructor ******************************************/
-  public CalendarsNatTable( Composite parent, ThemeConfiguration theme )
+  public DaysBody()
   {
-    // construct NatTable and set theme
-    super( parent );
-    setTheme( theme );
+    // TODO !!!!!!!!!!!!!!
+  }
+
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // TODO !!!!!!!!!!!!!!
+    return 6;
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int columnIndex, int rowIndex )
+  {
+    // TODO !!!!!!!!!!!!!!
+    return "day...";
+  }
+
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // TODO !!!!!!!!!!!!!!
+    return 6;
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  {
+    // TODO !!!!!!!!!!!!!!
+
   }
 
 }

@@ -19,7 +19,6 @@
 
 package rjc.jplanner.gui;
 
-import org.eclipse.nebula.widgets.nattable.style.theme.ModernNatTableThemeConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -182,7 +181,7 @@ public class _MainWindowShell extends Shell
     actionAboutJplanner.setEnabled( false );
     actionAboutJplanner.setText( "About JPlanner" );
 
-    _MainTabWidget mainTabWidget = new _MainTabWidget( this, new ModernNatTableThemeConfiguration() );
+    _MainTabWidget mainTabWidget = new _MainTabWidget( this );
     createContents();
   }
 

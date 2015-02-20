@@ -20,6 +20,8 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.DayType.DefaultDayTypes;
 
@@ -29,13 +31,17 @@ import rjc.jplanner.model.DayType.DefaultDayTypes;
 
 public class Plan
 {
-  private StringBuilder       m_title;    // plan title as set in properties
-  private DateTime            m_start;    // plan start as set in properties
+  private StringBuilder       m_title;            // plan title as set in properties
+  private DateTime            m_start;            // plan start as set in properties
 
-  private ArrayList<Task>     m_tasks;    // list of plan tasks
-  private ArrayList<Resource> m_resources; // list of plan resources
-  private ArrayList<Calendar> m_calendars; // list of plan calendars
-  private ArrayList<DayType>  m_daytypes; // list of plan day types
+  private ArrayList<Task>     m_tasks;            // list of plan tasks
+  private ArrayList<Resource> m_resources;        // list of plan resources
+  private ArrayList<Calendar> m_calendars;        // list of plan calendars
+  private ArrayList<DayType>  m_daytypes;         // list of plan day types
+
+  public IDataProvider        daysDataProvider;
+  public IDataProvider        daysCHeaderProvider;
+  public IDataProvider        daysRHeaderProvider;
 
   /**************************************** constructor ******************************************/
   public Plan()
