@@ -30,25 +30,24 @@ import rjc.jplanner.model.DayType;
 public class DaysBody implements IDataProvider
 {
 
-  /**************************************** constructor ******************************************/
-  public DaysBody()
-  {
-    // TODO !!!!!!!!!!!!!!
-  }
-
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // TODO !!!!!!!!!!!!!!
-    return 7;
+    // table column count is max number of periods * 2 + 3
+    int max = 0;
+    for ( int i = 0; i < getRowCount(); i++ )
+      if ( JPlanner.plan.day( i ).numPeriods() > max )
+        max = JPlanner.plan.day( i ).numPeriods();
+
+    return max * 2 + 3;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int columnIndex, int rowIndex )
   {
-    // return appropriate value
+    // return appropriate value for table cell
     DayType day = JPlanner.plan.day( rowIndex );
 
     if ( columnIndex == 0 )
