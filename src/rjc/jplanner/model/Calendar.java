@@ -127,4 +127,35 @@ public class Calendar
   {
     return "Calendar[" + m_name + ", " + m_cycleAnchor + ", " + m_normal + "]";
   }
+
+  /******************************************* name **********************************************/
+  public String name()
+  {
+    return m_name;
+  }
+
+  /****************************************** anchor *********************************************/
+  public Date anchor()
+  {
+    return m_cycleAnchor;
+  }
+
+  /**************************************** numNormals *******************************************/
+  public int numNormals()
+  {
+    return m_normal.size();
+  }
+
+  /*************************************** numExceptions *****************************************/
+  public int numExceptions()
+  {
+    return m_exceptions.size();
+  }
+
+  /****************************************** normal *********************************************/
+  public DayType normal( int index )
+  {
+    return m_normal.get( index );
+  }
+
 }

@@ -41,6 +41,10 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
+import rjc.jplanner.gui.data.CalendarsBody;
+import rjc.jplanner.gui.data.CalendarsColumnHeader;
+import rjc.jplanner.gui.data.CalendarsLabelAccumulator;
+import rjc.jplanner.gui.data.CalendarsRowHeader;
 import rjc.jplanner.gui.data.DaysBody;
 import rjc.jplanner.gui.data.DaysColumnHeader;
 import rjc.jplanner.gui.data.DaysLabelAccumulator;
@@ -136,11 +140,11 @@ public class NatTableFactory
   public NatTable newCalendarsTable( Composite parent )
   {
     // create table for calendars TODO
-    IDataProvider body = new DaysBody();
-    IDataProvider colh = new DaysColumnHeader( body );
-    IDataProvider rowh = new DaysRowHeader( body );
-    IConfigLabelAccumulator label = new DaysLabelAccumulator();
-    int[] widths = { 60, 25, 150 };
+    IDataProvider body = new CalendarsBody();
+    IDataProvider colh = new CalendarsColumnHeader( body );
+    IDataProvider rowh = new CalendarsRowHeader( body );
+    IConfigLabelAccumulator label = new CalendarsLabelAccumulator();
+    int[] widths = { 140, 75 };
     return newTable( parent, body, colh, rowh, label, widths );
   }
 
