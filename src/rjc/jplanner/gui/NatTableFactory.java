@@ -49,6 +49,14 @@ import rjc.jplanner.gui.data.DaysBody;
 import rjc.jplanner.gui.data.DaysColumnHeader;
 import rjc.jplanner.gui.data.DaysLabelAccumulator;
 import rjc.jplanner.gui.data.DaysRowHeader;
+import rjc.jplanner.gui.data.ResourcesBody;
+import rjc.jplanner.gui.data.ResourcesColumnHeader;
+import rjc.jplanner.gui.data.ResourcesLabelAccumulator;
+import rjc.jplanner.gui.data.ResourcesRowHeader;
+import rjc.jplanner.gui.data.TasksBody;
+import rjc.jplanner.gui.data.TasksColumnHeader;
+import rjc.jplanner.gui.data.TasksLabelAccumulator;
+import rjc.jplanner.gui.data.TasksRowHeader;
 
 /*************************************************************************************************/
 /*************** Factory for making the different Nebula NatTable used in JPlanner ***************/
@@ -79,10 +87,15 @@ public class NatTableFactory
         shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
         reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, "SHADE" );
 
-        // Style "LEFT" centre text horizontally
+        // Style "LEFT" align left text horizontally
         Style left = new Style();
         left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
         reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, "LEFT" );
+
+        // Style "RIGHT" align right text horizontally
+        Style right = new Style();
+        right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
+        reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, "RIGHT" );
       }
     };
   }
@@ -152,11 +165,11 @@ public class NatTableFactory
   public NatTable newResourcesTable( Composite parent )
   {
     // create table for resources TODO
-    IDataProvider body = new DaysBody();
-    IDataProvider colh = new DaysColumnHeader( body );
-    IDataProvider rowh = new DaysRowHeader( body );
-    IConfigLabelAccumulator label = new DaysLabelAccumulator();
-    int[] widths = { 60, 25, 150 };
+    IDataProvider body = new ResourcesBody();
+    IDataProvider colh = new ResourcesColumnHeader( body );
+    IDataProvider rowh = new ResourcesRowHeader( body );
+    IConfigLabelAccumulator label = new ResourcesLabelAccumulator();
+    int[] widths = { 100, 25, 50 };
     return newTable( parent, body, colh, rowh, label, widths );
   }
 
@@ -164,11 +177,11 @@ public class NatTableFactory
   public NatTable newTasksTable( Composite parent )
   {
     // create table for tasks TODO
-    IDataProvider body = new DaysBody();
-    IDataProvider colh = new DaysColumnHeader( body );
-    IDataProvider rowh = new DaysRowHeader( body );
-    IConfigLabelAccumulator label = new DaysLabelAccumulator();
-    int[] widths = { 60, 25, 150 };
+    IDataProvider body = new TasksBody();
+    IDataProvider colh = new TasksColumnHeader( body );
+    IDataProvider rowh = new TasksRowHeader( body );
+    IConfigLabelAccumulator label = new TasksLabelAccumulator();
+    int[] widths = { 100, 25, 200, 60, 100, 100, 60 };
     return newTable( parent, body, colh, rowh, label, widths );
   }
 
