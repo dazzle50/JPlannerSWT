@@ -86,6 +86,7 @@ public class CalendarsBody implements IDataProvider
   public void setDataValue( int columnIndex, int rowIndex, Object newValue )
   {
     // TODO !!!!!!!!!!!!!!
+    JPlanner.trace( "Calendar setDataValue = " + newValue );
 
   }
 

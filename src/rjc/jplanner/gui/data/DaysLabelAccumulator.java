@@ -36,9 +36,11 @@ public class DaysLabelAccumulator implements IConfigLabelAccumulator
     // add config labels to style cell
     DayType day = JPlanner.plan.day( row );
 
-    // shade unused start/end cells
+    // all cells editable except shaded unused start/end cells
     if ( col > day.numPeriods() * 2 + 2 )
       labels.addLabel( "SHADE" );
+    else
+      labels.addLabel( "EDITABLE" );
 
     // left align name
     if ( col == 0 )

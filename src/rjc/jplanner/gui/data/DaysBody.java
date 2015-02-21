@@ -87,6 +87,7 @@ public class DaysBody implements IDataProvider
   public void setDataValue( int columnIndex, int rowIndex, Object newValue )
   {
     // TODO !!!!!!!!!!!!!!
+    JPlanner.trace( "Day setDataValue = " + newValue );
 
   }
 
