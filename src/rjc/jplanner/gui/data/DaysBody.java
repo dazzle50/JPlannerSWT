@@ -20,6 +20,9 @@ package rjc.jplanner.gui.data;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.DayType;
+
 /*************************************************************************************************/
 /************************** Body data provider for day-types NatTable ****************************/
 /*************************************************************************************************/
@@ -38,23 +41,46 @@ public class DaysBody implements IDataProvider
   public int getColumnCount()
   {
     // TODO !!!!!!!!!!!!!!
-    return 6;
+    return 7;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int columnIndex, int rowIndex )
   {
-    // TODO !!!!!!!!!!!!!!
-    return "day...";
+    // return appropriate value
+    DayType day = JPlanner.plan.day( rowIndex );
+
+    if ( columnIndex == 0 )
+      return day.name();
+
+    if ( columnIndex == 1 )
+      return day.work();
+
+    if ( columnIndex == 2 )
+      return day.numPeriods();
+
+    // if column beyond work period starts/ends handle index out of bounds
+    try
+    {
+      if ( columnIndex % 2 == 0 )
+        return day.end( columnIndex / 2 - 1 ).toString().substring( 0, 5 );
+      else
+        return day.start( columnIndex / 2 ).toString().substring( 0, 5 );
+    }
+    catch (IndexOutOfBoundsException e)
+    {
+      return "";
+    }
+
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // TODO !!!!!!!!!!!!!!
-    return 6;
+    // return number of day-types in plan
+    return JPlanner.plan.daysCount();
   }
 
   /*************************************** setDataValue ******************************************/

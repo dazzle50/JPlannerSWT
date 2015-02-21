@@ -87,6 +87,34 @@ public class Plan
       m_tasks.add( new Task() );
   }
 
+  /**************************************** tasksCount *******************************************/
+  public int tasksCount()
+  {
+    // return number of tasks in plan
+    return m_tasks.size();
+  }
+
+  /************************************** resourcesCount *****************************************/
+  public int resourcesCount()
+  {
+    // return number of resources in plan
+    return m_resources.size();
+  }
+
+  /************************************** calendarsCount *****************************************/
+  public int calendarsCount()
+  {
+    // return number of calendars in plan
+    return m_calendars.size();
+  }
+
+  /***************************************** daysCount *******************************************/
+  public int daysCount()
+  {
+    // return number of day-types in plan
+    return m_daytypes.size();
+  }
+
   /******************************************* task **********************************************/
   public Task task( int index )
   {
@@ -108,7 +136,7 @@ public class Plan
     return m_calendars.get( index );
   }
 
-  /****************************************** daytype ********************************************/
+  /********************************************* day *********************************************/
   public DayType day( int index )
   {
     // return day-type corresponding to index

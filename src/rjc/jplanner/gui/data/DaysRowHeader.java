@@ -47,8 +47,8 @@ public class DaysRowHeader implements IDataProvider
   @Override
   public Object getDataValue( int columnIndex, int rowIndex )
   {
-    // TODO !!!!!!!!!!!!!!
-    return "rrr";
+    // return row index plus one
+    return rowIndex + 1;
   }
 
   /**************************************** getRowCount ******************************************/

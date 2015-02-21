@@ -47,8 +47,20 @@ public class DaysColumnHeader implements IDataProvider
   @Override
   public Object getDataValue( int columnIndex, int rowIndex )
   {
-    // TODO !!!!!!!!!!!!!!
-    return "cccc";
+    // return column title
+    if ( columnIndex == 0 )
+      return "Name";
+
+    if ( columnIndex == 1 )
+      return "Work";
+
+    if ( columnIndex == 2 )
+      return "Periods";
+
+    if ( columnIndex % 2 == 0 )
+      return "End " + ( columnIndex / 2 - 1 );
+    else
+      return "Start " + ( columnIndex / 2 );
   }
 
   /**************************************** getRowCount ******************************************/

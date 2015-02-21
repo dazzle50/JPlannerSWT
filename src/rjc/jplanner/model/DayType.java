@@ -92,4 +92,35 @@ public class DayType
   {
     return "DayType[" + m_name + ", " + m_work + ", " + m_periods + "]";
   }
+
+  /******************************************* name **********************************************/
+  public String name()
+  {
+    return m_name;
+  }
+
+  /******************************************* work **********************************************/
+  public double work()
+  {
+    return m_work;
+  }
+
+  /**************************************** numPeriods *******************************************/
+  public int numPeriods()
+  {
+    return m_periods.size();
+  }
+
+  /******************************************** end **********************************************/
+  public Time end( int num )
+  {
+    return m_periods.get( num - 1 ).m_end;
+  }
+
+  /******************************************* start *********************************************/
+  public Time start( int num )
+  {
+    return m_periods.get( num - 1 ).m_start;
+  }
+
 }
