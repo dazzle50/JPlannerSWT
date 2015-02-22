@@ -64,7 +64,7 @@ public class XSashForm extends SashForm
 
   }
 
-  /**************************************** constructor ******************************************/
+  /****************************************** monitor ********************************************/
   public void monitor( Control left, Control right )
   {
     // add listener to detect sash drag to update preferred left child width

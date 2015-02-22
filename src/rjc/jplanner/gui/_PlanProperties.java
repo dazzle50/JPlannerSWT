@@ -27,18 +27,24 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import rjc.jplanner.JPlanner;
+
 public class _PlanProperties extends Composite
 {
-  private Text titleText;
-  private Text startText;
-  private Text earliestText;
-  private Text endText;
-  private Text calText;
-  private Text formatText;
-  private Text filenameText;
-  private Text filelocText;
-  private Text savedbyText;
-  private Text savedwhenText;
+  private Text            titleText;
+  private _DateTimeEditor startDT;
+  private Text            firstText;
+  private Text            endText;
+  private Text            calText;
+  private Text            formatText;
+  private Text            filenameText;
+  private Text            filelocText;
+  private Text            savedbyText;
+  private Text            savedwhenText;
+  private Label           tasksNum;
+  private Label           resourcesNum;
+  private Label           calendarsNum;
+  private Label           daysNum;
 
   /**
    * Create the composite.
@@ -61,15 +67,15 @@ public class _PlanProperties extends Composite
     startLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
     startLabel.setText( "Start" );
 
-    startText = new Text( this, SWT.BORDER );
-    startText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    startDT = new _DateTimeEditor( this, SWT.NONE );
+    startDT.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label earliestLabel = new Label( this, SWT.NONE );
     earliestLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    earliestLabel.setText( "Earliest" );
+    earliestLabel.setText( "First" );
 
-    earliestText = new Text( this, SWT.BORDER );
-    earliestText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    firstText = new Text( this, SWT.BORDER );
+    firstText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label endLabel = new Label( this, SWT.NONE );
     endLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -125,33 +131,33 @@ public class _PlanProperties extends Composite
     grpNumberOf.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 2, 1 ) );
     grpNumberOf.setText( "Number of" );
 
-    Label lblNewLabel = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel.setText( "Tasks" );
+    Label tasksLabel = new Label( grpNumberOf, SWT.NONE );
+    tasksLabel.setText( "Tasks" );
 
-    Label lblNewLabel_1 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_1.setLayoutData( new GridData( SWT.LEFT, SWT.CENTER, true, false, 1, 1 ) );
-    lblNewLabel_1.setText( ": 0" );
+    tasksNum = new Label( grpNumberOf, SWT.NONE );
+    tasksNum.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    tasksNum.setText( ": 0" );
 
-    Label lblNewLabel_2 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_2.setText( "Resources" );
+    Label resourcesLabel = new Label( grpNumberOf, SWT.NONE );
+    resourcesLabel.setText( "Resources" );
 
-    Label lblNewLabel_3 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_3.setLayoutData( new GridData( SWT.LEFT, SWT.CENTER, true, false, 1, 1 ) );
-    lblNewLabel_3.setText( ": 0" );
+    resourcesNum = new Label( grpNumberOf, SWT.NONE );
+    resourcesNum.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    resourcesNum.setText( ": 0" );
 
-    Label lblNewLabel_4 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_4.setText( "Calendars" );
+    Label calendarsLabel = new Label( grpNumberOf, SWT.NONE );
+    calendarsLabel.setText( "Calendars" );
 
-    Label lblNewLabel_5 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_5.setLayoutData( new GridData( SWT.LEFT, SWT.CENTER, true, false, 1, 1 ) );
-    lblNewLabel_5.setText( ": 0" );
+    calendarsNum = new Label( grpNumberOf, SWT.NONE );
+    calendarsNum.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    calendarsNum.setText( ": 0" );
 
-    Label lblNewLabel_6 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_6.setText( "Days" );
+    Label daysLabel = new Label( grpNumberOf, SWT.NONE );
+    daysLabel.setText( "Days" );
 
-    Label lblNewLabel_7 = new Label( grpNumberOf, SWT.NONE );
-    lblNewLabel_7.setLayoutData( new GridData( SWT.LEFT, SWT.CENTER, true, false, 1, 1 ) );
-    lblNewLabel_7.setText( ": 0" );
+    daysNum = new Label( grpNumberOf, SWT.NONE );
+    daysNum.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    daysNum.setText( ": 0" );
 
   }
 
@@ -159,5 +165,33 @@ public class _PlanProperties extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /*************************************** updateFromPlan ****************************************/
+  public void updateFromPlan()
+  {
+    // update the gui property widgets with values from plan
+    titleText.setText( JPlanner.plan.title() );
+    startDT.setDateTime( JPlanner.plan.start() );
+    calText.setText( JPlanner.plan.calendar().name() );
+    formatText.setText( JPlanner.plan.datetimeFormat() );
+    filenameText.setText( JPlanner.plan.filename() );
+    filelocText.setText( JPlanner.plan.fileLocation() );
+    savedbyText.setText( JPlanner.plan.savedBy() );
+
+    try
+    {
+      savedwhenText.setText( JPlanner.plan.savedWhen().toString() );
+    }
+    catch (NullPointerException e)
+    {
+      savedwhenText.setText( "" );
+    }
+
+    // update the gui "number of" widgets
+    tasksNum.setText( ": " + JPlanner.plan.tasksCount() );
+    resourcesNum.setText( ": " + JPlanner.plan.resourcesCount() );
+    calendarsNum.setText( ": " + JPlanner.plan.calendarsCount() );
+    daysNum.setText( ": " + JPlanner.plan.daysCount() );
   }
 }

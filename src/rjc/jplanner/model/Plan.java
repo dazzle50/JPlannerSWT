@@ -20,8 +20,6 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.DayType.DefaultDayTypes;
 
@@ -31,17 +29,19 @@ import rjc.jplanner.model.DayType.DefaultDayTypes;
 
 public class Plan
 {
-  private StringBuilder       m_title;            // plan title as set in properties
-  private DateTime            m_start;            // plan start as set in properties
+  private String              m_title;         // plan title as set in properties
+  private DateTime            m_start;         // plan start date-time as set in properties
+  private Calendar            m_calendar;      // plan's default calendar
+  private String              m_datetimeFormat; // format to display date-times
+  private String              m_filename;      // filename when saved or loaded
+  private String              m_fileLocation;  // file location
+  private String              m_savedBy;       // who saved last
+  private DateTime            m_savedWhen;     // when was last saved
 
-  private ArrayList<Task>     m_tasks;            // list of plan tasks
-  private ArrayList<Resource> m_resources;        // list of plan resources
-  private ArrayList<Calendar> m_calendars;        // list of plan calendars
-  private ArrayList<DayType>  m_daytypes;         // list of plan day types
-
-  public IDataProvider        daysDataProvider;
-  public IDataProvider        daysCHeaderProvider;
-  public IDataProvider        daysRHeaderProvider;
+  private ArrayList<Task>     m_tasks;         // list of plan tasks
+  private ArrayList<Resource> m_resources;     // list of plan resources
+  private ArrayList<Calendar> m_calendars;     // list of plan calendars
+  private ArrayList<DayType>  m_daytypes;      // list of plan day types
 
   /**************************************** constructor ******************************************/
   public Plan()
@@ -68,8 +68,6 @@ public class Plan
   public void initialise()
   {
     // initialise plan with default settings and contents
-    m_start = DateTime.now();
-
     m_daytypes.clear();
     for ( DefaultDayTypes type : DefaultDayTypes.values() )
       m_daytypes.add( new DayType( type ) );
@@ -85,6 +83,14 @@ public class Plan
     m_tasks.clear();
     for ( int count = 0; count < 10; count++ )
       m_tasks.add( new Task() );
+
+    m_title = "";
+    m_start = DateTime.now();
+    m_calendar = calendar( 0 );
+    m_datetimeFormat = "ddd dd/MM/yyyy hh:mm";
+    m_filename = "";
+    m_fileLocation = "";
+    m_savedBy = "";
   }
 
   /**************************************** tasksCount *******************************************/
@@ -141,6 +147,54 @@ public class Plan
   {
     // return day-type corresponding to index
     return m_daytypes.get( index );
+  }
+
+  /******************************************** title ********************************************/
+  public String title()
+  {
+    return m_title;
+  }
+
+  /******************************************** start ********************************************/
+  public DateTime start()
+  {
+    return m_start;
+  }
+
+  /******************************************* calendar ******************************************/
+  public Calendar calendar()
+  {
+    return m_calendar;
+  }
+
+  /**************************************** datetimeFormat ***************************************/
+  public String datetimeFormat()
+  {
+    return m_datetimeFormat;
+  }
+
+  /******************************************* filename ******************************************/
+  public String filename()
+  {
+    return m_filename;
+  }
+
+  /***************************************** fileLocation ****************************************/
+  public String fileLocation()
+  {
+    return m_fileLocation;
+  }
+
+  /******************************************* savedBy *******************************************/
+  public String savedBy()
+  {
+    return m_savedBy;
+  }
+
+  /****************************************** savedWhen ******************************************/
+  public DateTime savedWhen()
+  {
+    return m_savedWhen;
   }
 
 }

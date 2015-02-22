@@ -60,8 +60,9 @@ public class _MainTabWidget extends TabFolder
 
     planNotes = new _PlanNotes( splitterPlanTab, SWT.NONE );
     planNotes.setBackground( getBackground() );
-    splitterPlanTab.preferredLeftChildWidth = planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x * 4 / 3;
+    splitterPlanTab.preferredLeftChildWidth = planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x + 1;
     splitterPlanTab.monitor( scrolledProperties, planNotes );
+    planProperties.updateFromPlan();
 
     TabItem tabTasksGantt = new TabItem( this, SWT.NONE );
     tabTasksGantt.setText( "Tasks && Gantt" );
