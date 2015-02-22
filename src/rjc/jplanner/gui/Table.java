@@ -61,54 +61,112 @@ import rjc.jplanner.gui.data.TasksLabelAccumulator;
 import rjc.jplanner.gui.data.TasksRowHeader;
 
 /*************************************************************************************************/
-/*************** Factory for making the different Nebula NatTable used in JPlanner ***************/
+/**************************** JPlanner table based on Nebula NatTable ****************************/
 /*************************************************************************************************/
 
-public class NatTableFactory
+public class Table extends NatTable
 {
-  private ModernNatTableThemeConfiguration m_theme;      // theme to use for all the tables
-  private IConfiguration                   m_labelStyles; // to support styling of individual cells
+  private static ModernNatTableThemeConfiguration m_theme; // theme to use for all the tables
+  private static IConfiguration                   m_labels; // to support styling of individual cells
 
-  /**************************************** constructor ******************************************/
-  public NatTableFactory()
+  public enum TableType
   {
-    // use modern theme but with small adjustments
-    m_theme = new ModernNatTableThemeConfiguration();
-    m_theme.defaultHAlign = HorizontalAlignmentEnum.CENTER;
-    m_theme.cHeaderHAlign = HorizontalAlignmentEnum.CENTER;
-    m_theme.rHeaderHAlign = HorizontalAlignmentEnum.CENTER;
-
-    // styles that can be applied to individual table cells
-    m_labelStyles = new AbstractRegistryConfiguration()
-    {
-      @Override
-      public void configureRegistry( IConfigRegistry reg )
-      {
-        // Style "SHADE" gray cell background colour
-        Style shade = new Style();
-        shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
-        reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, "SHADE" );
-
-        // Style "LEFT" align left text horizontally
-        Style left = new Style();
-        left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
-        reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, "LEFT" );
-
-        // Style "RIGHT" align right text horizontally
-        Style right = new Style();
-        right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
-        reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, "RIGHT" );
-
-        // Config "EDIT" is editable 
-        reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
-            DisplayMode.EDIT, "EDITABLE" );
-      }
-    };
+    DAY, CALENDAR, RESOURCE, TASK
   }
 
-  /**************************************** newTable ******************************************/
-  public NatTable newTable( Composite parent, IDataProvider body, IDataProvider ch, IDataProvider rh,
-      IConfigLabelAccumulator label, int[] widths )
+  /**************************************** constructor ******************************************/
+  public Table( Composite parent, TableType type )
+  {
+    // constructor call must be the first statement in a constructor
+    super( parent, false );
+
+    // check private variables are initialised
+    if ( m_theme == null )
+    {
+      m_theme = new ModernNatTableThemeConfiguration();
+      m_theme.defaultHAlign = HorizontalAlignmentEnum.CENTER;
+      m_theme.cHeaderHAlign = HorizontalAlignmentEnum.CENTER;
+      m_theme.rHeaderHAlign = HorizontalAlignmentEnum.CENTER;
+    }
+
+    if ( m_labels == null )
+      m_labels = new AbstractRegistryConfiguration()
+      {
+        @Override
+        public void configureRegistry( IConfigRegistry reg )
+        {
+          // Style "SHADE" gray cell background colour
+          Style shade = new Style();
+          shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, "SHADE" );
+
+          // Style "LEFT" align left text horizontally
+          Style left = new Style();
+          left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, "LEFT" );
+
+          // Style "RIGHT" align right text horizontally
+          Style right = new Style();
+          right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, "RIGHT" );
+
+          // Config "EDIT" is editable 
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
+              DisplayMode.EDIT, "EDITABLE" );
+        }
+      };
+
+    // depending on table type configure differently
+    switch (type) {
+      case DAY:
+        // create table for day-types
+        IDataProvider body = new DaysBody();
+        IDataProvider colh = new DaysColumnHeader( body );
+        IDataProvider rowh = new DaysRowHeader( body );
+        IConfigLabelAccumulator label = new DaysLabelAccumulator();
+        int[] widthD = { 60, 25, 150 };
+        configTable( body, colh, rowh, label, widthD );
+        break;
+
+      case CALENDAR:
+        // create table for calendars
+        body = new CalendarsBody();
+        colh = new CalendarsColumnHeader( body );
+        rowh = new CalendarsRowHeader( body );
+        label = new CalendarsLabelAccumulator();
+        int[] widthC = { 140, 75 };
+        configTable( body, colh, rowh, label, widthC );
+        break;
+
+      case RESOURCE:
+        // create table for resources
+        body = new ResourcesBody();
+        colh = new ResourcesColumnHeader( body );
+        rowh = new ResourcesRowHeader( body );
+        label = new ResourcesLabelAccumulator();
+        int[] widthR = { 100, 25, 50 };
+        configTable( body, colh, rowh, label, widthR );
+        break;
+
+      case TASK:
+        // create table for tasks
+        body = new TasksBody();
+        colh = new TasksColumnHeader( body );
+        rowh = new TasksRowHeader( body );
+        label = new TasksLabelAccumulator();
+        int[] widthT = { 100, 25, 200, 60, 100, 100, 60 };
+        configTable( body, colh, rowh, label, widthT );
+        break;
+
+      default:
+        throw new IllegalArgumentException( "type" );
+    }
+
+  }
+
+  /**************************************** configTable ******************************************/
+  private void configTable( IDataProvider body, IDataProvider ch, IDataProvider rh, IConfigLabelAccumulator label,
+      int[] widths )
   {
     // create body layer stack
     DataLayer bodyDataLayer = new DataLayer( body, widths[0], 20 );
@@ -135,60 +193,11 @@ public class NatTableFactory
     // create grid layer composite
     GridLayer grid = new GridLayer( viewport, colHeader, rowHeader, corner );
 
-    // create NatTable with correct parent and theme
-    NatTable table = new NatTable( parent, grid, false );
-    table.addConfiguration( m_theme );
-    table.addConfiguration( m_labelStyles );
-    table.configure();
-    return table;
-  }
-
-  /*************************************** newDaysTable ******************************************/
-  public NatTable newDaysTable( Composite parent )
-  {
-    // create table for day-types
-    IDataProvider body = new DaysBody();
-    IDataProvider colh = new DaysColumnHeader( body );
-    IDataProvider rowh = new DaysRowHeader( body );
-    IConfigLabelAccumulator label = new DaysLabelAccumulator();
-    int[] widths = { 60, 25, 150 };
-    return newTable( parent, body, colh, rowh, label, widths );
-  }
-
-  /************************************* newCalendarsTable ***************************************/
-  public NatTable newCalendarsTable( Composite parent )
-  {
-    // create table for calendars TODO
-    IDataProvider body = new CalendarsBody();
-    IDataProvider colh = new CalendarsColumnHeader( body );
-    IDataProvider rowh = new CalendarsRowHeader( body );
-    IConfigLabelAccumulator label = new CalendarsLabelAccumulator();
-    int[] widths = { 140, 75 };
-    return newTable( parent, body, colh, rowh, label, widths );
-  }
-
-  /************************************* newResourcesTable ***************************************/
-  public NatTable newResourcesTable( Composite parent )
-  {
-    // create table for resources TODO
-    IDataProvider body = new ResourcesBody();
-    IDataProvider colh = new ResourcesColumnHeader( body );
-    IDataProvider rowh = new ResourcesRowHeader( body );
-    IConfigLabelAccumulator label = new ResourcesLabelAccumulator();
-    int[] widths = { 100, 25, 50 };
-    return newTable( parent, body, colh, rowh, label, widths );
-  }
-
-  /*************************************** newTasksTable *****************************************/
-  public NatTable newTasksTable( Composite parent )
-  {
-    // create table for tasks TODO
-    IDataProvider body = new TasksBody();
-    IDataProvider colh = new TasksColumnHeader( body );
-    IDataProvider rowh = new TasksRowHeader( body );
-    IConfigLabelAccumulator label = new TasksLabelAccumulator();
-    int[] widths = { 100, 25, 200, 60, 100, 100, 60 };
-    return newTable( parent, body, colh, rowh, label, widths );
+    // configure NatTable with grid, theme, and labels
+    setLayer( grid );
+    addConfiguration( m_theme );
+    addConfiguration( m_labels );
+    configure();
   }
 
 }

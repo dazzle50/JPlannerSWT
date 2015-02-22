@@ -191,7 +191,7 @@ public class _MainWindowShell extends Shell
   protected void createContents()
   {
     setText( "JPlanner" );
-    setSize( 650, 400 );
+    setSize( 650, 460 );
 
   }
 

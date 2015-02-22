@@ -26,16 +26,15 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
 
 public class _MainTabWidget extends TabFolder
 {
-  private Text     tempPlanProperties;
-  private Text     tempPlanNotes;
-  private NatTable tableDays;
-  private NatTable tableCalendars;
-  private NatTable tableResources;
-  private NatTable tableTasks;
+  private _PlanProperties planProperties;
+  private _PlanNotes      planNotes;
+  private NatTable        tableDays;
+  private NatTable        tableCalendars;
+  private NatTable        tableResources;
+  private NatTable        tableTasks;
 
   /**
    * Create the composite.
@@ -45,7 +44,6 @@ public class _MainTabWidget extends TabFolder
   public _MainTabWidget( Composite parent )
   {
     super( parent, SWT.NONE );
-    NatTableFactory factory = new NatTableFactory();
 
     TabItem tabPlan = new TabItem( this, SWT.NONE );
     tabPlan.setText( "Plan" );
@@ -53,9 +51,17 @@ public class _MainTabWidget extends TabFolder
     SashForm splitterPlanTab = new SashForm( this, SWT.SMOOTH );
     tabPlan.setControl( splitterPlanTab );
 
-    tempPlanProperties = new Text( splitterPlanTab, SWT.BORDER );
+    ScrolledComposite scrolledProperties = new ScrolledComposite( splitterPlanTab, SWT.H_SCROLL | SWT.V_SCROLL );
+    scrolledProperties.setExpandHorizontal( true );
+    scrolledProperties.setExpandVertical( true );
 
-    tempPlanNotes = new Text( splitterPlanTab, SWT.BORDER );
+    planProperties = new _PlanProperties( scrolledProperties, SWT.NONE );
+    planProperties.setBackground( getBackground() );
+    scrolledProperties.setContent( planProperties );
+    scrolledProperties.setMinSize( planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+
+    planNotes = new _PlanNotes( splitterPlanTab, SWT.NONE );
+    planNotes.setBackground( getBackground() );
     splitterPlanTab.setWeights( new int[] { 1, 1 } );
 
     TabItem tabTasksGantt = new TabItem( this, SWT.NONE );
@@ -64,30 +70,29 @@ public class _MainTabWidget extends TabFolder
     SashForm splitterTasksGantt = new SashForm( this, SWT.SMOOTH );
     tabTasksGantt.setControl( splitterTasksGantt );
 
-    tableTasks = factory.newTasksTable( splitterTasksGantt );
+    tableTasks = new Table( splitterTasksGantt, Table.TableType.TASK );
 
-    ScrolledComposite scrolledComposite = new ScrolledComposite( splitterTasksGantt, SWT.BORDER | SWT.H_SCROLL
-        | SWT.V_SCROLL );
-    scrolledComposite.setExpandHorizontal( true );
-    scrolledComposite.setExpandVertical( true );
+    ScrolledComposite gantt = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL | SWT.V_SCROLL );
+    gantt.setExpandHorizontal( true );
+    gantt.setExpandVertical( true );
     splitterTasksGantt.setWeights( new int[] { 1, 1 } );
 
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
     tabResources.setText( "Resources" );
-    tableResources = factory.newResourcesTable( this );
+    tableResources = new Table( this, Table.TableType.RESOURCE );
     tabResources.setControl( tableResources );
 
     // Calendars tab
     TabItem tabCalendars = new TabItem( this, SWT.NONE );
     tabCalendars.setText( "Calendars" );
-    tableCalendars = factory.newCalendarsTable( this );
+    tableCalendars = new Table( this, Table.TableType.CALENDAR );
     tabCalendars.setControl( tableCalendars );
 
     // Days-type tab
     TabItem tabDays = new TabItem( this, SWT.NONE );
     tabDays.setText( "Days" );
-    tableDays = factory.newDaysTable( this );
+    tableDays = new Table( this, Table.TableType.DAY );
     tabDays.setControl( tableDays );
   }
 
