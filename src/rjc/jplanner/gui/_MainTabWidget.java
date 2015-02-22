@@ -21,7 +21,6 @@ package rjc.jplanner.gui;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -48,13 +47,12 @@ public class _MainTabWidget extends TabFolder
     TabItem tabPlan = new TabItem( this, SWT.NONE );
     tabPlan.setText( "Plan" );
 
-    SashForm splitterPlanTab = new SashForm( this, SWT.SMOOTH );
+    XSashForm splitterPlanTab = new XSashForm( this, SWT.SMOOTH );
     tabPlan.setControl( splitterPlanTab );
 
     ScrolledComposite scrolledProperties = new ScrolledComposite( splitterPlanTab, SWT.H_SCROLL | SWT.V_SCROLL );
     scrolledProperties.setExpandHorizontal( true );
     scrolledProperties.setExpandVertical( true );
-
     planProperties = new _PlanProperties( scrolledProperties, SWT.NONE );
     planProperties.setBackground( getBackground() );
     scrolledProperties.setContent( planProperties );
@@ -62,37 +60,38 @@ public class _MainTabWidget extends TabFolder
 
     planNotes = new _PlanNotes( splitterPlanTab, SWT.NONE );
     planNotes.setBackground( getBackground() );
-    splitterPlanTab.setWeights( new int[] { 1, 1 } );
+    splitterPlanTab.preferredLeftChildWidth = planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x * 4 / 3;
+    splitterPlanTab.monitor( scrolledProperties, planNotes );
 
     TabItem tabTasksGantt = new TabItem( this, SWT.NONE );
     tabTasksGantt.setText( "Tasks && Gantt" );
 
-    SashForm splitterTasksGantt = new SashForm( this, SWT.SMOOTH );
+    XSashForm splitterTasksGantt = new XSashForm( this, SWT.SMOOTH );
     tabTasksGantt.setControl( splitterTasksGantt );
 
-    tableTasks = new Table( splitterTasksGantt, Table.TableType.TASK );
+    tableTasks = new XNatTable( splitterTasksGantt, XNatTable.TableType.TASK );
 
     ScrolledComposite gantt = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL | SWT.V_SCROLL );
     gantt.setExpandHorizontal( true );
     gantt.setExpandVertical( true );
-    splitterTasksGantt.setWeights( new int[] { 1, 1 } );
+    splitterTasksGantt.monitor( tableTasks, gantt );
 
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
     tabResources.setText( "Resources" );
-    tableResources = new Table( this, Table.TableType.RESOURCE );
+    tableResources = new XNatTable( this, XNatTable.TableType.RESOURCE );
     tabResources.setControl( tableResources );
 
     // Calendars tab
     TabItem tabCalendars = new TabItem( this, SWT.NONE );
     tabCalendars.setText( "Calendars" );
-    tableCalendars = new Table( this, Table.TableType.CALENDAR );
+    tableCalendars = new XNatTable( this, XNatTable.TableType.CALENDAR );
     tabCalendars.setControl( tableCalendars );
 
     // Days-type tab
     TabItem tabDays = new TabItem( this, SWT.NONE );
     tabDays.setText( "Days" );
-    tableDays = new Table( this, Table.TableType.DAY );
+    tableDays = new XNatTable( this, XNatTable.TableType.DAY );
     tabDays.setControl( tableDays );
   }
 

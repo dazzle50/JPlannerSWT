@@ -64,7 +64,7 @@ import rjc.jplanner.gui.data.TasksRowHeader;
 /**************************** JPlanner table based on Nebula NatTable ****************************/
 /*************************************************************************************************/
 
-public class Table extends NatTable
+public class XNatTable extends NatTable
 {
   private static ModernNatTableThemeConfiguration m_theme; // theme to use for all the tables
   private static IConfiguration                   m_labels; // to support styling of individual cells
@@ -75,7 +75,7 @@ public class Table extends NatTable
   }
 
   /**************************************** constructor ******************************************/
-  public Table( Composite parent, TableType type )
+  public XNatTable( Composite parent, TableType type )
   {
     // constructor call must be the first statement in a constructor
     super( parent, false );
