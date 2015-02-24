@@ -29,10 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 public class _MainWindowShell extends Shell
 {
 
-  /**
-   * Create the shell.
-   * @param display
-   */
+  /**************************************** constructor ******************************************/
   public _MainWindowShell( Display display )
   {
     super( display, SWT.SHELL_TRIM );
@@ -192,7 +189,6 @@ public class _MainWindowShell extends Shell
   {
     setText( "JPlanner" );
     setSize( 650, 480 );
-
   }
 
   @Override

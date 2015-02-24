@@ -74,4 +74,25 @@ public class Date
     // return a new Date from LocalDate
     return new Date( (int) localDate.toEpochDay() );
   }
+
+  /******************************************** year *********************************************/
+  public int year()
+  {
+    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
+    return ld.getYear();
+  }
+
+  /******************************************** month ********************************************/
+  public int month()
+  {
+    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
+    return ld.getMonthValue();
+  }
+
+  /********************************************* day *********************************************/
+  public int day()
+  {
+    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
+    return ld.getDayOfMonth();
+  }
 }

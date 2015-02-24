@@ -79,9 +79,9 @@ public class Time
   {
     // convert to string to "hh:mm:ss.mmm" format
     StringBuilder buf = new StringBuilder( 16 );
-    int hour = m_milliseconds / 3600_000;
-    int minute = m_milliseconds / 60_000 % 60;
-    int second = m_milliseconds / 1000 % 60;
+    int hour = hours();
+    int minute = minutes();
+    int second = seconds();
     int milli = m_milliseconds % 1000;
 
     buf.append( hour < 10 ? "0" : "" ).append( hour );
@@ -97,5 +97,23 @@ public class Time
   {
     // return a new Time from current system clock
     return new Time( (int) ( LocalTime.now().toNanoOfDay() / 1_000_000L ) );
+  }
+
+  /******************************************** hours ********************************************/
+  public int hours()
+  {
+    return m_milliseconds / 3600_000;
+  }
+
+  /******************************************* minutes *******************************************/
+  public int minutes()
+  {
+    return m_milliseconds / 60_000 % 60;
+  }
+
+  /******************************************* seconds *******************************************/
+  public int seconds()
+  {
+    return m_milliseconds / 1000 % 60;
   }
 }

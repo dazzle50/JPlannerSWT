@@ -46,6 +46,7 @@ public class DateTime
   }
 
   /****************************************** toString *******************************************/
+  @Override
   public String toString()
   {
     // convert to string to "YYYY-MM-DD hh:mm:ss.mmm" format
@@ -57,5 +58,41 @@ public class DateTime
   {
     // return a new DateTime from current system clock
     return new DateTime( LocalDateTime.now() );
+  }
+
+  /******************************************** year *********************************************/
+  public int year()
+  {
+    return m_date.year();
+  }
+
+  /******************************************** month ********************************************/
+  public int month()
+  {
+    return m_date.month();
+  }
+
+  /********************************************* day *********************************************/
+  public int day()
+  {
+    return m_date.day();
+  }
+
+  /******************************************** hours ********************************************/
+  public int hours()
+  {
+    return m_time.hours();
+  }
+
+  /******************************************* minutes *******************************************/
+  public int minutes()
+  {
+    return m_time.minutes();
+  }
+
+  /******************************************* seconds *******************************************/
+  public int seconds()
+  {
+    return m_time.seconds();
   }
 }

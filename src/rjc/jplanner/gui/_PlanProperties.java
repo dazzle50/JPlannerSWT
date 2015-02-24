@@ -22,6 +22,7 @@ package rjc.jplanner.gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -35,7 +36,7 @@ public class _PlanProperties extends Composite
   private _DateTimeEditor startDT;
   private Text            firstText;
   private Text            endText;
-  private Text            calText;
+  private Combo           calCombo;
   private Text            formatText;
   private Text            filenameText;
   private Text            filelocText;
@@ -46,11 +47,7 @@ public class _PlanProperties extends Composite
   private Label           calendarsNum;
   private Label           daysNum;
 
-  /**
-   * Create the composite.
-   * @param parent
-   * @param style
-   */
+  /**************************************** constructor ******************************************/
   public _PlanProperties( Composite parent, int style )
   {
     super( parent, style );
@@ -88,8 +85,8 @@ public class _PlanProperties extends Composite
     calLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
     calLabel.setText( "Default Calendar" );
 
-    calText = new Text( this, SWT.BORDER );
-    calText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    calCombo = new XComboCalendars( this, SWT.READ_ONLY );
+    calCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label formatLabel = new Label( this, SWT.NONE );
     formatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -173,7 +170,7 @@ public class _PlanProperties extends Composite
     // update the gui property widgets with values from plan
     titleText.setText( JPlanner.plan.title() );
     startDT.setDateTime( JPlanner.plan.start() );
-    calText.setText( JPlanner.plan.calendar().name() );
+    calCombo.setText( JPlanner.plan.calendar().name() );
     formatText.setText( JPlanner.plan.datetimeFormat() );
     filenameText.setText( JPlanner.plan.filename() );
     filelocText.setText( JPlanner.plan.fileLocation() );

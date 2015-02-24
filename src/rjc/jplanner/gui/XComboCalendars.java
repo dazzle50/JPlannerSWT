@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
@@ -19,30 +18,54 @@
 
 package rjc.jplanner.gui;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 
-public class _PlanNotes extends Composite
+import rjc.jplanner.JPlanner;
+
+/*************************************************************************************************/
+/**************** Extended version of Combo auto populated with list of calendars ****************/
+/*************************************************************************************************/
+
+public class XComboCalendars extends Combo
 {
 
   /**************************************** constructor ******************************************/
-  public _PlanNotes( Composite parent, int style )
+  public XComboCalendars( Composite parent, int style )
   {
     super( parent, style );
-    setLayout( new GridLayout( 1, false ) );
 
-    Label notesLabel = new Label( this, SWT.NONE );
-    notesLabel.setText( "Notes" );
+    // set drop-down list items to calendar names, and refresh every time widget gets focus
+    setCalendarItems();
+    addFocusListener( new FocusListener()
+    {
+      @Override
+      public void focusLost( FocusEvent e )
+      {
+        // do nothing
+      }
 
-    StyledText notesText = new StyledText( this, SWT.BORDER | SWT.V_SCROLL );
-    notesText.setAlwaysShowScrollBars( false );
-    notesText.setWordWrap( true );
-    notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+      @Override
+      public void focusGained( FocusEvent e )
+      {
+        // ensure drop-down list items are up to date
+        setCalendarItems();
+      }
+    } );
 
+  }
+
+  /************************************** setCalendarItems ***************************************/
+  private void setCalendarItems()
+  {
+    // ensure drop-down list items are up to date
+    removeAll();
+    int num = JPlanner.plan.calendarsCount();
+    for ( int i = 0; i < num; i++ )
+      add( JPlanner.plan.calendar( i ).name() );
+    setText( JPlanner.plan.calendar().name() );
   }
 
   @Override
