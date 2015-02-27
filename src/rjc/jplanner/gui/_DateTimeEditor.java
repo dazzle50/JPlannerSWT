@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.MenuItem;
 
 public class _DateTimeEditor extends Composite
 {
-  private DateTime date;
-  private DateTime time;
+  private DateTime m_date;
+  private DateTime m_time;
 
   /**************************************** constructor ******************************************/
   public _DateTimeEditor( Composite parent, int style )
@@ -41,10 +41,10 @@ public class _DateTimeEditor extends Composite
     gridLayout.marginHeight = 0;
     setLayout( gridLayout );
 
-    date = new DateTime( this, SWT.DROP_DOWN );
+    m_date = new DateTime( this, SWT.DROP_DOWN );
 
-    Menu menu = new Menu( date );
-    date.setMenu( menu );
+    Menu menu = new Menu( m_date );
+    m_date.setMenu( menu );
 
     MenuItem workForward = new MenuItem( menu, SWT.NONE );
     workForward.setText( "Forward to next work period start" );
@@ -52,12 +52,12 @@ public class _DateTimeEditor extends Composite
     MenuItem workBack = new MenuItem( menu, SWT.NONE );
     workBack.setText( "Back to previous work period end" );
 
-    time = new DateTime( this, SWT.BORDER | SWT.TIME );
+    m_time = new DateTime( this, SWT.BORDER | SWT.TIME );
 
-    Menu popup = new Menu( time );
+    Menu popup = new Menu( m_time );
     MenuItem workStart = new MenuItem( popup, SWT.CASCADE );
     workStart.setText( "Start of work day" );
-    time.setMenu( popup );
+    m_time.setMenu( popup );
 
     MenuItem workEnd = new MenuItem( popup, SWT.NONE );
     workEnd.setText( "End of work day" );
@@ -73,7 +73,7 @@ public class _DateTimeEditor extends Composite
   public void setDateTime( rjc.jplanner.model.DateTime dt )
   {
     // set editor to desired date-time
-    date.setDate( dt.year(), dt.month() - 1, dt.day() );
-    time.setTime( dt.hours(), dt.minutes(), dt.seconds() );
+    m_date.setDate( dt.year(), dt.month() - 1, dt.day() );
+    m_time.setTime( dt.hours(), dt.minutes(), dt.seconds() );
   }
 }

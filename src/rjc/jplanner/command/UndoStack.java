@@ -16,68 +16,58 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.command;
 
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-
-import rjc.jplanner.JPlanner;
+import java.util.ArrayList;
 
 /*************************************************************************************************/
-/**************** Extended version of Combo auto populated with list of calendars ****************/
+/********************************** Stack of UndoCommand objects *********************************/
 /*************************************************************************************************/
 
-public class XComboCalendars extends Combo
+public class UndoStack
 {
+  private ArrayList<UndoCommand> m_stack; // stack of undo commands
+  private int                    m_index; // current command
 
   /**************************************** constructor ******************************************/
-  public XComboCalendars( Composite parent, int style )
+  public UndoStack()
   {
-    super( parent, style );
-
-    // set drop-down list items to calendar names, and refresh every time widget gets focus
-    setCalendarItems();
-    addFocusListener( new FocusListener()
-    {
-      @Override
-      public void focusLost( FocusEvent e )
-      {
-        // do nothing
-      }
-
-      @Override
-      public void focusGained( FocusEvent e )
-      {
-        // ensure drop-down list items are up to date
-        setCalendarItems();
-      }
-    } );
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
 
   }
 
-  /************************************** setCalendarItems ***************************************/
-  private void setCalendarItems()
+  /******************************************** push *********************************************/
+  void push( UndoCommand undo )
   {
-    // ensure drop-down list items are up to date
-    int current = indexOf( getText() );
-    removeAll();
-    int num = JPlanner.plan.calendarsCount();
-    for ( int i = 0; i < num; i++ )
-      add( JPlanner.plan.calendar( i ).name() );
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
 
-    // if current text wasn't valid then default to plan default calendar
-    if ( current == -1 )
-      setText( JPlanner.plan.calendar().name() );
-    else
-      setText( getItem( current ) );
   }
 
-  @Override
-  protected void checkSubclass()
+  /******************************************** undo *********************************************/
+  void undo()
   {
-    // Disable the check that prevents subclassing of SWT components
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
+
   }
 
+  /******************************************** redo *********************************************/
+  void redo()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
+
+  }
+
+  /******************************************** clean ********************************************/
+  void clean()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
+
+  }
+
+  /******************************************** count ********************************************/
+  int count()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
+    return 0;
+  }
 }

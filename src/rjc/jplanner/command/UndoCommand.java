@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
@@ -17,37 +16,20 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.command;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+/*************************************************************************************************/
+/**************************** Interface for all commands on UndoStack ****************************/
+/*************************************************************************************************/
 
-public class _PlanNotes extends Composite
+public interface UndoCommand
 {
+  // applies the command
+  void redo();
 
-  /**************************************** constructor ******************************************/
-  public _PlanNotes( Composite parent, int style )
-  {
-    super( parent, style );
-    setLayout( new GridLayout( 1, false ) );
+  // reverts the command
+  void undo();
 
-    Label notesLabel = new Label( this, SWT.NONE );
-    notesLabel.setText( "Notes" );
-
-    StyledText notesText = new StyledText( this, SWT.BORDER | SWT.V_SCROLL );
-    notesText.setAlwaysShowScrollBars( false );
-    notesText.setWordWrap( true );
-    notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
-  }
-
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
+  //short text string describing what this command, e.g. "insert text"
+  String text();
 }
