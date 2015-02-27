@@ -16,35 +16,58 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
-
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/****************** UndoCommand for updating day-types (except num of periods) *******************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class CommandSetDayValue implements UndoCommand
 {
-  @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  private int    m_column;  // table column
+  private int    m_row;     // table row
+  private Object m_newValue; // new value after command
+  private Object m_oldValue; // old value before command
+
+  /**************************************** constructor ******************************************/
+  public CommandSetDayValue( int col, int row, Object newValue, Object oldValue )
   {
-    // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    // check not being used for updating number of work periods
+    if ( col == Day.SECTION_PERIODS )
+      throw new IllegalArgumentException( "Not for number of periods" );
 
-    // all cells editable except shaded unused start/end cells
-    if ( col > day.numPeriods() * 2 + 2 )
-      labels.addLabel( "SHADE" );
-    else
-      labels.addLabel( "EDITABLE" );
+    // initialise private variables
+    m_column = col;
+    m_row = row;
+    m_newValue = newValue;
+    m_oldValue = oldValue;
+  }
 
-    // left align name
-    if ( col == 0 )
-      labels.addLabel( "LEFT" );
+  /******************************************* redo **********************************************/
+  @Override
+  public void redo()
+  {
+    // action command
+    JPlanner.plan.day( m_row ).setData( m_column, m_newValue );
+  }
+
+  /******************************************* undo **********************************************/
+  @Override
+  public void undo()
+  {
+    // revert command
+    JPlanner.plan.day( m_row ).setData( m_column, m_oldValue );
+  }
+
+  /******************************************* text **********************************************/
+  @Override
+  public String text()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+    return "TODO";
   }
 
 }

@@ -20,8 +20,10 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 
+import rjc.jplanner.command.UndoCommand;
+import rjc.jplanner.command.UndoStack;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
-import rjc.jplanner.model.DayType.DefaultDayTypes;
+import rjc.jplanner.model.Day.DefaultDayTypes;
 
 /*************************************************************************************************/
 /************************** Holds the complete data model for the plan ***************************/
@@ -37,11 +39,14 @@ public class Plan
   private String              m_fileLocation;  // file location
   private String              m_savedBy;       // who saved last
   private DateTime            m_savedWhen;     // when was last saved
+  private String              m_notes;         // plan notes as on plan tab
+
+  private UndoStack           m_undostack;     // undo stack for plan editing
 
   private ArrayList<Task>     m_tasks;         // list of plan tasks
   private ArrayList<Resource> m_resources;     // list of plan resources
   private ArrayList<Calendar> m_calendars;     // list of plan calendars
-  private ArrayList<DayType>  m_daytypes;      // list of plan day types
+  private ArrayList<Day>      m_daytypes;      // list of plan day types
 
   /**************************************** constructor ******************************************/
   public Plan()
@@ -50,7 +55,8 @@ public class Plan
     m_tasks = new ArrayList<Task>();
     m_resources = new ArrayList<Resource>();
     m_calendars = new ArrayList<Calendar>();
-    m_daytypes = new ArrayList<DayType>();
+    m_daytypes = new ArrayList<Day>();
+    m_undostack = new UndoStack();
   }
 
   /***************************************** toString ********************************************/
@@ -70,7 +76,7 @@ public class Plan
     // initialise plan with default settings and contents
     m_daytypes.clear();
     for ( DefaultDayTypes type : DefaultDayTypes.values() )
-      m_daytypes.add( new DayType( type ) );
+      m_daytypes.add( new Day( type ) );
 
     m_calendars.clear();
     for ( DefaultCalendarTypes type : DefaultCalendarTypes.values() )
@@ -143,7 +149,7 @@ public class Plan
   }
 
   /********************************************* day *********************************************/
-  public DayType day( int index )
+  public Day day( int index )
   {
     // return day-type corresponding to index
     return m_daytypes.get( index );
@@ -153,6 +159,12 @@ public class Plan
   public String title()
   {
     return m_title;
+  }
+
+  /******************************************** notes ********************************************/
+  public String notes()
+  {
+    return m_notes;
   }
 
   /******************************************** start ********************************************/
@@ -195,6 +207,13 @@ public class Plan
   public DateTime savedWhen()
   {
     return m_savedWhen;
+  }
+
+  /******************************************** push *********************************************/
+  public void push( UndoCommand command )
+  {
+    // push new command onto undo stack
+    m_undostack.push( command );
   }
 
 }

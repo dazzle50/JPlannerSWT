@@ -21,7 +21,8 @@ package rjc.jplanner.gui.data;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.DayType;
+import rjc.jplanner.command.CommandSetDayValue;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
 /************************** Body data provider for day-types NatTable ****************************/
@@ -48,7 +49,7 @@ public class DaysBody implements IDataProvider
   public Object getDataValue( int columnIndex, int rowIndex )
   {
     // return appropriate value for table cell
-    DayType day = JPlanner.plan.day( rowIndex );
+    Day day = JPlanner.plan.day( rowIndex );
 
     if ( columnIndex == 0 )
       return day.name();
@@ -84,11 +85,13 @@ public class DaysBody implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // TODO !!!!!!!!!!!!!!
-    JPlanner.trace( "Day setDataValue = " + newValue );
+    Object oldValue = getDataValue( col, row );
+    JPlanner.trace( "Day setDataValue = " + newValue + "    oldValue=" + oldValue );
 
+    JPlanner.plan.push( new CommandSetDayValue( col, row, newValue, oldValue ) );
   }
 
 }

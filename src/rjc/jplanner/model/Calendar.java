@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.DayType.DefaultDayTypes;
+import rjc.jplanner.model.Day.DefaultDayTypes;
 
 /*************************************************************************************************/
 /********************************* Single calendar for planning **********************************/
@@ -30,10 +30,10 @@ import rjc.jplanner.model.DayType.DefaultDayTypes;
 
 public class Calendar
 {
-  private String                 m_name;       // name of calendar
-  private Date                   m_cycleAnchor; // anchor date of calendar cycle
-  private ArrayList<DayType>     m_normal;     // normal basic cycle days
-  private HashMap<Date, DayType> m_exceptions; // exceptions override normal days
+  private String             m_name;       // name of calendar
+  private Date               m_cycleAnchor; // anchor date of calendar cycle
+  private ArrayList<Day>     m_normal;     // normal basic cycle days
+  private HashMap<Date, Day> m_exceptions; // exceptions override normal days
 
   enum DefaultCalendarTypes
   {
@@ -46,22 +46,22 @@ public class Calendar
     // construct empty but usable calendar
     m_name = "Null";
     m_cycleAnchor = new Date( 2000, 1, 1 );
-    m_normal = new ArrayList<DayType>();
-    m_exceptions = new HashMap<Date, DayType>();
+    m_normal = new ArrayList<Day>();
+    m_exceptions = new HashMap<Date, Day>();
   }
 
   /**************************************** constructor ******************************************/
   public Calendar( DefaultCalendarTypes type )
   {
     // construct default calendar
-    DayType working = JPlanner.plan.day( DefaultDayTypes.STANDARDWORK.ordinal() );
-    DayType nonWorking = JPlanner.plan.day( DefaultDayTypes.NONWORK.ordinal() );
-    DayType fullTime = JPlanner.plan.day( DefaultDayTypes.TWENTYFOURHOURS.ordinal() );
-    DayType evening = JPlanner.plan.day( DefaultDayTypes.EVENING.ordinal() );
-    DayType shortDay = JPlanner.plan.day( DefaultDayTypes.SHORT.ordinal() );
+    Day working = JPlanner.plan.day( DefaultDayTypes.STANDARDWORK.ordinal() );
+    Day nonWorking = JPlanner.plan.day( DefaultDayTypes.NONWORK.ordinal() );
+    Day fullTime = JPlanner.plan.day( DefaultDayTypes.TWENTYFOURHOURS.ordinal() );
+    Day evening = JPlanner.plan.day( DefaultDayTypes.EVENING.ordinal() );
+    Day shortDay = JPlanner.plan.day( DefaultDayTypes.SHORT.ordinal() );
 
-    m_normal = new ArrayList<DayType>();
-    m_exceptions = new HashMap<Date, DayType>();
+    m_normal = new ArrayList<Day>();
+    m_exceptions = new HashMap<Date, Day>();
 
     if ( type == DefaultCalendarTypes.STANDARD )
     {
@@ -153,7 +153,7 @@ public class Calendar
   }
 
   /****************************************** normal *********************************************/
-  public DayType normal( int index )
+  public Day normal( int index )
   {
     return m_normal.get( index );
   }

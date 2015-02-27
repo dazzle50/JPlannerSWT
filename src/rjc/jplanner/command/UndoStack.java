@@ -32,42 +32,73 @@ public class UndoStack
   /**************************************** constructor ******************************************/
   public UndoStack()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-
+    // initialise private variables
+    m_stack = new ArrayList<UndoCommand>();
+    m_index = 0;
   }
 
   /******************************************** push *********************************************/
-  void push( UndoCommand undo )
+  public void push( UndoCommand command )
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
+    // remove any commands from stack that haven't been actioned (i.e. above index)
+    while ( m_stack.size() > m_index )
+      m_stack.remove( m_stack.size() - 1 );
 
+    // add new command to stack, do it, and increment stack index
+    m_stack.add( command );
+    command.redo();
+    m_index++;
   }
 
   /******************************************** undo *********************************************/
   void undo()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-
+    // decrement index and revert command
+    m_index--;
+    m_stack.get( m_index ).undo();
   }
 
   /******************************************** redo *********************************************/
   void redo()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-
+    // action command and increment index
+    m_stack.get( m_index ).redo();
+    m_index++;
   }
 
-  /******************************************** clean ********************************************/
-  void clean()
+  /****************************************** undoText *******************************************/
+  String undoText()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-
+    // return text associated with next potential undo
+    return m_stack.get( m_index - 1 ).text();
   }
 
-  /******************************************** count ********************************************/
-  int count()
+  /****************************************** redoText *******************************************/
+  String redoText()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!
-    return 0;
+    // return text associated with next potential redo
+    return m_stack.get( m_index ).text();
+  }
+
+  /******************************************** clear ********************************************/
+  void clear()
+  {
+    // clean the stack
+    m_stack.clear();
+    m_index = 0;
+  }
+
+  /******************************************** size *********************************************/
+  int size()
+  {
+    // return stack size
+    return m_stack.size();
+  }
+
+  /******************************************* index *********************************************/
+  int index()
+  {
+    // return command index
+    return m_index;
   }
 }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /***************************** Single day type as used by calendars ******************************/
 /*************************************************************************************************/
 
-public class DayType
+public class Day
 {
   private String                   m_name;   // name of day type
   private double                   m_work;   // equivalent days worked (typically 1.0 or 0.0)
@@ -35,8 +35,14 @@ public class DayType
     NONWORK, STANDARDWORK, SHORT, EVENING, TWENTYFOURHOURS
   }
 
+  final public static int SECTION_NAME    = 0;
+  final public static int SECTION_WORK    = 1;
+  final public static int SECTION_PERIODS = 2;
+  final public static int SECTION_START1  = 3;
+  final public static int SECTION_END1    = 4;
+
   /**************************************** constructor ******************************************/
-  public DayType()
+  public Day()
   {
     // construct empty but usable day type
     m_name = "Null";
@@ -45,7 +51,7 @@ public class DayType
   }
 
   /**************************************** constructor ******************************************/
-  public DayType( DefaultDayTypes type )
+  public Day( DefaultDayTypes type )
   {
     // construct default day type
     m_periods = new ArrayList<DayWorkPeriod>();
@@ -121,6 +127,25 @@ public class DayType
   public Time start( int num )
   {
     return m_periods.get( num - 1 ).m_start;
+  }
+
+  /****************************************** setData ********************************************/
+  public void setData( int section, Object newValue )
+  {
+    // update day with new value
+    if ( section == SECTION_NAME )
+      m_name = (String) newValue;
+    else if ( section == SECTION_WORK )
+      m_work = (double) newValue;
+    else if ( section >= SECTION_START1 )
+    {
+      if ( ( section - SECTION_START1 ) % 2 == 0 )
+        m_periods.get( ( section - SECTION_START1 ) / 2 ).m_start = (Time) newValue;
+      else
+        m_periods.get( ( section - SECTION_END1 ) / 2 ).m_end = (Time) newValue;
+    }
+    else
+      throw new IllegalArgumentException( "Unhandled section=" + section );
   }
 
 }
