@@ -16,39 +16,53 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
-
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/****************** UndoCommand for updating day-types number of work periods ********************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class CommandSetDayNumPeriods implements UndoCommand
 {
-  @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  private int m_row;     // table row
+  private int m_newValue; // new value after command
+  private int m_oldValue; // old value before command
+
+  /**************************************** constructor ******************************************/
+  public CommandSetDayNumPeriods( int row, Object newValue, Object oldValue )
   {
-    // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    // initialise private variables
+    m_row = row;
+    m_newValue = Integer.parseInt( (String) newValue );
+    m_oldValue = Integer.parseInt( (String) oldValue );
 
-    // all cells editable except shaded unused start/end cells
-    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
-      labels.addLabel( "EDITABLE" );
-    else
-      labels.addLabel( "SHADE" );
+    JPlanner.trace( "CommandSetDayNumPeriods " + row + " " + m_oldValue + " " + m_newValue );
+  }
 
-    // left align name
-    if ( col == Day.SECTION_NAME )
-      labels.addLabel( "LEFT" );
+  /******************************************* redo **********************************************/
+  @Override
+  public void redo()
+  {
+    // action command
+    //JPlanner.plan.day( m_row ).setData( m_column, m_newValue );
+  }
 
-    // use integer editor for number of periods
-    if ( col == Day.SECTION_PERIODS )
-      labels.addLabel( "INT_EDITOR" );
+  /******************************************* undo **********************************************/
+  @Override
+  public void undo()
+  {
+    // revert command
+    //JPlanner.plan.day( m_row ).setData( m_column, m_oldValue );
+  }
+
+  /******************************************* text **********************************************/
+  @Override
+  public String text()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+    return "TODO";
   }
 
 }

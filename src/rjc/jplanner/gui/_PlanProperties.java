@@ -185,8 +185,8 @@ public class _PlanProperties extends Composite
     }
 
     // update the gui "number of" widgets
-    m_tasksNum.setText( ": " + JPlanner.plan.tasksCount() );
-    m_resourcesNum.setText( ": " + JPlanner.plan.resourcesCount() );
+    m_tasksNum.setText( ": " + JPlanner.plan.tasksNotNullCount() );
+    m_resourcesNum.setText( ": " + JPlanner.plan.resourcesNotNullCount() );
     m_calendarsNum.setText( ": " + JPlanner.plan.calendarsCount() );
     m_daysNum.setText( ": " + JPlanner.plan.daysCount() );
   }

@@ -26,6 +26,7 @@ import org.eclipse.nebula.widgets.nattable.config.IConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
+import org.eclipse.nebula.widgets.nattable.edit.editor.DateCellEditor;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
@@ -60,6 +61,7 @@ import rjc.jplanner.gui.data.TasksBody;
 import rjc.jplanner.gui.data.TasksColumnHeader;
 import rjc.jplanner.gui.data.TasksLabelAccumulator;
 import rjc.jplanner.gui.data.TasksRowHeader;
+import rjc.jplanner.gui.editor.IntSpinEditor;
 
 /*************************************************************************************************/
 /**************************** JPlanner table based on Nebula NatTable ****************************/
@@ -111,13 +113,21 @@ public class XNatTable extends NatTable
           right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
           reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, "RIGHT" );
 
-          // Config "EDITABLE" cell is editable 
+          // Cell config "WRAP" cell text word wraps
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
+              DisplayMode.NORMAL, "WRAP" );
+
+          // Edit config "EDITABLE" cell is editable 
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
               DisplayMode.EDIT, "EDITABLE" );
 
-          // Config "WRAP" cell text word wraps
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
-              DisplayMode.NORMAL, "WRAP" );
+          // Edit config "INT_EDITOR" use date editor 
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new IntSpinEditor(), DisplayMode.EDIT,
+              "INT_EDITOR" );
+
+          // Edit config "DATE_EDITOR" use date editor 
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DateCellEditor(), DisplayMode.EDIT,
+              "DATE_EDITOR" );
         }
       };
 

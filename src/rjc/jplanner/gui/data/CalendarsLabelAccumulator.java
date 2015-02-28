@@ -44,6 +44,10 @@ public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
 
     // all cells left align
     labels.addLabel( "LEFT" );
+
+    // use date editor for anchor dates
+    if ( row == Calendar.SECTION_ANCHOR )
+      labels.addLabel( "DATE_EDITOR" );
   }
 
 }

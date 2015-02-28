@@ -21,6 +21,7 @@ package rjc.jplanner.gui.data;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandSetDayNumPeriods;
 import rjc.jplanner.command.CommandSetDayValue;
 import rjc.jplanner.model.Day;
 
@@ -64,11 +65,16 @@ public class DaysBody implements IDataProvider
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // TODO !!!!!!!!!!!!!!
+    // if new value equals old value, exit with no command
     Object oldValue = getDataValue( col, row );
-    JPlanner.trace( "Day setDataValue = " + newValue + "    oldValue=" + oldValue );
+    if ( newValue.equals( oldValue ) )
+      return;
 
-    JPlanner.plan.push( new CommandSetDayValue( col, row, newValue, oldValue ) );
+    // special command for setting number of work periods, otherwise generic
+    if ( col == Day.SECTION_PERIODS )
+      JPlanner.plan.push( new CommandSetDayNumPeriods( row, newValue, oldValue ) );
+    else
+      JPlanner.plan.push( new CommandSetDayValue( col, row, newValue, oldValue ) );
   }
 
 }

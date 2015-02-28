@@ -99,6 +99,30 @@ public class Plan
     m_savedBy = "";
   }
 
+  /************************************** tasksNotNullCount **************************************/
+  public int tasksNotNullCount()
+  {
+    // return number of not-null tasks in plan
+    int count = 0;
+    for ( int i = 0; i < m_tasks.size(); i++ )
+      if ( !m_tasks.get( i ).isNull() )
+        count++;
+
+    return count;
+  }
+
+  /************************************ resourcesNotNullCount ************************************/
+  public int resourcesNotNullCount()
+  {
+    // return number of not-null resources in plan
+    int count = 0;
+    for ( int i = 0; i < m_resources.size(); i++ )
+      if ( !m_resources.get( i ).isNull() )
+        count++;
+
+    return count;
+  }
+
   /**************************************** tasksCount *******************************************/
   public int tasksCount()
   {
