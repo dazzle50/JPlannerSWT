@@ -114,7 +114,7 @@ public class _MainWindowShell extends Shell
     actionDelete.setText( "Delete" );
     actionDelete.setEnabled( false );
 
-    MenuItem menuItem = new MenuItem( menu_2, SWT.SEPARATOR );
+    new MenuItem( menu_2, SWT.SEPARATOR );
 
     MenuItem actionFindReplace = new MenuItem( menu_2, SWT.NONE );
     actionFindReplace.setText( "Find/Replace ..." );
@@ -178,7 +178,7 @@ public class _MainWindowShell extends Shell
     actionAboutJplanner.setEnabled( false );
     actionAboutJplanner.setText( "About JPlanner" );
 
-    _MainTabWidget mainTabWidget = new _MainTabWidget( this );
+    new _MainTabWidget( this );
     createContents();
   }
 

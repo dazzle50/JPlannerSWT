@@ -31,6 +31,11 @@ public class Task
   private TimeSpan        m_work;               // work effort for task
   private Predecessors    m_predecessors;       // task predecessors
   private TaskResources   m_resources;          // resources allocated to task
+  private String          m_type;               // task type
+  private int             m_priority;           // overall task priority (0 to 999 times one million)
+  private DateTime        m_deadline;           // task warning deadline
+  private String          m_cost;               // calculated cost based on resource use
+  private String          m_comment;            // free text comment
 
   final public static int SECTION_TITLE    = 0;
   final public static int SECTION_DURATION = 1;
@@ -49,11 +54,46 @@ public class Task
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
+    // if task is null return blank
+    if ( isNull() )
+      return "";
+
     // return display string for given section
     if ( section == SECTION_TITLE )
       return m_title;
 
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+    if ( section == SECTION_DURATION )
+      return m_duration.toString();
+
+    if ( section == SECTION_START )
+      return m_start.toString();
+
+    if ( section == SECTION_END )
+      return m_end.toString();
+
+    if ( section == SECTION_WORK )
+      return m_work.toString();
+
+    if ( section == SECTION_PRED )
+      return m_predecessors.toString();
+
+    if ( section == SECTION_RES )
+      return m_resources.toString();
+
+    if ( section == SECTION_TYPE )
+      return m_type;
+
+    if ( section == SECTION_PRIORITY )
+      return String.format( "%d", m_priority / 1_000_000 );
+
+    if ( section == SECTION_DEADLINE )
+      return m_deadline.toString();
+
+    if ( section == SECTION_COST )
+      return m_cost;
+
+    if ( section == SECTION_COMMENT )
+      return m_comment;
 
     throw new IllegalArgumentException( "Section=" + section );
   }
@@ -69,5 +109,12 @@ public class Task
 
     else
       throw new IllegalArgumentException( "Section=" + section );
+  }
+
+  /****************************************** isNull *********************************************/
+  public boolean isNull()
+  {
+    // task is considered null if title not set
+    return ( m_title == null );
   }
 }

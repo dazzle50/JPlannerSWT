@@ -36,14 +36,24 @@ public class TasksLabelAccumulator implements IConfigLabelAccumulator
     // add config labels to style cell
     Task task = JPlanner.plan.task( row );
 
-    // shade unused start/end cells
+    // all cells editable unless task is null
+    if ( task.isNull() )
+    {
+      if ( col == Task.SECTION_TITLE )
+        labels.addLabel( "EDITABLE" );
+      else
+        labels.addLabel( "SHADE" );
+    }
+    else
+      labels.addLabel( "EDITABLE" );
 
-    // left align
-    if ( col == 0 || col == 5 || col == 6 || col == 11 ) // title predecessors resources comments 
+    // left align some columns
+    if ( col == Task.SECTION_TITLE || col == Task.SECTION_PRED || col == Task.SECTION_RES
+        || col == Task.SECTION_COMMENT )
       labels.addLabel( "LEFT" );
 
-    // right align
-    if ( col == 1 || col == 4 ) // duration work
+    // right align some columns
+    if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
       labels.addLabel( "RIGHT" );
   }
 }

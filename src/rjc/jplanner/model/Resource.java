@@ -54,11 +54,46 @@ public class Resource
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
+    // if resource is null return blank
+    if ( isNull() )
+      return "";
+
     // return display string for given section
     if ( section == SECTION_ID )
       return m_id;
 
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+    if ( section == SECTION_NAME )
+      return m_name;
+
+    if ( section == SECTION_ORG )
+      return m_org;
+
+    if ( section == SECTION_GROUP )
+      return m_group;
+
+    if ( section == SECTION_ROLE )
+      return m_role;
+
+    if ( section == SECTION_ALIAS )
+      return m_alias;
+
+    if ( section == SECTION_START )
+      return m_start.toString();
+
+    if ( section == SECTION_END )
+      return m_end.toString();
+
+    if ( section == SECTION_AVAIL )
+      return String.format( "%.2f", m_availability );
+
+    if ( section == SECTION_COST )
+      return String.format( "%.2f", m_cost );
+
+    if ( section == SECTION_CALENDAR )
+      return m_calendar.name();
+
+    if ( section == SECTION_COMMENT )
+      return m_comment;
 
     throw new IllegalArgumentException( "Section=" + section );
   }
@@ -74,5 +109,12 @@ public class Resource
 
     else
       throw new IllegalArgumentException( "Section=" + section );
+  }
+
+  /****************************************** isNull *********************************************/
+  public boolean isNull()
+  {
+    // resource is considered null if id not set
+    return ( m_id == null );
   }
 }

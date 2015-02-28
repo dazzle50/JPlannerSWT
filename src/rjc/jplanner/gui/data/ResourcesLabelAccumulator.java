@@ -36,10 +36,19 @@ public class ResourcesLabelAccumulator implements IConfigLabelAccumulator
     // add config labels to style cell
     Resource res = JPlanner.plan.resource( row );
 
-    // shade unused start/end cells
+    // all cells editable unless resource is null
+    if ( res.isNull() )
+    {
+      if ( col == Resource.SECTION_ID )
+        labels.addLabel( "EDITABLE" );
+      else
+        labels.addLabel( "SHADE" );
+    }
+    else
+      labels.addLabel( "EDITABLE" );
 
-    // left align name
-    if ( col == 11 ) // comment 
+    // left align comment
+    if ( col == Resource.SECTION_COMMENT )
       labels.addLabel( "LEFT" );
   }
 

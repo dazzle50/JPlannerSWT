@@ -20,6 +20,8 @@ package rjc.jplanner.gui.data;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.model.Task;
+
 /*************************************************************************************************/
 /************************ Column header data provider for tasks NatTable *************************/
 /*************************************************************************************************/
@@ -45,46 +47,46 @@ public class TasksColumnHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( columnIndex == 0 )
+    if ( col == Task.SECTION_TITLE )
       return "Title";
 
-    if ( columnIndex == 1 )
+    if ( col == Task.SECTION_DURATION )
       return "Duration";
 
-    if ( columnIndex == 2 )
+    if ( col == Task.SECTION_START )
       return "Start";
 
-    if ( columnIndex == 3 )
+    if ( col == Task.SECTION_END )
       return "End";
 
-    if ( columnIndex == 4 )
+    if ( col == Task.SECTION_WORK )
       return "Work";
 
-    if ( columnIndex == 5 )
+    if ( col == Task.SECTION_PRED )
       return "Predecessors";
 
-    if ( columnIndex == 6 )
+    if ( col == Task.SECTION_RES )
       return "Resources";
 
-    if ( columnIndex == 7 )
+    if ( col == Task.SECTION_TYPE )
       return "Type";
 
-    if ( columnIndex == 8 )
+    if ( col == Task.SECTION_PRIORITY )
       return "Priority";
 
-    if ( columnIndex == 9 )
+    if ( col == Task.SECTION_DEADLINE )
       return "Deadline";
 
-    if ( columnIndex == 10 )
+    if ( col == Task.SECTION_COST )
       return "Cost";
 
-    if ( columnIndex == 11 )
+    if ( col == Task.SECTION_COMMENT )
       return "Comment";
 
-    return "????";
+    throw new IllegalArgumentException( "Column=" + col );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -97,7 +99,7 @@ public class TasksColumnHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();

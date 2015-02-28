@@ -20,6 +20,8 @@ package rjc.jplanner.gui.data;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.model.Resource;
+
 /*************************************************************************************************/
 /********************** Column header data provider for resources NatTable ***********************/
 /*************************************************************************************************/
@@ -45,46 +47,46 @@ public class ResourcesColumnHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( columnIndex == 0 )
-      return "Initials";
+    if ( col == Resource.SECTION_ID )
+      return "Id";
 
-    if ( columnIndex == 1 )
+    if ( col == Resource.SECTION_NAME )
       return "Name";
 
-    if ( columnIndex == 2 )
+    if ( col == Resource.SECTION_ORG )
       return "Organisation";
 
-    if ( columnIndex == 3 )
+    if ( col == Resource.SECTION_GROUP )
       return "Group";
 
-    if ( columnIndex == 4 )
+    if ( col == Resource.SECTION_ROLE )
       return "Role";
 
-    if ( columnIndex == 5 )
+    if ( col == Resource.SECTION_ALIAS )
       return "Alias";
 
-    if ( columnIndex == 6 )
+    if ( col == Resource.SECTION_START )
       return "Start";
 
-    if ( columnIndex == 7 )
+    if ( col == Resource.SECTION_END )
       return "End";
 
-    if ( columnIndex == 8 )
+    if ( col == Resource.SECTION_AVAIL )
       return "Available";
 
-    if ( columnIndex == 9 )
+    if ( col == Resource.SECTION_COST )
       return "Cost";
 
-    if ( columnIndex == 10 )
+    if ( col == Resource.SECTION_CALENDAR )
       return "Calendar";
 
-    if ( columnIndex == 11 )
+    if ( col == Resource.SECTION_COMMENT )
       return "Comment";
 
-    return "???";
+    throw new IllegalArgumentException( "Column=" + col );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -97,7 +99,7 @@ public class ResourcesColumnHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();

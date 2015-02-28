@@ -35,17 +35,15 @@ public class ResourcesBody implements IDataProvider
   public int getColumnCount()
   {
     // table row count is constant
-    return 12;
+    return Resource.SECTION_MAX + 1;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return appropriate value for table cell
-    Resource res = JPlanner.plan.resource( rowIndex );
-
-    return "?";
+    return JPlanner.plan.resource( row ).toString( col );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -58,7 +56,7 @@ public class ResourcesBody implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // TODO !!!!!!!!!!!!!!
 
