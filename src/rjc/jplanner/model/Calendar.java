@@ -40,6 +40,12 @@ public class Calendar
     STANDARD, FULLTIME, FANCY
   };
 
+  final public static int SECTION_NAME       = 0;
+  final public static int SECTION_ANCHOR     = 1;
+  final public static int SECTION_EXCEPTIONS = 2;
+  final public static int SECTION_CYCLE      = 3;
+  final public static int SECTION_NORMAL1    = 4;
+
   /**************************************** constructor ******************************************/
   public Calendar()
   {
@@ -156,6 +162,46 @@ public class Calendar
   public Day normal( int index )
   {
     return m_normal.get( index );
+  }
+
+  /****************************************** toString *******************************************/
+  public String toString( int section )
+  {
+    // return display string for given section
+    if ( section == SECTION_NAME )
+      return m_name;
+
+    if ( section == SECTION_ANCHOR )
+      return m_cycleAnchor.toString();
+
+    if ( section == SECTION_EXCEPTIONS )
+      return String.format( "%d", m_exceptions.size() );
+
+    if ( section == SECTION_CYCLE )
+      return String.format( "%d", m_normal.size() );
+
+    // if row beyond normals handle index out of bounds
+    try
+    {
+      return normal( section - SECTION_NORMAL1 ).name();
+    }
+    catch (IndexOutOfBoundsException e)
+    {
+      return "";
+    }
+  }
+
+  /****************************************** setData ********************************************/
+  public void setData( int section, Object newValue )
+  {
+    // set calendar data for given section 
+    if ( section == SECTION_NAME )
+      m_name = (String) newValue;
+
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    else
+      throw new IllegalArgumentException( "Section=" + section );
   }
 
 }

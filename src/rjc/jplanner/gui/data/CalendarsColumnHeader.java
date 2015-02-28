@@ -45,10 +45,10 @@ public class CalendarsColumnHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return column title
-    return "Calendar " + ( columnIndex + 1 );
+    return "Calendar " + ( col + 1 );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -61,7 +61,7 @@ public class CalendarsColumnHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();

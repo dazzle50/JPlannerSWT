@@ -24,17 +24,55 @@ package rjc.jplanner.model;
 
 public class Resource
 {
-  private String   m_initials;    // must be unique across all resources in model
-  private String   m_name;        // free text
-  private String   m_org;         // free text
-  private String   m_group;       // free text
-  private String   m_role;        // free text
-  private String   m_alias;       // free text
-  private Date     m_start;       // date availability starts inclusive
-  private Date     m_end;         // date availability end inclusive
-  private double   m_availability; // number available
-  private double   m_cost;        // cost TODO
-  private Calendar m_calendar;    // calendar for resource
-  private String   m_comment;     // free text
+  private String          m_id;                 // must be unique across all resources in model
+  private String          m_name;               // free text
+  private String          m_org;                // free text
+  private String          m_group;              // free text
+  private String          m_role;               // free text
+  private String          m_alias;              // free text
+  private Date            m_start;              // date availability starts inclusive
+  private Date            m_end;                // date availability end inclusive
+  private double          m_availability;       // number available
+  private double          m_cost;               // cost TODO
+  private Calendar        m_calendar;           // calendar for resource
+  private String          m_comment;            // free text
 
+  final public static int SECTION_ID       = 0;
+  final public static int SECTION_NAME     = 1;
+  final public static int SECTION_ORG      = 2;
+  final public static int SECTION_GROUP    = 3;
+  final public static int SECTION_ROLE     = 4;
+  final public static int SECTION_ALIAS    = 5;
+  final public static int SECTION_START    = 6;
+  final public static int SECTION_END      = 7;
+  final public static int SECTION_AVAIL    = 8;
+  final public static int SECTION_COST     = 9;
+  final public static int SECTION_CALENDAR = 10;
+  final public static int SECTION_COMMENT  = 11;
+  final public static int SECTION_MAX      = 11;
+
+  /****************************************** toString *******************************************/
+  public String toString( int section )
+  {
+    // return display string for given section
+    if ( section == SECTION_ID )
+      return m_id;
+
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    throw new IllegalArgumentException( "Section=" + section );
+  }
+
+  /****************************************** setData ********************************************/
+  public void setData( int section, Object newValue )
+  {
+    // set resource data for given section 
+    if ( section == SECTION_ID )
+      m_id = (String) newValue;
+
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    else
+      throw new IllegalArgumentException( "Section=" + section );
+  }
 }

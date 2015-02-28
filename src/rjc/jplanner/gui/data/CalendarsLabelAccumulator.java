@@ -37,10 +37,10 @@ public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
     Calendar cal = JPlanner.plan.calendar( col );
 
     // all cells editable except shaded unused normal cells
-    if ( row > cal.numNormals() + 3 )
-      labels.addLabel( "SHADE" );
-    else
+    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
       labels.addLabel( "EDITABLE" );
+    else
+      labels.addLabel( "SHADE" );
 
     // all cells left align
     labels.addLabel( "LEFT" );

@@ -120,13 +120,41 @@ public class Day
   /******************************************** end **********************************************/
   public Time end( int num )
   {
-    return m_periods.get( num - 1 ).m_end;
+    return m_periods.get( num ).m_end;
   }
 
   /******************************************* start *********************************************/
   public Time start( int num )
   {
-    return m_periods.get( num - 1 ).m_start;
+    return m_periods.get( num ).m_start;
+  }
+
+  /****************************************** toString *******************************************/
+  public String toString( int section )
+  {
+    // return display string for given section
+    if ( section == SECTION_NAME )
+      return m_name;
+
+    if ( section == SECTION_WORK )
+      return String.format( "%.2f", m_work );
+
+    if ( section == SECTION_PERIODS )
+      return String.format( "%d", numPeriods() );
+
+    section -= SECTION_START1;
+    try
+    {
+      if ( section % 2 == 0 )
+        return start( section / 2 ).toString().substring( 0, 5 );
+      else
+        return end( section / 2 ).toString().substring( 0, 5 );
+    }
+    catch (IndexOutOfBoundsException e)
+    {
+      // if no work period, return blank
+      return "";
+    }
   }
 
   /****************************************** setData ********************************************/
@@ -135,17 +163,21 @@ public class Day
     // update day with new value
     if ( section == SECTION_NAME )
       m_name = (String) newValue;
+
     else if ( section == SECTION_WORK )
       m_work = (double) newValue;
+
     else if ( section >= SECTION_START1 )
     {
-      if ( ( section - SECTION_START1 ) % 2 == 0 )
-        m_periods.get( ( section - SECTION_START1 ) / 2 ).m_start = (Time) newValue;
+      section -= SECTION_START1;
+      if ( section % 2 == 0 )
+        m_periods.get( section / 2 ).m_start = (Time) newValue;
       else
-        m_periods.get( ( section - SECTION_END1 ) / 2 ).m_end = (Time) newValue;
+        m_periods.get( section / 2 ).m_end = (Time) newValue;
     }
+
     else
-      throw new IllegalArgumentException( "Unhandled section=" + section );
+      throw new IllegalArgumentException( "Section=" + section );
   }
 
 }

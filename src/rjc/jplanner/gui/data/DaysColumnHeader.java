@@ -20,6 +20,8 @@ package rjc.jplanner.gui.data;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.model.Day;
+
 /*************************************************************************************************/
 /********************** Column header data provider for day-types NatTable ***********************/
 /*************************************************************************************************/
@@ -45,22 +47,22 @@ public class DaysColumnHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( columnIndex == 0 )
+    if ( col == Day.SECTION_NAME )
       return "Name";
 
-    if ( columnIndex == 1 )
+    if ( col == Day.SECTION_WORK )
       return "Work";
 
-    if ( columnIndex == 2 )
+    if ( col == Day.SECTION_PERIODS )
       return "Periods";
 
-    if ( columnIndex % 2 == 0 )
-      return "End " + ( columnIndex / 2 - 1 );
+    if ( col % 2 == 0 )
+      return "End " + ( col / 2 - 1 );
     else
-      return "Start " + ( columnIndex / 2 );
+      return "Start " + ( col / 2 );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -73,7 +75,7 @@ public class DaysColumnHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();

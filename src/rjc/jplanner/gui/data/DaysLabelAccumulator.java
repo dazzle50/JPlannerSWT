@@ -37,13 +37,13 @@ public class DaysLabelAccumulator implements IConfigLabelAccumulator
     Day day = JPlanner.plan.day( row );
 
     // all cells editable except shaded unused start/end cells
-    if ( col > day.numPeriods() * 2 + 2 )
-      labels.addLabel( "SHADE" );
-    else
+    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
       labels.addLabel( "EDITABLE" );
+    else
+      labels.addLabel( "SHADE" );
 
     // left align name
-    if ( col == 0 )
+    if ( col == Day.SECTION_NAME )
       labels.addLabel( "LEFT" );
   }
 

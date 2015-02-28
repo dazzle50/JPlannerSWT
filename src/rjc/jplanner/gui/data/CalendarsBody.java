@@ -40,50 +40,28 @@ public class CalendarsBody implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return appropriate value for table cell
-    Calendar cal = JPlanner.plan.calendar( columnIndex );
-
-    if ( rowIndex == 0 )
-      return cal.name();
-
-    if ( rowIndex == 1 )
-      return cal.anchor();
-
-    if ( rowIndex == 2 )
-      return cal.numExceptions();
-
-    if ( rowIndex == 3 )
-      return cal.numNormals();
-
-    // if row beyond normals handle index out of bounds
-    try
-    {
-      return cal.normal( rowIndex - 4 ).name();
-    }
-    catch (IndexOutOfBoundsException e)
-    {
-      return "";
-    }
+    return JPlanner.plan.calendar( col ).toString( row );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // table row count is max number of normals + 4
+    // table row count is max number of normals + SECTION_NORMAL1
     int max = 0;
     for ( int i = 0; i < getColumnCount(); i++ )
       if ( JPlanner.plan.calendar( i ).numNormals() > max )
         max = JPlanner.plan.calendar( i ).numNormals();
 
-    return max + 4;
+    return max + Calendar.SECTION_NORMAL1;
   }
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // TODO !!!!!!!!!!!!!!
     JPlanner.trace( "Calendar setDataValue = " + newValue );

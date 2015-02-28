@@ -35,44 +35,13 @@ public class DaysBody implements IDataProvider
   @Override
   public int getColumnCount()
   {
-    // table column count is max number of periods * 2 + 3
+    // table column count is max number of periods * 2 + SECTION_START1
     int max = 0;
     for ( int i = 0; i < getRowCount(); i++ )
       if ( JPlanner.plan.day( i ).numPeriods() > max )
         max = JPlanner.plan.day( i ).numPeriods();
 
-    return max * 2 + 3;
-  }
-
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
-  {
-    // return appropriate value for table cell
-    Day day = JPlanner.plan.day( rowIndex );
-
-    if ( columnIndex == 0 )
-      return day.name();
-
-    if ( columnIndex == 1 )
-      return day.work();
-
-    if ( columnIndex == 2 )
-      return day.numPeriods();
-
-    // if column beyond work period starts/ends handle index out of bounds
-    try
-    {
-      if ( columnIndex % 2 == 0 )
-        return day.end( columnIndex / 2 - 1 ).toString().substring( 0, 5 );
-      else
-        return day.start( columnIndex / 2 ).toString().substring( 0, 5 );
-    }
-    catch (IndexOutOfBoundsException e)
-    {
-      return "";
-    }
-
+    return max * 2 + Day.SECTION_START1;
   }
 
   /**************************************** getRowCount ******************************************/
@@ -81,6 +50,14 @@ public class DaysBody implements IDataProvider
   {
     // return number of day-types in plan
     return JPlanner.plan.daysCount();
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return appropriate display value for table cell
+    return JPlanner.plan.day( row ).toString( col );
   }
 
   /*************************************** setDataValue ******************************************/

@@ -37,7 +37,7 @@ public class CommandSetDayValue implements UndoCommand
   {
     // check not being used for updating number of work periods
     if ( col == Day.SECTION_PERIODS )
-      throw new IllegalArgumentException( "Not for number of periods" );
+      throw new UnsupportedOperationException( "Number of work-periods" );
 
     // initialise private variables
     m_column = col;

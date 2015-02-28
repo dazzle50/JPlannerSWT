@@ -45,10 +45,10 @@ public class DaysRowHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return row index plus one
-    return rowIndex + 1;
+    return row + 1;
   }
 
   /**************************************** getRowCount ******************************************/
@@ -61,7 +61,7 @@ public class DaysRowHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();

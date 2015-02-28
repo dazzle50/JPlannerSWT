@@ -20,6 +20,8 @@ package rjc.jplanner.gui.data;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.model.Calendar;
+
 /*************************************************************************************************/
 /************************ Row header data provider for calendars NatTable ************************/
 /*************************************************************************************************/
@@ -45,22 +47,22 @@ public class CalendarsRowHeader implements IDataProvider
 
   /*************************************** getDataValue ******************************************/
   @Override
-  public Object getDataValue( int columnIndex, int rowIndex )
+  public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( rowIndex == 0 )
+    if ( row == Calendar.SECTION_NAME )
       return "Name";
 
-    if ( rowIndex == 1 )
+    if ( row == Calendar.SECTION_ANCHOR )
       return "Anchor";
 
-    if ( rowIndex == 2 )
+    if ( row == Calendar.SECTION_EXCEPTIONS )
       return "Exceptions";
 
-    if ( rowIndex == 3 )
+    if ( row == Calendar.SECTION_CYCLE )
       return "Cycle";
 
-    return "Normal " + ( rowIndex - 3 );
+    return "Normal " + ( row + 1 - Calendar.SECTION_NORMAL1 );
   }
 
   /**************************************** getRowCount ******************************************/
@@ -73,7 +75,7 @@ public class CalendarsRowHeader implements IDataProvider
 
   /*************************************** setDataValue ******************************************/
   @Override
-  public void setDataValue( int columnIndex, int rowIndex, Object newValue )
+  public void setDataValue( int col, int row, Object newValue )
   {
     // setting header data not supported
     throw new UnsupportedOperationException();
