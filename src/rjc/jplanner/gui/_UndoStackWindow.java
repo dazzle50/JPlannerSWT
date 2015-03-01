@@ -20,64 +20,72 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.UndoCommand;
 
 /*************************************************************************************************/
-/***************************** Widget with both date & time editors ******************************/
+/**************************** Window for plan undo-stack command list ****************************/
 /*************************************************************************************************/
 
-public class _DateTimeEditor extends Composite
+public class _UndoStackWindow extends Shell
 {
-  private DateTime m_date;
-  private DateTime m_time;
+  private List m_list; // list showing undo stack commands
 
   /**************************************** constructor ******************************************/
-  public _DateTimeEditor( Composite parent, int style )
+  public _UndoStackWindow( Display display, _MainWindowShell mainShell )
   {
-    super( parent, style );
-    GridLayout gridLayout = new GridLayout( 2, false );
-    gridLayout.verticalSpacing = 0;
-    gridLayout.marginWidth = 0;
-    gridLayout.marginHeight = 0;
-    setLayout( gridLayout );
+    super( display, SWT.SHELL_TRIM );
+    setSize( 248, 200 );
+    setText( "Undo stack" );
+    setLayout( new FillLayout( SWT.FILL ) );
 
-    m_date = new DateTime( this, SWT.DROP_DOWN );
+    // inform the main shell if this window is disposed (i.e. closed by user pressing X in corner)
+    addDisposeListener( new DisposeListener()
+    {
+      @Override
+      public void widgetDisposed( DisposeEvent e )
+      {
+        mainShell.undoStackWindowDisposed();
+      }
+    } );
 
-    Menu menu = new Menu( m_date );
-    m_date.setMenu( menu );
+    // create list to show commands
+    m_list = new List( this, SWT.V_SCROLL );
+    setList();
+    m_list.showSelection();
+  }
 
-    MenuItem workForward = new MenuItem( menu, SWT.NONE );
-    workForward.setText( "Forward to next work period start" );
+  /******************************************* setList *******************************************/
+  public void setList()
+  {
+    // initialise list with current plan undo-stack list of commands
+    m_list.removeAll();
+    m_list.add( "<empty>" );
 
-    MenuItem workBack = new MenuItem( menu, SWT.NONE );
-    workBack.setText( "Back to previous work period end" );
+    int size = JPlanner.plan.undostack().size();
+    for ( int i = 0; i < size; i++ )
+      m_list.add( JPlanner.plan.undostack().text( i ) );
 
-    m_time = new DateTime( this, SWT.BORDER | SWT.TIME );
+    m_list.setSelection( JPlanner.plan.undostack().index() );
+  }
 
-    Menu popup = new Menu( m_time );
-    MenuItem workStart = new MenuItem( popup, SWT.CASCADE );
-    workStart.setText( "Start of work day" );
-    m_time.setMenu( popup );
+  /***************************************** updateList ******************************************/
+  public void updateList( UndoCommand command, int index )
+  {
+    // update list with command at position index
 
-    MenuItem workEnd = new MenuItem( popup, SWT.NONE );
-    workEnd.setText( "End of work day" );
   }
 
   @Override
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
-  }
-
-  /***************************************** setDateTime *****************************************/
-  public void setDateTime( rjc.jplanner.model.DateTime dt )
-  {
-    // set editor to desired date-time
-    m_date.setDate( dt.year(), dt.month() - 1, dt.day() );
-    m_time.setTime( dt.hours(), dt.minutes(), dt.seconds() );
   }
 }

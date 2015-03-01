@@ -233,6 +233,12 @@ public class Plan
     return m_savedWhen;
   }
 
+  /****************************************** undostack ******************************************/
+  public UndoStack undostack()
+  {
+    return m_undostack;
+  }
+
   /******************************************** push *********************************************/
   public void push( UndoCommand command )
   {

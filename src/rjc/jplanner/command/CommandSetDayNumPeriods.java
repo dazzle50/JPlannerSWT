@@ -61,8 +61,8 @@ public class CommandSetDayNumPeriods implements UndoCommand
   @Override
   public String text()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
-    return "TODO";
+    // text description of command
+    return "Day " + m_row + " Periods = " + m_newValue;
   }
 
 }

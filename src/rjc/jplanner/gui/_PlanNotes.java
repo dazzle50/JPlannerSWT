@@ -26,6 +26,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+/*************************************************************************************************/
+/**************************** Widget display & editing of plan notes *****************************/
+/*************************************************************************************************/
+
 public class _PlanNotes extends Composite
 {
 

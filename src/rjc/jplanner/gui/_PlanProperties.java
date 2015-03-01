@@ -30,6 +30,10 @@ import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 
+/*************************************************************************************************/
+/********************************** Widget for plan properties ***********************************/
+/*************************************************************************************************/
+
 public class _PlanProperties extends Composite
 {
   private Text            m_titleText;
@@ -175,6 +179,7 @@ public class _PlanProperties extends Composite
     m_filelocText.setText( JPlanner.plan.fileLocation() );
     m_savedbyText.setText( JPlanner.plan.savedBy() );
 
+    // if plan hasn't been saved, the saved-when is null so display blank
     try
     {
       m_savedwhenText.setText( JPlanner.plan.savedWhen().toString() );

@@ -20,6 +20,8 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -28,11 +30,15 @@ import org.eclipse.swt.widgets.Shell;
 
 public class _MainWindowShell extends Shell
 {
+  private _UndoStackWindow undoWindow;         // window to show plan undo-stack
+  private MenuItem         actionUndoStackView; // action to show plan undo-stack window
 
   /**************************************** constructor ******************************************/
   public _MainWindowShell( Display display )
   {
     super( display, SWT.SHELL_TRIM );
+    setSize( 650, 480 );
+    setText( "JPlanner" );
     setLayout( new FillLayout( SWT.HORIZONTAL ) );
 
     Menu menuBar = new Menu( this, SWT.BAR );
@@ -154,9 +160,22 @@ public class _MainWindowShell extends Shell
     Menu menu_5 = new Menu( menuView );
     menuView.setMenu( menu_5 );
 
-    MenuItem actionUndoStackView = new MenuItem( menu_5, SWT.NONE );
-    actionUndoStackView.setEnabled( false );
+    actionUndoStackView = new MenuItem( menu_5, SWT.CHECK );
     actionUndoStackView.setText( "Undo Stack ..." );
+    _MainWindowShell thisShell = this;
+    actionUndoStackView.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        if ( undoWindow == null )
+        {
+          undoWindow = new _UndoStackWindow( display, thisShell );
+          undoWindow.open();
+        }
+        undoWindow.setVisible( actionUndoStackView.getSelection() );
+      }
+    } );
 
     MenuItem actionNewWindow = new MenuItem( menu_5, SWT.NONE );
     actionNewWindow.setText( "New window ..." );
@@ -179,16 +198,6 @@ public class _MainWindowShell extends Shell
     actionAboutJplanner.setText( "About JPlanner" );
 
     new _MainTabWidget( this );
-    createContents();
-  }
-
-  /**
-   * Create contents of the shell.
-   */
-  protected void createContents()
-  {
-    setText( "JPlanner" );
-    setSize( 650, 480 );
   }
 
   @Override
@@ -196,4 +205,13 @@ public class _MainWindowShell extends Shell
   {
     // Disable the check that prevents subclassing of SWT components
   }
+
+  /*********************************** undoStackWindowDisposed ***********************************/
+  public void undoStackWindowDisposed()
+  {
+    // if undo-stack window is disposed (closed) then clear handle and untick menu-item
+    undoWindow = null;
+    actionUndoStackView.setSelection( false );
+  }
+
 }

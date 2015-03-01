@@ -51,7 +51,7 @@ public class UndoStack
   }
 
   /******************************************** undo *********************************************/
-  void undo()
+  public void undo()
   {
     // decrement index and revert command
     m_index--;
@@ -59,7 +59,7 @@ public class UndoStack
   }
 
   /******************************************** redo *********************************************/
-  void redo()
+  public void redo()
   {
     // action command and increment index
     m_stack.get( m_index ).redo();
@@ -67,21 +67,28 @@ public class UndoStack
   }
 
   /****************************************** undoText *******************************************/
-  String undoText()
+  public String undoText()
   {
     // return text associated with next potential undo
     return m_stack.get( m_index - 1 ).text();
   }
 
   /****************************************** redoText *******************************************/
-  String redoText()
+  public String redoText()
   {
     // return text associated with next potential redo
     return m_stack.get( m_index ).text();
   }
 
+  /******************************************** text *********************************************/
+  public String text( int index )
+  {
+    // return text associated with command at index
+    return m_stack.get( index ).text();
+  }
+
   /******************************************** clear ********************************************/
-  void clear()
+  public void clear()
   {
     // clean the stack
     m_stack.clear();
@@ -89,16 +96,17 @@ public class UndoStack
   }
 
   /******************************************** size *********************************************/
-  int size()
+  public int size()
   {
     // return stack size
     return m_stack.size();
   }
 
   /******************************************* index *********************************************/
-  int index()
+  public int index()
   {
     // return command index
     return m_index;
   }
+
 }

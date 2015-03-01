@@ -28,6 +28,10 @@ import org.eclipse.swt.widgets.TabItem;
 
 import rjc.jplanner.gui.table.XNatTable;
 
+/*************************************************************************************************/
+/*************** Widget showing the Plan/Tasks&Gantt/Resources/Calendars/Days tabs ***************/
+/*************************************************************************************************/
+
 public class _MainTabWidget extends TabFolder
 {
   private _PlanProperties m_planProperties;
@@ -37,15 +41,12 @@ public class _MainTabWidget extends TabFolder
   private NatTable        m_tableResources;
   private NatTable        m_tableTasks;
 
-  /**
-   * Create the composite.
-   * @param parent
-   * @param style
-   */
+  /**************************************** constructor ******************************************/
   public _MainTabWidget( Composite parent )
   {
     super( parent, SWT.NONE );
 
+    // Plan tab
     TabItem tabPlan = new TabItem( this, SWT.NONE );
     tabPlan.setText( "Plan" );
 
@@ -66,6 +67,7 @@ public class _MainTabWidget extends TabFolder
     splitterPlanTab.monitor( scrolledProperties, m_planNotes );
     m_planProperties.updateFromPlan();
 
+    // Tasks & Gantt tab
     TabItem tabTasksGantt = new TabItem( this, SWT.NONE );
     tabTasksGantt.setText( "Tasks && Gantt" );
 
