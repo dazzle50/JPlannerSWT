@@ -16,7 +16,7 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
@@ -45,22 +45,6 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
-import rjc.jplanner.gui.data.CalendarsBody;
-import rjc.jplanner.gui.data.CalendarsColumnHeader;
-import rjc.jplanner.gui.data.CalendarsLabelAccumulator;
-import rjc.jplanner.gui.data.CalendarsRowHeader;
-import rjc.jplanner.gui.data.DaysBody;
-import rjc.jplanner.gui.data.DaysColumnHeader;
-import rjc.jplanner.gui.data.DaysLabelAccumulator;
-import rjc.jplanner.gui.data.DaysRowHeader;
-import rjc.jplanner.gui.data.ResourcesBody;
-import rjc.jplanner.gui.data.ResourcesColumnHeader;
-import rjc.jplanner.gui.data.ResourcesLabelAccumulator;
-import rjc.jplanner.gui.data.ResourcesRowHeader;
-import rjc.jplanner.gui.data.TasksBody;
-import rjc.jplanner.gui.data.TasksColumnHeader;
-import rjc.jplanner.gui.data.TasksLabelAccumulator;
-import rjc.jplanner.gui.data.TasksRowHeader;
 import rjc.jplanner.gui.editor.IntSpinEditor;
 
 /*************************************************************************************************/

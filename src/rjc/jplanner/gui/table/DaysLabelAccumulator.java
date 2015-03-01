@@ -16,55 +16,39 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
+import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/************************** Row header data provider for tasks NatTable **************************/
+/*********************** Label Accumulator for styling of individual cells ***********************/
 /*************************************************************************************************/
 
-public class TasksRowHeader implements IDataProvider
+public class DaysLabelAccumulator implements IConfigLabelAccumulator
 {
-  private IDataProvider m_body; // data provider for the table body
-
-  /**************************************** constructor ******************************************/
-  public TasksRowHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
-
-  /************************************** getColumnCount *****************************************/
   @Override
-  public int getColumnCount()
+  public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
-    // must be one
-    return 1;
-  }
+    // add config labels to style cell
+    Day day = JPlanner.plan.day( row );
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return row index plus one
-    return row + 1;
-  }
+    // all cells editable except shaded unused start/end cells
+    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
+      labels.addLabel( "EDITABLE" );
+    else
+      labels.addLabel( "SHADE" );
 
-  /**************************************** getRowCount ******************************************/
-  @Override
-  public int getRowCount()
-  {
-    // must be same as body
-    return m_body.getRowCount();
-  }
+    // left align name
+    if ( col == Day.SECTION_NAME )
+      labels.addLabel( "LEFT" );
 
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // use integer editor for number of periods
+    if ( col == Day.SECTION_PERIODS )
+      labels.addLabel( "INT_EDITOR" );
   }
 
 }

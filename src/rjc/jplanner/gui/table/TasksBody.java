@@ -16,18 +16,18 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Resource;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/************************** Body data provider for resources NatTable ****************************/
+/**************************** Body data provider for tasks NatTable ******************************/
 /*************************************************************************************************/
 
-public class ResourcesBody implements IDataProvider
+public class TasksBody implements IDataProvider
 {
 
   /************************************** getColumnCount *****************************************/
@@ -35,7 +35,7 @@ public class ResourcesBody implements IDataProvider
   public int getColumnCount()
   {
     // table row count is constant
-    return Resource.SECTION_MAX + 1;
+    return Task.SECTION_MAX + 1;
   }
 
   /*************************************** getDataValue ******************************************/
@@ -43,15 +43,15 @@ public class ResourcesBody implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return appropriate value for table cell
-    return JPlanner.plan.resource( row ).toString( col );
+    return JPlanner.plan.task( row ).toString( col );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // return number of resources in plan
-    return JPlanner.plan.resourcesCount();
+    // return number of tasks in plan
+    return JPlanner.plan.tasksCount();
   }
 
   /*************************************** setDataValue ******************************************/

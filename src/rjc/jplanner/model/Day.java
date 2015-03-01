@@ -165,15 +165,15 @@ public class Day
       m_name = (String) newValue;
 
     else if ( section == SECTION_WORK )
-      m_work = (double) newValue;
+      m_work = Double.parseDouble( (String) newValue );
 
     else if ( section >= SECTION_START1 )
     {
       section -= SECTION_START1;
       if ( section % 2 == 0 )
-        m_periods.get( section / 2 ).m_start = (Time) newValue;
+        m_periods.get( section / 2 ).m_start = Time.fromString( (String) newValue );
       else
-        m_periods.get( section / 2 ).m_end = (Time) newValue;
+        m_periods.get( section / 2 ).m_end = Time.fromString( (String) newValue );
     }
 
     else

@@ -16,20 +16,20 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /*************************************************************************************************/
-/********************** Column header data provider for calendars NatTable ***********************/
+/************************ Row header data provider for resources NatTable ************************/
 /*************************************************************************************************/
 
-public class CalendarsColumnHeader implements IDataProvider
+public class ResourcesRowHeader implements IDataProvider
 {
   private IDataProvider m_body; // data provider for the table body
 
   /**************************************** constructor ******************************************/
-  public CalendarsColumnHeader( IDataProvider body )
+  public ResourcesRowHeader( IDataProvider body )
   {
     // initialise variable
     m_body = body;
@@ -39,24 +39,24 @@ public class CalendarsColumnHeader implements IDataProvider
   @Override
   public int getColumnCount()
   {
-    // must be same as body
-    return m_body.getColumnCount();
+    // must be one
+    return 1;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return column title
-    return "Calendar " + ( col + 1 );
+    // return row index plus one
+    return row + 1;
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // must be one
-    return 1;
+    // must be same as body
+    return m_body.getRowCount();
   }
 
   /*************************************** setDataValue ******************************************/

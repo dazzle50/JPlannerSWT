@@ -16,39 +16,38 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
+import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
 /*********************** Label Accumulator for styling of individual cells ***********************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
 {
   @Override
   public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
     // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    Calendar cal = JPlanner.plan.calendar( col );
 
-    // all cells editable except shaded unused start/end cells
-    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
+    // all cells editable except shaded unused normal cells
+    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
       labels.addLabel( "EDITABLE" );
     else
       labels.addLabel( "SHADE" );
 
-    // left align name
-    if ( col == Day.SECTION_NAME )
-      labels.addLabel( "LEFT" );
+    // all cells left align
+    labels.addLabel( "LEFT" );
 
-    // use integer editor for number of periods
-    if ( col == Day.SECTION_PERIODS )
-      labels.addLabel( "INT_EDITOR" );
+    // use date editor for anchor dates
+    if ( row == Calendar.SECTION_ANCHOR )
+      labels.addLabel( "DATE_EDITOR" );
   }
 
 }

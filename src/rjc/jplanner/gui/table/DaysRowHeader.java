@@ -16,22 +16,20 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-import rjc.jplanner.model.Day;
-
 /*************************************************************************************************/
-/********************** Column header data provider for day-types NatTable ***********************/
+/************************ Row header data provider for day-types NatTable ************************/
 /*************************************************************************************************/
 
-public class DaysColumnHeader implements IDataProvider
+public class DaysRowHeader implements IDataProvider
 {
   private IDataProvider m_body; // data provider for the table body
 
   /**************************************** constructor ******************************************/
-  public DaysColumnHeader( IDataProvider body )
+  public DaysRowHeader( IDataProvider body )
   {
     // initialise variable
     m_body = body;
@@ -41,36 +39,24 @@ public class DaysColumnHeader implements IDataProvider
   @Override
   public int getColumnCount()
   {
-    // must be same as body
-    return m_body.getColumnCount();
+    // must be one
+    return 1;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return column title
-    if ( col == Day.SECTION_NAME )
-      return "Name";
-
-    if ( col == Day.SECTION_WORK )
-      return "Work";
-
-    if ( col == Day.SECTION_PERIODS )
-      return "Periods";
-
-    if ( col % 2 == 0 )
-      return "End " + ( col / 2 - 1 );
-    else
-      return "Start " + ( col / 2 );
+    // return row index plus one
+    return row + 1;
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // must be one
-    return 1;
+    // must be same as body
+    return m_body.getRowCount();
   }
 
   /*************************************** setDataValue ******************************************/

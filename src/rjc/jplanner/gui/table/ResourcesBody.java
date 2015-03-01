@@ -16,38 +16,50 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/************************** Body data provider for resources NatTable ****************************/
 /*************************************************************************************************/
 
-public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
+public class ResourcesBody implements IDataProvider
 {
+
+  /************************************** getColumnCount *****************************************/
   @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  public int getColumnCount()
   {
-    // add config labels to style cell
-    Calendar cal = JPlanner.plan.calendar( col );
+    // table row count is constant
+    return Resource.SECTION_MAX + 1;
+  }
 
-    // all cells editable except shaded unused normal cells
-    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
-      labels.addLabel( "EDITABLE" );
-    else
-      labels.addLabel( "SHADE" );
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return appropriate value for table cell
+    return JPlanner.plan.resource( row ).toString( col );
+  }
 
-    // all cells left align
-    labels.addLabel( "LEFT" );
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // return number of resources in plan
+    return JPlanner.plan.resourcesCount();
+  }
 
-    // use date editor for anchor dates
-    if ( row == Calendar.SECTION_ANCHOR )
-      labels.addLabel( "DATE_EDITOR" );
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int col, int row, Object newValue )
+  {
+    // TODO !!!!!!!!!!!!!!
+
   }
 
 }

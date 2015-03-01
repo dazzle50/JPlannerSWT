@@ -16,55 +16,65 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandSetDayNumPeriods;
+import rjc.jplanner.command.CommandSetDayValue;
+import rjc.jplanner.model.Day;
+
 /*************************************************************************************************/
-/************************ Row header data provider for resources NatTable ************************/
+/************************** Body data provider for day-types NatTable ****************************/
 /*************************************************************************************************/
 
-public class ResourcesRowHeader implements IDataProvider
+public class DaysBody implements IDataProvider
 {
-  private IDataProvider m_body; // data provider for the table body
-
-  /**************************************** constructor ******************************************/
-  public ResourcesRowHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // must be one
-    return 1;
-  }
+    // table column count is max number of periods * 2 + SECTION_START1
+    int max = 0;
+    for ( int i = 0; i < getRowCount(); i++ )
+      if ( JPlanner.plan.day( i ).numPeriods() > max )
+        max = JPlanner.plan.day( i ).numPeriods();
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return row index plus one
-    return row + 1;
+    return max * 2 + Day.SECTION_START1;
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // must be same as body
-    return m_body.getRowCount();
+    // return number of day-types in plan
+    return JPlanner.plan.daysCount();
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return appropriate display value for table cell
+    return JPlanner.plan.day( row ).toString( col );
   }
 
   /*************************************** setDataValue ******************************************/
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // if new value equals old value, exit with no command
+    Object oldValue = getDataValue( col, row );
+    if ( newValue.equals( oldValue ) )
+      return;
+
+    // special command for setting number of work periods, otherwise generic
+    if ( col == Day.SECTION_PERIODS )
+      JPlanner.plan.push( new CommandSetDayNumPeriods( row, newValue, oldValue ) );
+    else
+      JPlanner.plan.push( new CommandSetDayValue( col, row, newValue, oldValue ) );
   }
 
 }

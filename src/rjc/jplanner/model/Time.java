@@ -39,11 +39,66 @@ public class Time
     m_milliseconds = milliseconds;
   }
 
+  /**************************************** constructor ******************************************/
+  public Time( int hours, int mins, int secs, int ms )
+  {
+    // valid inputs
+    if ( hours < 0 || hours > 24 )
+      throw new IllegalArgumentException( "hours=" + hours );
+
+    if ( mins < 0 || mins > 59 )
+      throw new IllegalArgumentException( "minutes=" + mins );
+
+    if ( secs < 0 || secs > 59 )
+      throw new IllegalArgumentException( "seconds=" + secs );
+
+    if ( ms < 0 || ms > 999 )
+      throw new IllegalArgumentException( "milliseconds=" + ms );
+
+    if ( hours == 24 && ( mins > 0 || secs > 0 || ms > 0 ) )
+      throw new IllegalArgumentException( "time beyond 24H" );
+
+    m_milliseconds = hours * 3600_000 + mins * 60_000 + secs * 1000 + ms;
+  }
+
   /**************************************** milliseconds *****************************************/
   public int milliseconds()
   {
     // return int number of milliseconds from start of day
     return m_milliseconds;
+  }
+
+  /***************************************** fromString ******************************************/
+  public static Time fromString( String str )
+  {
+    // if string of type HH:MM
+    if ( str.matches( "\\d\\d:\\d\\d" ) )
+    {
+      int hours = Integer.parseInt( str.substring( 0, 2 ) );
+      int mins = Integer.parseInt( str.substring( 3, 5 ) );
+      return new Time( hours, mins, 0, 0 );
+    }
+
+    // if string of type HH:MM:SS
+    if ( str.matches( "\\d\\d:\\d\\d:\\d\\d" ) )
+    {
+      int hours = Integer.parseInt( str.substring( 0, 2 ) );
+      int mins = Integer.parseInt( str.substring( 3, 5 ) );
+      int secs = Integer.parseInt( str.substring( 6, 8 ) );
+      return new Time( hours, mins, secs, 0 );
+    }
+
+    // if string of type HH:MM:SS.mmm
+    if ( str.matches( "\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d" ) )
+    {
+      int hours = Integer.parseInt( str.substring( 0, 2 ) );
+      int mins = Integer.parseInt( str.substring( 3, 5 ) );
+      int secs = Integer.parseInt( str.substring( 6, 8 ) );
+      int ms = Integer.parseInt( str.substring( 9, 12 ) );
+      return new Time( hours, mins, secs, ms );
+    }
+
+    throw new IllegalArgumentException( "String=" + str );
   }
 
   /****************************************** fromHours ******************************************/

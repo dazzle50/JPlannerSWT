@@ -16,56 +16,69 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/************************** Body data provider for calendars NatTable ****************************/
+/********************** Column header data provider for day-types NatTable ***********************/
 /*************************************************************************************************/
 
-public class CalendarsBody implements IDataProvider
+public class DaysColumnHeader implements IDataProvider
 {
+  private IDataProvider m_body; // data provider for the table body
+
+  /**************************************** constructor ******************************************/
+  public DaysColumnHeader( IDataProvider body )
+  {
+    // initialise variable
+    m_body = body;
+  }
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // return number of calendars in plan
-    return JPlanner.plan.calendarsCount();
+    // must be same as body
+    return m_body.getColumnCount();
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return appropriate value for table cell
-    return JPlanner.plan.calendar( col ).toString( row );
+    // return column title
+    if ( col == Day.SECTION_NAME )
+      return "Name";
+
+    if ( col == Day.SECTION_WORK )
+      return "Work";
+
+    if ( col == Day.SECTION_PERIODS )
+      return "Periods";
+
+    if ( col % 2 == 0 )
+      return "End " + ( col / 2 - 1 );
+    else
+      return "Start " + ( col / 2 );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // table row count is max number of normals + SECTION_NORMAL1
-    int max = 0;
-    for ( int i = 0; i < getColumnCount(); i++ )
-      if ( JPlanner.plan.calendar( i ).numNormals() > max )
-        max = JPlanner.plan.calendar( i ).numNormals();
-
-    return max + Calendar.SECTION_NORMAL1;
+    // must be one
+    return 1;
   }
 
   /*************************************** setDataValue ******************************************/
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // TODO !!!!!!!!!!!!!!
-    JPlanner.trace( "Calendar setDataValue = " + newValue );
-
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }

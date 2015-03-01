@@ -16,50 +16,55 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.data;
+package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
-
 /*************************************************************************************************/
-/**************************** Body data provider for tasks NatTable ******************************/
+/********************** Column header data provider for calendars NatTable ***********************/
 /*************************************************************************************************/
 
-public class TasksBody implements IDataProvider
+public class CalendarsColumnHeader implements IDataProvider
 {
+  private IDataProvider m_body; // data provider for the table body
+
+  /**************************************** constructor ******************************************/
+  public CalendarsColumnHeader( IDataProvider body )
+  {
+    // initialise variable
+    m_body = body;
+  }
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // table row count is constant
-    return Task.SECTION_MAX + 1;
+    // must be same as body
+    return m_body.getColumnCount();
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return appropriate value for table cell
-    return JPlanner.plan.task( row ).toString( col );
+    // return column title
+    return "Calendar " + ( col + 1 );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // return number of tasks in plan
-    return JPlanner.plan.tasksCount();
+    // must be one
+    return 1;
   }
 
   /*************************************** setDataValue ******************************************/
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // TODO !!!!!!!!!!!!!!
-
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }
