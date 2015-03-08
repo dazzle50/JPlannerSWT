@@ -29,6 +29,11 @@ public class DateTime
   private Date m_date;
   private Time m_time;
 
+  public enum Interval
+  {
+    YEAR, HALFYEAR, QUARTERYEAR, MONTH, WEEK, DAY
+  }
+
   /***************************************** constructor *****************************************/
   public DateTime( Date date, Time time )
   {

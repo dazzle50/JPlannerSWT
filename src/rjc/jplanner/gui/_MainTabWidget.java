@@ -76,10 +76,13 @@ public class _MainTabWidget extends TabFolder
 
     m_tableTasks = new XNatTable( splitterTasksGantt, XNatTable.TableType.TASK );
 
-    ScrolledComposite gantt = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL | SWT.V_SCROLL );
-    gantt.setExpandHorizontal( true );
-    gantt.setExpandVertical( true );
-    splitterTasksGantt.monitor( m_tableTasks, gantt );
+    ScrolledComposite ganttView = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL );
+    ganttView.setExpandHorizontal( true );
+    ganttView.setExpandVertical( true );
+    _Gantt gantt = new _Gantt( ganttView );
+    ganttView.setContent( gantt );
+    ganttView.setMinSize( gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+    splitterTasksGantt.monitor( m_tableTasks, ganttView );
 
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
