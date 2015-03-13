@@ -85,6 +85,7 @@ public class Date
   /******************************************** month ********************************************/
   public int month()
   {
+    // return month of year as number 1 to 12
     LocalDate ld = LocalDate.ofEpochDay( m_epochday );
     return ld.getMonthValue();
   }

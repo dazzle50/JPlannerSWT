@@ -84,14 +84,18 @@ public class _GanttPlot extends Composite
   }
 
   /************************************* shadeNonWorkingDays *************************************/
-  private void shadeNonWorkingDays( PaintEvent e )
+  private void shadeNonWorkingDays( PaintEvent event )
   {
+    // exit immediately if less than one pixel per 24H
+    if ( DateTime.MILLISECONDS_IN_DAY / m_millisecondsPP < 1 )
+      return;
+
     // shade the non-working days based on the plan default calendar
-    int x = e.x;
-    int y = e.y;
-    int h = e.height;
-    int w = e.width;
-    GC gc = e.gc;
+    int x = event.x;
+    int y = event.y;
+    int h = event.height;
+    int w = event.width;
+    GC gc = event.gc;
 
     // fill in white background
     gc.setBackground( MainWindow.GANTT_BACKGROUND );
@@ -118,7 +122,7 @@ public class _GanttPlot extends Composite
       if ( xs >= 0 && calendar.isWorking( date ) )
       {
         xe = x( date );
-        gc.fillRectangle( xs, y, xe - xs, h );
+        gc.fillRectangle( xs, y, xe - xs + 1, h );
         xs = -1;
       }
 
