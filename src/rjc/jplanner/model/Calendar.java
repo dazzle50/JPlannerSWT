@@ -204,4 +204,25 @@ public class Calendar
       throw new IllegalArgumentException( "Section=" + section );
   }
 
+  /***************************************** isWorking *******************************************/
+  public boolean isWorking( Date date )
+  {
+    // return whether date is working or not
+    return day( date ).isWorking();
+  }
+
+  /********************************************* day *********************************************/
+  private Day day( Date date )
+  {
+    // if exception exists return it, otherwise return normal cycle day
+    if ( m_exceptions.containsKey( date ) )
+      return m_exceptions.get( date );
+
+    int normal = ( date.epochday() - m_cycleAnchor.epochday() ) % m_normal.size();
+    if ( normal < 0 )
+      normal += m_normal.size();
+
+    return m_normal.get( normal );
+  }
+
 }

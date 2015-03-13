@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
-import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
 
@@ -37,7 +37,7 @@ import rjc.jplanner.model.DateTime.Interval;
 public class _GanttScale extends Composite
 {
   private DateTime m_start;
-  private double   m_secsPP;
+  private long     m_millisecondsPP;
   private Interval m_interval;
   private String   m_format;
 
@@ -51,8 +51,8 @@ public class _GanttScale extends Composite
 
     m_color = this.hashCode() % 200;
 
-    m_start = DateTime.now();
-    m_secsPP = 1000.0;
+    m_start = new DateTime( 0 );
+    m_millisecondsPP = 3600 * 2000;
     m_interval = Interval.MONTH;
     m_format = "dd-MMM";
 
@@ -62,7 +62,7 @@ public class _GanttScale extends Composite
       public void paintControl( PaintEvent e )
       {
         // TODO Auto-generated method stub
-        JPlanner.trace( e.toString() );
+        //JPlanner.trace( e.toString() );
 
         int x = e.x;
         int y = e.y;
@@ -77,6 +77,9 @@ public class _GanttScale extends Composite
         gc.setBackground( color );
         gc.fillRectangle( x, y, w, h );
 
+        // !!!!!!!! MUST GET IN HABIT OF DISPOSING SWT RESOURCES !!!!!!!!!!!!!!
+        // https://www.eclipse.org/articles/swt-design-2/swt-design-2.html
+
       }
     } );
   }
@@ -85,6 +88,24 @@ public class _GanttScale extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /********************************************** x **********************************************/
+  private int x( Date date )
+  {
+    return (int) ( ( date.epochday() * DateTime.MILLISECONDS_IN_DAY - m_start.milliseconds() ) / m_millisecondsPP );
+  }
+
+  /********************************************** x **********************************************/
+  private int x( DateTime dt )
+  {
+    return (int) ( ( dt.milliseconds() - m_start.milliseconds() ) / m_millisecondsPP );
+  }
+
+  /****************************************** datetime *******************************************/
+  private DateTime datetime( int x )
+  {
+    return m_start.addMilliseconds( x * m_millisecondsPP );
   }
 
 }

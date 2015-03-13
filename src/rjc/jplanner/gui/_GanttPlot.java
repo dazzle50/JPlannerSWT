@@ -22,11 +22,12 @@ package rjc.jplanner.gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
@@ -36,38 +37,23 @@ import rjc.jplanner.model.DateTime;
 public class _GanttPlot extends Composite
 {
   private DateTime m_start;
-  private double   m_secsPP;
-
-  private int      m_color;
+  private long     m_millisecondsPP;
 
   /**************************************** constructor ******************************************/
   public _GanttPlot( Composite parent )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
 
-    m_color = this.hashCode() % 200;
+    m_start = new DateTime( 0 );
+    m_millisecondsPP = 3600 * 2000;
 
     addPaintListener( new PaintListener()
     {
       @Override
       public void paintControl( PaintEvent e )
       {
-        // TODO Auto-generated method stub
-        JPlanner.trace( e.toString() );
-
-        int x = e.x;
-        int y = e.y;
-        int h = e.height;
-        int w = e.width;
-        GC gc = e.gc;
-
-        //gc.drawString( "X", x, y, true );
-        Color color = new Color( gc.getDevice(), ++m_color, m_color, m_color );
-        if ( m_color > 253 )
-          m_color = 0;
-        gc.setBackground( color );
-        gc.fillRectangle( x, y, w, h );
-
+        // update the gantt plot for the specified paint-event
+        shadeNonWorkingDays( e );
       }
     } );
 
@@ -78,4 +64,71 @@ public class _GanttPlot extends Composite
   {
     // Disable the check that prevents subclassing of SWT components
   }
+
+  /********************************************** x **********************************************/
+  private int x( Date date )
+  {
+    return (int) ( ( date.epochday() * DateTime.MILLISECONDS_IN_DAY - m_start.milliseconds() ) / m_millisecondsPP );
+  }
+
+  /********************************************** x **********************************************/
+  private int x( DateTime dt )
+  {
+    return (int) ( ( dt.milliseconds() - m_start.milliseconds() ) / m_millisecondsPP );
+  }
+
+  /****************************************** datetime *******************************************/
+  private DateTime datetime( int x )
+  {
+    return m_start.addMilliseconds( x * m_millisecondsPP );
+  }
+
+  /************************************* shadeNonWorkingDays *************************************/
+  private void shadeNonWorkingDays( PaintEvent e )
+  {
+    // shade the non-working days based on the plan default calendar
+    int x = e.x;
+    int y = e.y;
+    int h = e.height;
+    int w = e.width;
+    GC gc = e.gc;
+
+    // fill in white background
+    gc.setBackground( MainWindow.GANTT_BACKGROUND );
+    gc.fillRectangle( x, y, w, h );
+
+    // calculate start-date and end-date etc
+    Calendar calendar = JPlanner.plan.calendar();
+    Date date = datetime( x - 1 ).date();
+    Date dateEnd = datetime( x + w ).date();
+    int xs = -1;
+    int xe = 0;
+    gc.setBackground( MainWindow.GANTT_NONWORKING );
+
+    // for each date check if working and shade accordingly
+    do
+    {
+      if ( xs < 0 && !calendar.isWorking( date ) )
+      {
+        xs = x( date ) + 1;
+        if ( xs < 0 )
+          xs = 0;
+      }
+
+      if ( xs >= 0 && calendar.isWorking( date ) )
+      {
+        xe = x( date );
+        gc.fillRectangle( xs, y, xe - xs, h );
+        xs = -1;
+      }
+
+      date = date.addDays( 1 );
+    }
+    while ( date.epochday() <= dateEnd.epochday() );
+
+    // shade any remaining non-working days
+    if ( xs >= 0 )
+      gc.fillRectangle( xs, y, this.getSize().x, h );
+  }
+
 }

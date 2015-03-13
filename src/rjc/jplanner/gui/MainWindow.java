@@ -18,6 +18,8 @@
 
 package rjc.jplanner.gui;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
 /*************************************************************************************************/
@@ -26,12 +28,17 @@ import org.eclipse.swt.widgets.Display;
 
 public class MainWindow
 {
+  public static Color GANTT_BACKGROUND;
+  public static Color GANTT_NONWORKING;
 
   /**************************************** constructor ******************************************/
   public MainWindow()
   {
     // create main application display
     Display display = new Display();
+    GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
+    GANTT_NONWORKING = new Color( Display.getCurrent(), 240, 240, 240 );
+
     _MainWindowShell shell = new _MainWindowShell( display );
     shell.open();
 

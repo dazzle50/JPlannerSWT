@@ -31,10 +31,10 @@ public class Date
   // min int=-2^31 gives minimum date of approx 5,800,000 BC
   // max int=2^31-1 gives maximum date of approx 5,800,000 AD
 
-  /* ======================================= constructor ======================================= */
-  private Date( int epochday )
+  /**************************************** constructor ******************************************/
+  public Date( int epochday )
   {
-    // constructor (from pre-validated epochday)
+    // constructor from epoch-day
     m_epochday = epochday;
   }
 
@@ -94,5 +94,11 @@ public class Date
   {
     LocalDate ld = LocalDate.ofEpochDay( m_epochday );
     return ld.getDayOfMonth();
+  }
+
+  /******************************************* addDays *******************************************/
+  public Date addDays( int days )
+  {
+    return new Date( m_epochday + days );
   }
 }

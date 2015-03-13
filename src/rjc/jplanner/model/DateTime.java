@@ -26,8 +26,9 @@ import java.time.LocalDateTime;
 
 public class DateTime
 {
-  private Date m_date;
-  private Time m_time;
+  private long             m_milliseconds;                        // milliseconds from 00:00:00.000 start of epoch-day
+
+  public static final long MILLISECONDS_IN_DAY = 24 * 3600 * 1000; // milliseconds in day
 
   public enum Interval
   {
@@ -35,19 +36,26 @@ public class DateTime
   }
 
   /***************************************** constructor *****************************************/
+  public DateTime( long ms )
+  {
+    // constructor
+    m_milliseconds = ms;
+  }
+
+  /***************************************** constructor *****************************************/
   public DateTime( Date date, Time time )
   {
     // constructor
-    m_date = date;
-    m_time = time;
+    m_milliseconds = date.epochday() * MILLISECONDS_IN_DAY + time.milliseconds();
   }
 
   /***************************************** constructor *****************************************/
   public DateTime( LocalDateTime dt )
   {
     // constructor
-    m_date = Date.fromLocalDate( dt.toLocalDate() );
-    m_time = Time.fromLocalTime( dt.toLocalTime() );
+    Date date = Date.fromLocalDate( dt.toLocalDate() );
+    Time time = Time.fromLocalTime( dt.toLocalTime() );
+    m_milliseconds = date.epochday() * MILLISECONDS_IN_DAY + time.milliseconds();
   }
 
   /****************************************** toString *******************************************/
@@ -55,7 +63,19 @@ public class DateTime
   public String toString()
   {
     // convert to string to "YYYY-MM-DD hh:mm:ss.mmm" format
-    return m_date.toString() + " " + m_time.toString();
+    return date().toString() + " " + time().toString();
+  }
+
+  /******************************************** date *********************************************/
+  public Date date()
+  {
+    return new Date( (int) ( m_milliseconds / MILLISECONDS_IN_DAY ) );
+  }
+
+  /******************************************** time *********************************************/
+  public Time time()
+  {
+    return Time.fromMilliseconds( (int) ( m_milliseconds % MILLISECONDS_IN_DAY ) );
   }
 
   /********************************************* now *********************************************/
@@ -68,36 +88,48 @@ public class DateTime
   /******************************************** year *********************************************/
   public int year()
   {
-    return m_date.year();
+    return date().year();
   }
 
   /******************************************** month ********************************************/
   public int month()
   {
-    return m_date.month();
+    return date().month();
   }
 
   /********************************************* day *********************************************/
   public int day()
   {
-    return m_date.day();
+    return date().day();
   }
 
   /******************************************** hours ********************************************/
   public int hours()
   {
-    return m_time.hours();
+    return time().hours();
   }
 
   /******************************************* minutes *******************************************/
   public int minutes()
   {
-    return m_time.minutes();
+    return time().minutes();
   }
 
   /******************************************* seconds *******************************************/
   public int seconds()
   {
-    return m_time.seconds();
+    return time().seconds();
+  }
+
+  /*************************************** addMilliseconds ***************************************/
+  public DateTime addMilliseconds( long ms )
+  {
+    return new DateTime( m_milliseconds + ms );
+  }
+
+  /***************************************** milliseconds ****************************************/
+  public long milliseconds()
+  {
+    return m_milliseconds;
   }
 }
