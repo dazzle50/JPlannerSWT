@@ -50,19 +50,7 @@ public class DaysColumnHeader implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( col == Day.SECTION_NAME )
-      return "Name";
-
-    if ( col == Day.SECTION_WORK )
-      return "Work";
-
-    if ( col == Day.SECTION_PERIODS )
-      return "Periods";
-
-    if ( col % 2 == 0 )
-      return "End " + ( col / 2 - 1 );
-    else
-      return "Start " + ( col / 2 );
+    return Day.sectionName( col );
   }
 
   /**************************************** getRowCount ******************************************/

@@ -187,4 +187,23 @@ public class Day
     return m_periods.size() > 0;
   }
 
+  /**************************************** sectionName ******************************************/
+  public static String sectionName( int num )
+  {
+    // return section title
+    if ( num == SECTION_NAME )
+      return "Name";
+
+    if ( num == SECTION_WORK )
+      return "Work";
+
+    if ( num == SECTION_PERIODS )
+      return "Periods";
+
+    if ( num % 2 == 0 )
+      return "End " + ( num / 2 - 1 );
+    else
+      return "Start " + ( num / 2 );
+  }
+
 }

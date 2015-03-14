@@ -66,8 +66,8 @@ public class CommandSetDayValue implements UndoCommand
   @Override
   public String text()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
-    return "TODO";
+    // command description
+    return "Day " + ( m_row + 1 ) + " " + Day.sectionName( m_column ) + " = " + m_newValue;
   }
 
 }

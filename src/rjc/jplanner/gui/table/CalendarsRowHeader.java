@@ -50,19 +50,7 @@ public class CalendarsRowHeader implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( row == Calendar.SECTION_NAME )
-      return "Name";
-
-    if ( row == Calendar.SECTION_ANCHOR )
-      return "Anchor";
-
-    if ( row == Calendar.SECTION_EXCEPTIONS )
-      return "Exceptions";
-
-    if ( row == Calendar.SECTION_CYCLE )
-      return "Cycle";
-
-    return "Normal " + ( row + 1 - Calendar.SECTION_NORMAL1 );
+    return Calendar.sectionName( row );
   }
 
   /**************************************** getRowCount ******************************************/

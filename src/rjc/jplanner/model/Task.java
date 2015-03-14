@@ -117,4 +117,48 @@ public class Task
     // task is considered null if title not set
     return ( m_title == null );
   }
+
+  /**************************************** sectionName ******************************************/
+  public static String sectionName( int num )
+  {
+    // return section title
+    if ( num == SECTION_TITLE )
+      return "Title";
+
+    if ( num == SECTION_DURATION )
+      return "Duration";
+
+    if ( num == SECTION_START )
+      return "Start";
+
+    if ( num == SECTION_END )
+      return "End";
+
+    if ( num == SECTION_WORK )
+      return "Work";
+
+    if ( num == SECTION_PRED )
+      return "Predecessors";
+
+    if ( num == SECTION_RES )
+      return "Resources";
+
+    if ( num == SECTION_TYPE )
+      return "Type";
+
+    if ( num == SECTION_PRIORITY )
+      return "Priority";
+
+    if ( num == SECTION_DEADLINE )
+      return "Deadline";
+
+    if ( num == SECTION_COST )
+      return "Cost";
+
+    if ( num == SECTION_COMMENT )
+      return "Comment";
+
+    throw new IllegalArgumentException( "Section=" + num );
+  }
+
 }

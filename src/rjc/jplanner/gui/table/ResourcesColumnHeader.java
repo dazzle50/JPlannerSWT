@@ -50,43 +50,7 @@ public class ResourcesColumnHeader implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( col == Resource.SECTION_ID )
-      return "Id";
-
-    if ( col == Resource.SECTION_NAME )
-      return "Name";
-
-    if ( col == Resource.SECTION_ORG )
-      return "Organisation";
-
-    if ( col == Resource.SECTION_GROUP )
-      return "Group";
-
-    if ( col == Resource.SECTION_ROLE )
-      return "Role";
-
-    if ( col == Resource.SECTION_ALIAS )
-      return "Alias";
-
-    if ( col == Resource.SECTION_START )
-      return "Start";
-
-    if ( col == Resource.SECTION_END )
-      return "End";
-
-    if ( col == Resource.SECTION_AVAIL )
-      return "Available";
-
-    if ( col == Resource.SECTION_COST )
-      return "Cost";
-
-    if ( col == Resource.SECTION_CALENDAR )
-      return "Calendar";
-
-    if ( col == Resource.SECTION_COMMENT )
-      return "Comment";
-
-    throw new IllegalArgumentException( "Column=" + col );
+    return Resource.sectionName( col );
   }
 
   /**************************************** getRowCount ******************************************/

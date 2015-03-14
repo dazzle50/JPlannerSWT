@@ -50,43 +50,7 @@ public class TasksColumnHeader implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return column title
-    if ( col == Task.SECTION_TITLE )
-      return "Title";
-
-    if ( col == Task.SECTION_DURATION )
-      return "Duration";
-
-    if ( col == Task.SECTION_START )
-      return "Start";
-
-    if ( col == Task.SECTION_END )
-      return "End";
-
-    if ( col == Task.SECTION_WORK )
-      return "Work";
-
-    if ( col == Task.SECTION_PRED )
-      return "Predecessors";
-
-    if ( col == Task.SECTION_RES )
-      return "Resources";
-
-    if ( col == Task.SECTION_TYPE )
-      return "Type";
-
-    if ( col == Task.SECTION_PRIORITY )
-      return "Priority";
-
-    if ( col == Task.SECTION_DEADLINE )
-      return "Deadline";
-
-    if ( col == Task.SECTION_COST )
-      return "Cost";
-
-    if ( col == Task.SECTION_COMMENT )
-      return "Comment";
-
-    throw new IllegalArgumentException( "Column=" + col );
+    return Task.sectionName( col );
   }
 
   /**************************************** getRowCount ******************************************/

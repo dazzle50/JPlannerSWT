@@ -225,4 +225,23 @@ public class Calendar
     return m_normal.get( normal );
   }
 
+  /**************************************** sectionName ******************************************/
+  public static String sectionName( int num )
+  {
+    // return section title
+    if ( num == SECTION_NAME )
+      return "Name";
+
+    if ( num == SECTION_ANCHOR )
+      return "Anchor";
+
+    if ( num == SECTION_EXCEPTIONS )
+      return "Exceptions";
+
+    if ( num == SECTION_CYCLE )
+      return "Cycle";
+
+    return "Normal " + ( num + 1 - SECTION_NORMAL1 );
+  }
+
 }

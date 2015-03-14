@@ -117,4 +117,48 @@ public class Resource
     // resource is considered null if id not set
     return ( m_id == null );
   }
+
+  /**************************************** sectionName ******************************************/
+  public static String sectionName( int num )
+  {
+    // return section title
+    if ( num == SECTION_ID )
+      return "Id";
+
+    if ( num == SECTION_NAME )
+      return "Name";
+
+    if ( num == SECTION_ORG )
+      return "Organisation";
+
+    if ( num == SECTION_GROUP )
+      return "Group";
+
+    if ( num == SECTION_ROLE )
+      return "Role";
+
+    if ( num == SECTION_ALIAS )
+      return "Alias";
+
+    if ( num == SECTION_START )
+      return "Start";
+
+    if ( num == SECTION_END )
+      return "End";
+
+    if ( num == SECTION_AVAIL )
+      return "Available";
+
+    if ( num == SECTION_COST )
+      return "Cost";
+
+    if ( num == SECTION_CALENDAR )
+      return "Calendar";
+
+    if ( num == SECTION_COMMENT )
+      return "Comment";
+
+    throw new IllegalArgumentException( "Section=" + num );
+  }
+
 }
