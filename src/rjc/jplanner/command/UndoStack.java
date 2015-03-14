@@ -20,6 +20,8 @@ package rjc.jplanner.command;
 
 import java.util.ArrayList;
 
+import rjc.jplanner.gui.MainWindow;
+
 /*************************************************************************************************/
 /********************************** Stack of UndoCommand objects *********************************/
 /*************************************************************************************************/
@@ -48,6 +50,10 @@ public class UndoStack
     m_stack.add( command );
     command.redo();
     m_index++;
+
+    // update undo-stack window if exists
+    if ( MainWindow.undoWindow != null )
+      MainWindow.undoWindow.updateList( command, m_index );
   }
 
   /******************************************** undo *********************************************/

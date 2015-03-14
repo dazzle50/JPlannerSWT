@@ -30,9 +30,6 @@ import org.eclipse.swt.widgets.Shell;
 
 public class _MainWindowShell extends Shell
 {
-  private _UndoStackWindow undoWindow;         // window to show plan undo-stack
-  private MenuItem         actionUndoStackView; // action to show plan undo-stack window
-
   /**************************************** constructor ******************************************/
   public _MainWindowShell( Display display )
   {
@@ -160,20 +157,19 @@ public class _MainWindowShell extends Shell
     Menu menu_5 = new Menu( menuView );
     menuView.setMenu( menu_5 );
 
-    actionUndoStackView = new MenuItem( menu_5, SWT.CHECK );
-    actionUndoStackView.setText( "Undo Stack ..." );
-    _MainWindowShell thisShell = this;
-    actionUndoStackView.addSelectionListener( new SelectionAdapter()
+    MainWindow.actionUndoStackView = new MenuItem( menu_5, SWT.CHECK );
+    MainWindow.actionUndoStackView.setText( "Undo Stack ..." );
+    MainWindow.actionUndoStackView.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        if ( undoWindow == null )
+        if ( MainWindow.undoWindow == null )
         {
-          undoWindow = new _UndoStackWindow( display, thisShell );
-          undoWindow.open();
+          MainWindow.undoWindow = new UndoStackWindow( display );
+          MainWindow.undoWindow.open();
         }
-        undoWindow.setVisible( actionUndoStackView.getSelection() );
+        MainWindow.undoWindow.setVisible( MainWindow.actionUndoStackView.getSelection() );
       }
     } );
 
@@ -204,14 +200,6 @@ public class _MainWindowShell extends Shell
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
-  }
-
-  /*********************************** undoStackWindowDisposed ***********************************/
-  public void undoStackWindowDisposed()
-  {
-    // if undo-stack window is disposed (closed) then clear handle and untick menu-item
-    undoWindow = null;
-    actionUndoStackView.setSelection( false );
   }
 
 }

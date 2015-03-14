@@ -20,8 +20,8 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 
-import rjc.jplanner.command.UndoCommand;
 import rjc.jplanner.command.UndoStack;
+import rjc.jplanner.gui.table.TableRegister;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.Day.DefaultDayTypes;
 
@@ -48,6 +48,11 @@ public class Plan
   private ArrayList<Calendar> m_calendars;     // list of plan calendars
   private ArrayList<Day>      m_daytypes;      // list of plan day types
 
+  private TableRegister       m_taskTables;    // register of tables showing tasks
+  private TableRegister       m_resourceTables; // register of tables showing resources
+  private TableRegister       m_calendarTables; // register of tables showing calendars
+  private TableRegister       m_dayTables;     // register of tables showing day-types
+
   /**************************************** constructor ******************************************/
   public Plan()
   {
@@ -56,7 +61,13 @@ public class Plan
     m_resources = new ArrayList<Resource>();
     m_calendars = new ArrayList<Calendar>();
     m_daytypes = new ArrayList<Day>();
+
     m_undostack = new UndoStack();
+
+    m_taskTables = new TableRegister();
+    m_resourceTables = new TableRegister();
+    m_calendarTables = new TableRegister();
+    m_dayTables = new TableRegister();
   }
 
   /***************************************** toString ********************************************/
@@ -126,14 +137,14 @@ public class Plan
   /**************************************** tasksCount *******************************************/
   public int tasksCount()
   {
-    // return number of tasks in plan
+    // return number of tasks in plan (including null tasks)
     return m_tasks.size();
   }
 
   /************************************** resourcesCount *****************************************/
   public int resourcesCount()
   {
-    // return number of resources in plan
+    // return number of resources in plan (including null resources)
     return m_resources.size();
   }
 
@@ -151,21 +162,21 @@ public class Plan
     return m_daytypes.size();
   }
 
-  /******************************************* task **********************************************/
+  /******************************************** task *********************************************/
   public Task task( int index )
   {
     // return task corresponding to index
     return m_tasks.get( index );
   }
 
-  /***************************************** resource ********************************************/
+  /****************************************** resource *******************************************/
   public Resource resource( int index )
   {
     // return resource corresponding to index
     return m_resources.get( index );
   }
 
-  /***************************************** calendar ********************************************/
+  /****************************************** calendar *******************************************/
   public Calendar calendar( int index )
   {
     // return calendar corresponding to index
@@ -239,11 +250,28 @@ public class Plan
     return m_undostack;
   }
 
-  /******************************************** push *********************************************/
-  public void push( UndoCommand command )
+  /****************************************** dayTables ******************************************/
+  public TableRegister dayTables()
   {
-    // push new command onto undo stack
-    m_undostack.push( command );
+    return m_dayTables;
+  }
+
+  /**************************************** calendarTables ***************************************/
+  public TableRegister calendarTables()
+  {
+    return m_calendarTables;
+  }
+
+  /**************************************** resourceTables ***************************************/
+  public TableRegister resourceTables()
+  {
+    return m_resourceTables;
+  }
+
+  /****************************************** taskTables *****************************************/
+  public TableRegister taskTables()
+  {
+    return m_taskTables;
   }
 
 }

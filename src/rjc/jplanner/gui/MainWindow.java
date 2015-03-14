@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MenuItem;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -29,9 +30,12 @@ import org.eclipse.swt.widgets.Display;
 
 public class MainWindow
 {
-  public static Color     GANTT_BACKGROUND;
-  public static Color     GANTT_NONWORKING;
-  public static Transform TRANSFORM;
+  public static Color           GANTT_BACKGROUND;
+  public static Color           GANTT_NONWORKING;
+  public static Transform       TRANSFORM;
+
+  public static UndoStackWindow undoWindow;         // window to show plan undo-stack
+  public static MenuItem        actionUndoStackView; // action to show plan undo-stack window
 
   /**************************************** constructor ******************************************/
   public MainWindow()

@@ -72,9 +72,9 @@ public class DaysBody implements IDataProvider
 
     // special command for setting number of work periods, otherwise generic
     if ( col == Day.SECTION_PERIODS )
-      JPlanner.plan.push( new CommandSetDayNumPeriods( row, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandSetDayNumPeriods( row, newValue, oldValue ) );
     else
-      JPlanner.plan.push( new CommandSetDayValue( col, row, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandSetDayValue( col, row, newValue, oldValue ) );
   }
 
 }
