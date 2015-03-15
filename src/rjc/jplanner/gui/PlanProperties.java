@@ -34,10 +34,10 @@ import rjc.jplanner.JPlanner;
 /********************************** Widget for plan properties ***********************************/
 /*************************************************************************************************/
 
-public class _PlanProperties extends Composite
+public class PlanProperties extends Composite
 {
   private Text            m_titleText;
-  private _DateTimeEditor m_startDT;
+  private DateTimeEditor m_startDT;
   private Text            m_firstText;
   private Text            m_endText;
   private Combo           m_calCombo;
@@ -52,7 +52,7 @@ public class _PlanProperties extends Composite
   private Label           m_daysNum;
 
   /**************************************** constructor ******************************************/
-  public _PlanProperties( Composite parent, int style )
+  public PlanProperties( Composite parent, int style )
   {
     super( parent, style );
     setLayout( new GridLayout( 2, false ) );
@@ -68,7 +68,7 @@ public class _PlanProperties extends Composite
     startLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
     startLabel.setText( "Start" );
 
-    m_startDT = new _DateTimeEditor( this, SWT.NONE );
+    m_startDT = new DateTimeEditor( this, SWT.NONE );
     m_startDT.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label earliestLabel = new Label( this, SWT.NONE );

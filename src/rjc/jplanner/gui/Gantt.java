@@ -20,32 +20,47 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+
+import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
-/**************************** Widget display & editing of plan notes *****************************/
+/*************** Gantt shows tasks in a gantt plot with upper & lower gantt scales ***************/
 /*************************************************************************************************/
 
-public class _PlanNotes extends Composite
+public class Gantt extends Composite
 {
+  private DateTime    m_start;
+  private DateTime    m_end;
+  private double      m_secsPP;
+
+  private GanttScale m_upperScale;
+  private GanttScale m_lowerScale;
+  private GanttPlot  m_chart;
 
   /**************************************** constructor ******************************************/
-  public _PlanNotes( Composite parent, int style )
+  public Gantt( Composite parent )
   {
-    super( parent, style );
-    setLayout( new GridLayout( 1, false ) );
+    super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
+    setBackground( getBackground() ); // needed for some strange reason for no_redraw_resize to work!
 
-    Label notesLabel = new Label( this, SWT.NONE );
-    notesLabel.setText( "Notes" );
+    GridLayout gridLayout = new GridLayout( 1, false );
+    gridLayout.verticalSpacing = 0;
+    gridLayout.marginWidth = 0;
+    gridLayout.horizontalSpacing = 0;
+    gridLayout.marginHeight = 0;
+    setLayout( gridLayout );
 
-    StyledText notesText = new StyledText( this, SWT.BORDER | SWT.V_SCROLL );
-    notesText.setAlwaysShowScrollBars( false );
-    notesText.setWordWrap( true );
-    notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    m_upperScale = new GanttScale( this );
+    m_upperScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+
+    m_lowerScale = new GanttScale( this );
+    m_lowerScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+
+    m_chart = new GanttPlot( this );
+    m_chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
   }
 
   @Override
@@ -53,5 +68,4 @@ public class _PlanNotes extends Composite
   {
     // Disable the check that prevents subclassing of SWT components
   }
-
 }

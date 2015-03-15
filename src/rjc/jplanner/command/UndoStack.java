@@ -20,6 +20,8 @@ package rjc.jplanner.command;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.MenuItem;
+
 import rjc.jplanner.gui.MainWindow;
 
 /*************************************************************************************************/
@@ -50,6 +52,7 @@ public class UndoStack
     m_stack.add( command );
     command.redo();
     m_index++;
+    updateUndoRedoMenuItems();
 
     // update undo-stack window if exists
     if ( MainWindow.undoWindow != null )
@@ -62,6 +65,7 @@ public class UndoStack
     // decrement index and revert command
     m_index--;
     m_stack.get( m_index ).undo();
+    updateUndoRedoMenuItems();
   }
 
   /******************************************** redo *********************************************/
@@ -70,6 +74,41 @@ public class UndoStack
     // action command and increment index
     m_stack.get( m_index ).redo();
     m_index++;
+    updateUndoRedoMenuItems();
+  }
+
+  /*********************************** updateUndoRedoMenuItems ***********************************/
+  private void updateUndoRedoMenuItems()
+  {
+    // update undo menu-item
+    MenuItem undo = MainWindow.actionUndo;
+    if ( m_index > 0 )
+    {
+      undo.setText( "Undo " + undoText() + "\tCtrl+Z" );
+      undo.setEnabled( true );
+    }
+    else
+    {
+      undo.setText( "Undo\tCtrl+Z" );
+      undo.setEnabled( false );
+    }
+
+    // update redo menu-item
+    MenuItem redo = MainWindow.actionRedo;
+    if ( m_index < size() )
+    {
+      redo.setText( "Redo " + redoText() + "\tCtrl+Y" );
+      redo.setEnabled( true );
+    }
+    else
+    {
+      redo.setText( "Redo\tCtrl+Y" );
+      redo.setEnabled( false );
+    }
+
+    // also update undo-stack window selected item if exists
+    if ( MainWindow.undoWindow != null )
+      MainWindow.undoWindow.updateSelection();
   }
 
   /****************************************** undoText *******************************************/
@@ -99,6 +138,7 @@ public class UndoStack
     // clean the stack
     m_stack.clear();
     m_index = 0;
+    updateUndoRedoMenuItems();
   }
 
   /******************************************** size *********************************************/

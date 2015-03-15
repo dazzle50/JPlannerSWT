@@ -36,6 +36,8 @@ public class MainWindow
 
   public static UndoStackWindow undoWindow;         // window to show plan undo-stack
   public static MenuItem        actionUndoStackView; // action to show plan undo-stack window
+  public static MenuItem        actionUndo;
+  public static MenuItem        actionRedo;
 
   /**************************************** constructor ******************************************/
   public MainWindow()
@@ -46,7 +48,7 @@ public class MainWindow
     GANTT_NONWORKING = new Color( display, 240, 240, 240 );
     TRANSFORM = new Transform( display );
 
-    _MainWindowShell shell = new _MainWindowShell( display );
+    MainWindowShell shell = new MainWindowShell( display );
     shell.open();
 
     // run the event loop as long as the window is open

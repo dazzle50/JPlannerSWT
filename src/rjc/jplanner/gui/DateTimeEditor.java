@@ -30,13 +30,13 @@ import org.eclipse.swt.widgets.MenuItem;
 /***************************** Widget with both date & time editors ******************************/
 /*************************************************************************************************/
 
-public class _DateTimeEditor extends Composite
+public class DateTimeEditor extends Composite
 {
   private DateTime m_dateWidget; // SWT "DateTime" widget (not rjc.jplanner.model.DateTime)
   private DateTime m_timeWidget; // SWT "DateTime" widget (not rjc.jplanner.model.DateTime)
 
   /**************************************** constructor ******************************************/
-  public _DateTimeEditor( Composite parent, int style )
+  public DateTimeEditor( Composite parent, int style )
   {
     // construct composite with date-widget and time-widget, plus convenience menu
     super( parent, style );

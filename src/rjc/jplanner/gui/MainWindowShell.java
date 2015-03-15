@@ -28,10 +28,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public class _MainWindowShell extends Shell
+import rjc.jplanner.JPlanner;
+
+public class MainWindowShell extends Shell
 {
   /**************************************** constructor ******************************************/
-  public _MainWindowShell( Display display )
+  public MainWindowShell( Display display )
   {
     super( display, SWT.SHELL_TRIM );
     setSize( 650, 480 );
@@ -85,13 +87,31 @@ public class _MainWindowShell extends Shell
     Menu menu_2 = new Menu( menuEdit );
     menuEdit.setMenu( menu_2 );
 
-    MenuItem actionUndo = new MenuItem( menu_2, SWT.NONE );
-    actionUndo.setEnabled( false );
-    actionUndo.setText( "Undo" );
+    MainWindow.actionUndo = new MenuItem( menu_2, SWT.NONE );
+    MainWindow.actionUndo.setText( "Undo\tCtrl+Z" );
+    MainWindow.actionUndo.setAccelerator( SWT.CTRL + 'Z' );
+    MainWindow.actionUndo.setEnabled( false );
+    MainWindow.actionUndo.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        JPlanner.plan.undostack().undo();
+      }
+    } );
 
-    MenuItem actionRedo = new MenuItem( menu_2, SWT.NONE );
-    actionRedo.setText( "Redo" );
-    actionRedo.setEnabled( false );
+    MainWindow.actionRedo = new MenuItem( menu_2, SWT.NONE );
+    MainWindow.actionRedo.setText( "Redo\tCtrl+Y" );
+    MainWindow.actionRedo.setAccelerator( SWT.CTRL + 'Y' );
+    MainWindow.actionRedo.setEnabled( false );
+    MainWindow.actionRedo.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        JPlanner.plan.undostack().redo();
+      }
+    } );
 
     new MenuItem( menu_2, SWT.SEPARATOR );
 
@@ -170,6 +190,8 @@ public class _MainWindowShell extends Shell
           MainWindow.undoWindow.open();
         }
         MainWindow.undoWindow.setVisible( MainWindow.actionUndoStackView.getSelection() );
+        MainWindow.undoWindow.setMinimized( false );
+        MainWindow.undoWindow.forceActive();
       }
     } );
 
@@ -193,7 +215,7 @@ public class _MainWindowShell extends Shell
     actionAboutJplanner.setEnabled( false );
     actionAboutJplanner.setText( "About JPlanner" );
 
-    new _MainTabWidget( this );
+    new MainTabWidget( this );
   }
 
   @Override

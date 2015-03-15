@@ -32,17 +32,17 @@ import rjc.jplanner.gui.table.XNatTable;
 /*************** Widget showing the Plan/Tasks&Gantt/Resources/Calendars/Days tabs ***************/
 /*************************************************************************************************/
 
-public class _MainTabWidget extends TabFolder
+public class MainTabWidget extends TabFolder
 {
-  private _PlanProperties m_planProperties;
-  private _PlanNotes      m_planNotes;
+  private PlanProperties m_planProperties;
+  private PlanNotes      m_planNotes;
   private NatTable        m_tableDays;
   private NatTable        m_tableCalendars;
   private NatTable        m_tableResources;
   private NatTable        m_tableTasks;
 
   /**************************************** constructor ******************************************/
-  public _MainTabWidget( Composite parent )
+  public MainTabWidget( Composite parent )
   {
     super( parent, SWT.NONE );
 
@@ -56,12 +56,12 @@ public class _MainTabWidget extends TabFolder
     ScrolledComposite scrolledProperties = new ScrolledComposite( splitterPlanTab, SWT.H_SCROLL | SWT.V_SCROLL );
     scrolledProperties.setExpandHorizontal( true );
     scrolledProperties.setExpandVertical( true );
-    m_planProperties = new _PlanProperties( scrolledProperties, SWT.NONE );
+    m_planProperties = new PlanProperties( scrolledProperties, SWT.NONE );
     m_planProperties.setBackground( getBackground() );
     scrolledProperties.setContent( m_planProperties );
     scrolledProperties.setMinSize( m_planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
 
-    m_planNotes = new _PlanNotes( splitterPlanTab, SWT.NONE );
+    m_planNotes = new PlanNotes( splitterPlanTab, SWT.NONE );
     m_planNotes.setBackground( getBackground() );
     splitterPlanTab.preferredLeftChildWidth = m_planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x + 1;
     splitterPlanTab.monitor( scrolledProperties, m_planNotes );
@@ -79,7 +79,7 @@ public class _MainTabWidget extends TabFolder
     ScrolledComposite ganttView = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL );
     ganttView.setExpandHorizontal( true );
     ganttView.setExpandVertical( true );
-    _Gantt gantt = new _Gantt( ganttView );
+    Gantt gantt = new Gantt( ganttView );
     ganttView.setContent( gantt );
     ganttView.setMinSize( gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
     splitterTasksGantt.monitor( m_tableTasks, ganttView );

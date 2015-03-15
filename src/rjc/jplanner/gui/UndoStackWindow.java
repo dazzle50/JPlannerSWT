@@ -128,4 +128,11 @@ public class UndoStackWindow extends Shell
     m_list.setSelection( index );
   }
 
+  /*************************************** updateSelection ***************************************/
+  public void updateSelection()
+  {
+    // ensure list selected item matches undo-stack index
+    m_list.setSelection( JPlanner.plan.undostack().index() );
+  }
+
 }
