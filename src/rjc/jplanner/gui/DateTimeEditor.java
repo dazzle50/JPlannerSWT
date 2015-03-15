@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *

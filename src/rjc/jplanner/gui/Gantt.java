@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
@@ -32,9 +31,9 @@ import rjc.jplanner.model.DateTime;
 
 public class Gantt extends Composite
 {
-  private DateTime    m_start;
-  private DateTime    m_end;
-  private double      m_secsPP;
+  private DateTime   m_start;
+  private DateTime   m_end;
+  private double     m_secsPP;
 
   private GanttScale m_upperScale;
   private GanttScale m_lowerScale;

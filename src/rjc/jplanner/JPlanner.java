@@ -18,6 +18,8 @@
 
 package rjc.jplanner;
 
+import org.eclipse.swt.widgets.Display;
+
 import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
@@ -46,11 +48,29 @@ public class JPlanner
     plan.initialise();
     trace( "" + plan );
 
-    new MainWindow();
+    // create main application display
+    Display display = new Display();
+    MainWindow window = new MainWindow( display );
+    window.open();
+
+    // run the event loop as long as the window is open
+    while ( !window.isDisposed() )
+    {
+      // read the next OS event queue and transfer it to a SWT event 
+      if ( !display.readAndDispatch() )
+      {
+        // if there are currently no other OS event to process, sleep until the next OS event is available 
+        display.sleep();
+      }
+    }
+
+    // disposes all associated windows and their components
+    display.dispose();
+
     trace( "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ JPlanner ended ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" );
   }
 
-  /******************************************* debug *********************************************/
+  /******************************************* trace *********************************************/
   public static void trace( String txt )
   {
     // prints txt prefixed by date-time

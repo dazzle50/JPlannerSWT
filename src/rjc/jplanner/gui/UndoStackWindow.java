@@ -42,12 +42,13 @@ public class UndoStackWindow extends Shell
   /**************************************** constructor ******************************************/
   public UndoStackWindow( Display display )
   {
+    // create undo-stack window
     super( display, SWT.SHELL_TRIM );
     setSize( 248, 200 );
     setText( "Undo stack" );
     setLayout( new FillLayout( SWT.FILL ) );
 
-    // inform the main window if this window is disposed (i.e. closed by user pressing X in corner)
+    // inform the main-window if this window is disposed (e.g. when closed by user pressing X in corner)
     addDisposeListener( new DisposeListener()
     {
       @Override
@@ -60,12 +61,12 @@ public class UndoStackWindow extends Shell
       }
     } );
 
-    // create list to show commands
+    // create list to show undo-commands
     m_list = new List( this, SWT.V_SCROLL );
     setList();
     m_list.showSelection();
 
-    // if the selected item is above or below current undostack index then redo or undo
+    // if user changes selected item, execute redo or undo commands as appropriate
     m_list.addListener( SWT.Selection, new Listener()
     {
       @Override

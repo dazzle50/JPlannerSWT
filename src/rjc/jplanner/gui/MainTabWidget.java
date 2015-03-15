@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
@@ -36,10 +35,10 @@ public class MainTabWidget extends TabFolder
 {
   private PlanProperties m_planProperties;
   private PlanNotes      m_planNotes;
-  private NatTable        m_tableDays;
-  private NatTable        m_tableCalendars;
-  private NatTable        m_tableResources;
-  private NatTable        m_tableTasks;
+  private NatTable       m_tableDays;
+  private NatTable       m_tableCalendars;
+  private NatTable       m_tableResources;
+  private NatTable       m_tableTasks;
 
   /**************************************** constructor ******************************************/
   public MainTabWidget( Composite parent )

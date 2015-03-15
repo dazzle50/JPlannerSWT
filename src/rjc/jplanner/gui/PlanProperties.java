@@ -1,5 +1,4 @@
 /**************************************************************************
- *  ######## WRITTEN USING WindowBuilder Editor ########                  *
  *  Copyright (C) 2015 by Richard Crook                                   *
  *  http://code.google.com/p/jplanner/                                    *
  *                                                                        *
@@ -36,20 +35,20 @@ import rjc.jplanner.JPlanner;
 
 public class PlanProperties extends Composite
 {
-  private Text            m_titleText;
+  private Text           m_titleText;
   private DateTimeEditor m_startDT;
-  private Text            m_firstText;
-  private Text            m_endText;
-  private Combo           m_calCombo;
-  private Text            m_formatText;
-  private Text            m_filenameText;
-  private Text            m_filelocText;
-  private Text            m_savedbyText;
-  private Text            m_savedwhenText;
-  private Label           m_tasksNum;
-  private Label           m_resourcesNum;
-  private Label           m_calendarsNum;
-  private Label           m_daysNum;
+  private Text           m_firstText;
+  private Text           m_endText;
+  private Combo          m_calCombo;
+  private Text           m_formatText;
+  private Text           m_filenameText;
+  private Text           m_filelocText;
+  private Text           m_savedbyText;
+  private Text           m_savedwhenText;
+  private Label          m_tasksNum;
+  private Label          m_resourcesNum;
+  private Label          m_calendarsNum;
+  private Label          m_daysNum;
 
   /**************************************** constructor ******************************************/
   public PlanProperties( Composite parent, int style )
