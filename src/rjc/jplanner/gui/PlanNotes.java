@@ -57,10 +57,17 @@ public class PlanNotes extends Composite
     // Disable the check that prevents subclassing of SWT components
   }
 
-  /************************************** updatePlanNotes ****************************************/
-  public void updatePlanNotes()
+  /*************************************** updateFromPlan ****************************************/
+  public void updateFromPlan()
   {
-    // if notes not changed, return immediately, otherwise update via command
+    // update the gui noteswith text from plan
+    m_notesText.setText( JPlanner.plan.notes() );
+  }
+
+  /************************************** updatePlanNotes ****************************************/
+  public void updatePlan()
+  {
+    // if notes not changed, return doing nothing, otherwise update via undostack command
     if ( JPlanner.plan.notes().equals( m_notesText.getText() ) )
       return;
 

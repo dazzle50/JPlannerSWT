@@ -21,7 +21,6 @@ package rjc.jplanner.model;
 import java.util.ArrayList;
 
 import rjc.jplanner.command.UndoStack;
-import rjc.jplanner.gui.table.TableRegister;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.Day.DefaultDayTypes;
 
@@ -49,11 +48,6 @@ public class Plan
   private ArrayList<Calendar> m_calendars;     // list of plan calendars
   private ArrayList<Day>      m_daytypes;      // list of plan day types
 
-  private TableRegister       m_taskTables;    // register of tables showing tasks
-  private TableRegister       m_resourceTables; // register of tables showing resources
-  private TableRegister       m_calendarTables; // register of tables showing calendars
-  private TableRegister       m_dayTables;     // register of tables showing day-types
-
   /**************************************** constructor ******************************************/
   public Plan()
   {
@@ -64,11 +58,6 @@ public class Plan
     m_daytypes = new ArrayList<Day>();
 
     m_undostack = new UndoStack();
-
-    m_taskTables = new TableRegister();
-    m_resourceTables = new TableRegister();
-    m_calendarTables = new TableRegister();
-    m_dayTables = new TableRegister();
   }
 
   /***************************************** toString ********************************************/
@@ -103,8 +92,8 @@ public class Plan
       m_tasks.add( new Task() );
 
     m_title = "";
-    m_start = DateTime.now();
     m_calendar = calendar( 0 );
+    m_start = m_calendar.workUp( new DateTime( Date.now(), Time.fromMilliseconds( 0 ) ) );
     m_datetimeFormat = "ddd dd/MM/yyyy hh:mm";
     m_dateFormat = "dd/MM/yyyy";
     m_filename = "";
@@ -273,28 +262,40 @@ public class Plan
     return m_undostack;
   }
 
-  /****************************************** dayTables ******************************************/
-  public TableRegister dayTables()
+  /******************************************* setNotes ******************************************/
+  public void setNotes( String notes )
   {
-    return m_dayTables;
+    m_notes = notes;
   }
 
-  /**************************************** calendarTables ***************************************/
-  public TableRegister calendarTables()
+  /******************************************* setTitle ******************************************/
+  public void setTitle( String title )
   {
-    return m_calendarTables;
+    m_title = title;
   }
 
-  /**************************************** resourceTables ***************************************/
-  public TableRegister resourceTables()
+  /******************************************* setStart ******************************************/
+  public void setStart( DateTime start )
   {
-    return m_resourceTables;
+    m_start = start;
   }
 
-  /****************************************** taskTables *****************************************/
-  public TableRegister taskTables()
+  /****************************************** setCalendar ****************************************/
+  public void setCalendar( Calendar cal )
   {
-    return m_taskTables;
+    m_calendar = cal;
+  }
+
+  /*************************************** setDatetimeFormat *************************************/
+  public void setDatetimeFormat( String DTformat )
+  {
+    m_datetimeFormat = DTformat;
+  }
+
+  /**************************************** setDateFormat ****************************************/
+  public void setDateFormat( String Dformat )
+  {
+    m_dateFormat = Dformat;
   }
 
 }

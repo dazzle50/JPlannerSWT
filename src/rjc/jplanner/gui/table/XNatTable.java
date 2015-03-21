@@ -45,7 +45,7 @@ import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
-import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.gui.editor.IntSpinEditor;
 
 /*************************************************************************************************/
@@ -126,7 +126,7 @@ public class XNatTable extends NatTable
         IConfigLabelAccumulator label = new DaysLabelAccumulator();
         int[] widthD = { 60, 25, 150 };
         configTable( body, colh, rowh, label, widthD );
-        JPlanner.plan.dayTables().register( this );
+        MainWindow.dayTables().register( this );
         break;
 
       case CALENDAR:
@@ -137,7 +137,7 @@ public class XNatTable extends NatTable
         label = new CalendarsLabelAccumulator();
         int[] widthC = { 140, 75 };
         configTable( body, colh, rowh, label, widthC );
-        JPlanner.plan.calendarTables().register( this );
+        MainWindow.calendarTables().register( this );
         break;
 
       case RESOURCE:
@@ -148,7 +148,7 @@ public class XNatTable extends NatTable
         label = new ResourcesLabelAccumulator();
         int[] widthR = { 100, 25, 50 };
         configTable( body, colh, rowh, label, widthR );
-        JPlanner.plan.resourceTables().register( this );
+        MainWindow.resourceTables().register( this );
         break;
 
       case TASK:
@@ -159,7 +159,7 @@ public class XNatTable extends NatTable
         label = new TasksLabelAccumulator();
         int[] widthT = { 100, 25, 200, 60, 100, 100, 60 };
         configTable( body, colh, rowh, label, widthT );
-        JPlanner.plan.taskTables().register( this );
+        MainWindow.taskTables().register( this );
         break;
 
       default:

@@ -244,4 +244,46 @@ public class Calendar
     return "Normal " + ( num + 1 - SECTION_NORMAL1 );
   }
 
+  /****************************************** workDown *******************************************/
+  public DateTime workDown( DateTime dt )
+  {
+    // return date-time if working, otherwise next future working date-time
+    Date date = dt.date();
+    Time time = dt.time();
+    Day day = day( date );
+
+    Time newTime = day.workDown( time );
+    while ( newTime == null )
+    {
+      date = date.addDays( -1 );
+      day = day( date );
+
+      if ( day.isWorking() )
+        newTime = day.end();
+    }
+
+    return new DateTime( date, newTime );
+  }
+
+  /******************************************** workUp *********************************************/
+  public DateTime workUp( DateTime dt )
+  {
+    // return date-time if working, otherwise last past working date-time
+    Date date = dt.date();
+    Time time = dt.time();
+    Day day = day( date );
+
+    Time newTime = day.workUp( time );
+    while ( newTime == null )
+    {
+      date = date.addDays( 1 );
+      day = day( date );
+
+      if ( day.isWorking() )
+        newTime = day.start();
+    }
+
+    return new DateTime( date, newTime );
+  }
+
 }

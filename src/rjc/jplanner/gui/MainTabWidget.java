@@ -59,14 +59,15 @@ public class MainTabWidget extends TabFolder
     scrolledProperties.setExpandVertical( true );
     m_planProperties = new PlanProperties( scrolledProperties, SWT.NONE );
     m_planProperties.setBackground( getBackground() );
+    m_planProperties.updateFromPlan();
     scrolledProperties.setContent( m_planProperties );
     scrolledProperties.setMinSize( m_planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
 
     m_planNotes = new PlanNotes( splitterPlanTab, SWT.NONE );
     m_planNotes.setBackground( getBackground() );
+    m_planNotes.updateFromPlan();
     splitterPlanTab.preferredLeftChildWidth = m_planProperties.computeSize( SWT.DEFAULT, SWT.DEFAULT ).x + 1;
     splitterPlanTab.monitor( scrolledProperties, m_planNotes );
-    m_planProperties.updateFromPlan();
 
     // Tasks & Gantt tab
     TabItem tabTasksGantt = new TabItem( this, SWT.NONE );
@@ -110,8 +111,8 @@ public class MainTabWidget extends TabFolder
       public void handleEvent( Event event )
       {
         // check if plan properties or notes changed
-        m_planProperties.updatePlanProperties();
-        m_planNotes.updatePlanNotes();
+        m_planProperties.updatePlan();
+        m_planNotes.updatePlan();
       }
     } );
 
@@ -121,6 +122,18 @@ public class MainTabWidget extends TabFolder
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /***************************************** properties ******************************************/
+  public PlanProperties properties()
+  {
+    return m_planProperties;
+  }
+
+  /******************************************** notes ********************************************/
+  public PlanNotes notes()
+  {
+    return m_planNotes;
   }
 
 }

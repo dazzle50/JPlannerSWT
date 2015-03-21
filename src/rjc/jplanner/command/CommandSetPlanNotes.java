@@ -19,6 +19,7 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.MainWindow;
 
 /*************************************************************************************************/
 /****************************** UndoCommand for updating plan notes ******************************/
@@ -41,24 +42,32 @@ public class CommandSetPlanNotes implements UndoCommand
   @Override
   public void redo()
   {
-    // TODO Auto-generated method stub
+    // action command
+    JPlanner.plan.setNotes( m_newNotes );
 
+    // update plan notes on gui
+    MainWindow.notes().updateFromPlan();
+    MainWindow.notes().update();
   }
 
   /******************************************* undo **********************************************/
   @Override
   public void undo()
   {
-    // TODO Auto-generated method stub
+    // revert command
+    JPlanner.plan.setNotes( m_oldNotes );
 
+    // update plan notes on gui
+    MainWindow.notes().updateFromPlan();
+    MainWindow.notes().update();
   }
 
   /******************************************* text **********************************************/
   @Override
   public String text()
   {
-    // TODO Auto-generated method stub
-    return null;
+    // command description
+    return "Plan notes";
   }
 
 }

@@ -19,6 +19,7 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.DateTime;
 
@@ -61,24 +62,55 @@ public class CommandSetPlanProperties implements UndoCommand
   @Override
   public void redo()
   {
-    // TODO Auto-generated method stub
+    // action command
+    JPlanner.plan.setTitle( m_newTitle );
+    JPlanner.plan.setStart( m_newStart );
+    JPlanner.plan.setCalendar( m_newCal );
+    JPlanner.plan.setDatetimeFormat( m_newDTformat );
+    JPlanner.plan.setDateFormat( m_newDformat );
 
+    // update plan properties on gui
+    MainWindow.properties().updateFromPlan();
+    MainWindow.properties().update();
   }
 
   /******************************************* undo **********************************************/
   @Override
   public void undo()
   {
-    // TODO Auto-generated method stub
+    // revert command
+    JPlanner.plan.setTitle( m_oldTitle );
+    JPlanner.plan.setStart( m_oldStart );
+    JPlanner.plan.setCalendar( m_oldCal );
+    JPlanner.plan.setDatetimeFormat( m_oldDTformat );
+    JPlanner.plan.setDateFormat( m_oldDformat );
 
+    // update plan properties on gui
+    MainWindow.properties().updateFromPlan();
+    MainWindow.properties().update();
   }
 
   /******************************************* text **********************************************/
   @Override
   public String text()
   {
-    // TODO Auto-generated method stub
-    return null;
+    // command description
+    StringBuilder txt = new StringBuilder( 32 );
+    txt.append( "Plan " );
+
+    if ( !m_newTitle.equals( m_oldTitle ) )
+      txt.append( "title/" );
+    if ( m_newStart.milliseconds() != m_oldStart.milliseconds() )
+      txt.append( "default start/" );
+    if ( m_newCal != m_oldCal )
+      txt.append( "default calendar/" );
+    if ( !m_newDTformat.equals( m_oldDTformat ) )
+      txt.append( "date-time format/" );
+    if ( !m_newDformat.equals( m_oldDformat ) )
+      txt.append( "date format/" );
+
+    txt.deleteCharAt( txt.length() - 1 );
+    return txt.toString();
   }
 
 }

@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.TableRegister;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -37,6 +38,8 @@ import rjc.jplanner.JPlanner;
 
 public class MainWindow extends Shell
 {
+  private static MainTabWidget  m_mainTabWidget;
+
   public static Color           GANTT_BACKGROUND;
   public static Color           GANTT_NONWORKING;
   public static Transform       TRANSFORM;
@@ -45,6 +48,11 @@ public class MainWindow extends Shell
   public static MenuItem        actionUndoStackView; // action to show plan undo-stack window
   public static MenuItem        actionUndo;
   public static MenuItem        actionRedo;
+
+  private static TableRegister  m_taskTables;       // register of tables showing tasks
+  private static TableRegister  m_resourceTables;   // register of tables showing resources
+  private static TableRegister  m_calendarTables;   // register of tables showing calendars
+  private static TableRegister  m_dayTables;        // register of tables showing day-types
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -70,7 +78,12 @@ public class MainWindow extends Shell
     addViewMenu( menuBar );
     addHelpMenu( menuBar );
 
-    new MainTabWidget( this );
+    m_taskTables = new TableRegister();
+    m_resourceTables = new TableRegister();
+    m_calendarTables = new TableRegister();
+    m_dayTables = new TableRegister();
+
+    m_mainTabWidget = new MainTabWidget( this );
   }
 
   @Override
@@ -289,6 +302,42 @@ public class MainWindow extends Shell
     MenuItem actionAboutJplanner = new MenuItem( helpMenu, SWT.NONE );
     actionAboutJplanner.setText( "About JPlanner" );
     actionAboutJplanner.setEnabled( false );
+  }
+
+  /****************************************** dayTables ******************************************/
+  public static TableRegister dayTables()
+  {
+    return m_dayTables;
+  }
+
+  /**************************************** calendarTables ***************************************/
+  public static TableRegister calendarTables()
+  {
+    return m_calendarTables;
+  }
+
+  /**************************************** resourceTables ***************************************/
+  public static TableRegister resourceTables()
+  {
+    return m_resourceTables;
+  }
+
+  /****************************************** taskTables *****************************************/
+  public static TableRegister taskTables()
+  {
+    return m_taskTables;
+  }
+
+  /***************************************** properties ******************************************/
+  public static PlanProperties properties()
+  {
+    return m_mainTabWidget.properties();
+  }
+
+  /******************************************** notes ********************************************/
+  public static PlanNotes notes()
+  {
+    return m_mainTabWidget.notes();
   }
 
 }

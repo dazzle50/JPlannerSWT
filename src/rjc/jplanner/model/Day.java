@@ -129,6 +129,20 @@ public class Day
     return m_periods.get( num ).m_start;
   }
 
+  /******************************************** end **********************************************/
+  public Time end()
+  {
+    // return end of working day
+    return end( m_periods.size() - 1 );
+  }
+
+  /******************************************* start *********************************************/
+  public Time start()
+  {
+    // return start of working day
+    return start( 0 );
+  }
+
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
@@ -204,6 +218,45 @@ public class Day
       return "End " + ( num / 2 - 1 );
     else
       return "Start " + ( num / 2 );
+  }
+
+  /****************************************** workDown *******************************************/
+  public Time workDown( Time time )
+  {
+    // if in work period, return original time, otherwise end of earlier period, or null
+    int ms = time.milliseconds();
+    Time answer = null;
+
+    for ( DayWorkPeriod period : m_periods )
+    {
+      if ( ms <= period.m_start.milliseconds() )
+        return answer;
+
+      if ( ms <= period.m_end.milliseconds() )
+        return time;
+
+      answer = period.m_end;
+    }
+
+    return answer;
+  }
+
+  /******************************************* workUp ********************************************/
+  public Time workUp( Time time )
+  {
+    // if in work period, return original time, otherwise start of later period, or null
+    int ms = time.milliseconds();
+
+    for ( DayWorkPeriod period : m_periods )
+    {
+      if ( ms < period.m_start.milliseconds() )
+        return period.m_start;
+
+      if ( ms < period.m_end.milliseconds() )
+        return time;
+    }
+
+    return null;
   }
 
 }

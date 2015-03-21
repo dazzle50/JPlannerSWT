@@ -79,7 +79,7 @@ public class DateTimeEditor extends Composite
   /***************************************** setDateTime *****************************************/
   public void setDateTime( rjc.jplanner.model.DateTime dt )
   {
-    // set editor widgets to desired date & time
+    // set editor widgets to desired date & time (note widget uses months 0-11, but Date uses months 1-12)
     m_dateWidget.setDate( dt.year(), dt.month() - 1, dt.day() );
     m_timeWidget.setTime( dt.hours(), dt.minutes(), dt.seconds() );
   }
@@ -87,8 +87,8 @@ public class DateTimeEditor extends Composite
   /**************************************** milliseconds *****************************************/
   public long milliseconds()
   {
-    // get editor widgets date-time in milliseconds
-    Date date = new Date( m_dateWidget.getYear(), m_dateWidget.getMonth(), m_dateWidget.getDay() );
+    // get editor widgets date-time in milliseconds (note widget uses months 0-11, but Date uses months 1-12)
+    Date date = new Date( m_dateWidget.getYear(), m_dateWidget.getMonth() + 1, m_dateWidget.getDay() );
     Time time = new Time( m_timeWidget.getHours(), m_timeWidget.getMinutes(), m_timeWidget.getSeconds(), 0 );
     return date.epochday() * rjc.jplanner.model.DateTime.MILLISECONDS_IN_DAY + time.milliseconds();
   }

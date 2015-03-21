@@ -233,9 +233,9 @@ public class PlanProperties extends Composite
   }
 
   /************************************ updatePlanProperties *************************************/
-  public void updatePlanProperties()
+  public void updatePlan()
   {
-    // if properties not changed, return immediately, otherwise update via command
+    // if properties not changed, return doing nothing, otherwise update via undostack command
     String title = m_titleText.getText();
     DateTime start = new DateTime( m_startDT.milliseconds() );
     Calendar cal = JPlanner.plan.calendar( m_calCombo.getSelectionIndex() );

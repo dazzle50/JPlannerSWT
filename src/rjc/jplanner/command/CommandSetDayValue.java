@@ -19,6 +19,7 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
@@ -54,9 +55,9 @@ public class CommandSetDayValue implements UndoCommand
     JPlanner.plan.day( m_row ).setData( m_column, m_newValue );
 
     // update day-types table, and if name section also update calendars table
-    JPlanner.plan.dayTables().refresh();
+    MainWindow.dayTables().refresh();
     if ( m_column == Day.SECTION_NAME )
-      JPlanner.plan.calendarTables().refresh();
+      MainWindow.calendarTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -67,9 +68,9 @@ public class CommandSetDayValue implements UndoCommand
     JPlanner.plan.day( m_row ).setData( m_column, m_oldValue );
 
     // update day-types table, and if name section also update calendars table
-    JPlanner.plan.dayTables().refresh();
+    MainWindow.dayTables().refresh();
     if ( m_column == Day.SECTION_NAME )
-      JPlanner.plan.calendarTables().refresh();
+      MainWindow.calendarTables().refresh();
   }
 
   /******************************************* text **********************************************/
