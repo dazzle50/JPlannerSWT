@@ -51,7 +51,7 @@ public class MainWindow extends Shell
   {
     // create JPlanner main window
     super( display, SWT.SHELL_TRIM );
-    setSize( 650, 480 );
+    setSize( 650, 500 );
     setText( "JPlanner" );
     setLayout( new FillLayout( SWT.HORIZONTAL ) );
 

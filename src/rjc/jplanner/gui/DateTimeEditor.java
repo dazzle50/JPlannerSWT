@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import rjc.jplanner.model.Date;
+import rjc.jplanner.model.Time;
+
 /*************************************************************************************************/
 /***************************** Widget with both date & time editors ******************************/
 /*************************************************************************************************/
@@ -80,4 +83,14 @@ public class DateTimeEditor extends Composite
     m_dateWidget.setDate( dt.year(), dt.month() - 1, dt.day() );
     m_timeWidget.setTime( dt.hours(), dt.minutes(), dt.seconds() );
   }
+
+  /**************************************** milliseconds *****************************************/
+  public long milliseconds()
+  {
+    // get editor widgets date-time in milliseconds
+    Date date = new Date( m_dateWidget.getYear(), m_dateWidget.getMonth(), m_dateWidget.getDay() );
+    Time time = new Time( m_timeWidget.getHours(), m_timeWidget.getMinutes(), m_timeWidget.getSeconds(), 0 );
+    return date.epochday() * rjc.jplanner.model.DateTime.MILLISECONDS_IN_DAY + time.milliseconds();
+  }
+
 }

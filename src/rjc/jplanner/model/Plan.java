@@ -35,6 +35,7 @@ public class Plan
   private DateTime            m_start;         // plan start date-time as set in properties
   private Calendar            m_calendar;      // plan's default calendar
   private String              m_datetimeFormat; // format to display date-times
+  private String              m_dateFormat;    // format to display dates
   private String              m_filename;      // filename when saved or loaded
   private String              m_fileLocation;  // file location
   private String              m_savedBy;       // who saved last
@@ -105,9 +106,11 @@ public class Plan
     m_start = DateTime.now();
     m_calendar = calendar( 0 );
     m_datetimeFormat = "ddd dd/MM/yyyy hh:mm";
+    m_dateFormat = "dd/MM/yyyy";
     m_filename = "";
     m_fileLocation = "";
     m_savedBy = "";
+    m_notes = "";
   }
 
   /************************************** tasksNotNullCount **************************************/
@@ -208,6 +211,20 @@ public class Plan
     return m_start;
   }
 
+  /****************************************** earliest *******************************************/
+  public DateTime earliest()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return null;
+  }
+
+  /********************************************* end *********************************************/
+  public DateTime end()
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return null;
+  }
+
   /******************************************* calendar ******************************************/
   public Calendar calendar()
   {
@@ -218,6 +235,12 @@ public class Plan
   public String datetimeFormat()
   {
     return m_datetimeFormat;
+  }
+
+  /****************************************** dateFormat *****************************************/
+  public String dateFormat()
+  {
+    return m_dateFormat;
   }
 
   /******************************************* filename ******************************************/

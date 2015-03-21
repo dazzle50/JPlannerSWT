@@ -16,54 +16,49 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandSetPlanNotes;
 
 /*************************************************************************************************/
-/**************************** Widget display & editing of plan notes *****************************/
+/****************************** UndoCommand for updating plan notes ******************************/
 /*************************************************************************************************/
 
-public class PlanNotes extends Composite
+public class CommandSetPlanNotes implements UndoCommand
 {
-  StyledText m_notesText;
+  private String m_oldNotes;
+  private String m_newNotes;
 
   /**************************************** constructor ******************************************/
-  public PlanNotes( Composite parent, int style )
+  public CommandSetPlanNotes( String newNotes )
   {
-    super( parent, style );
-    setLayout( new GridLayout( 1, false ) );
-
-    Label notesLabel = new Label( this, SWT.NONE );
-    notesLabel.setText( "Notes" );
-
-    m_notesText = new StyledText( this, SWT.BORDER | SWT.V_SCROLL );
-    m_notesText.setAlwaysShowScrollBars( false );
-    m_notesText.setWordWrap( true );
-    m_notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    // initialise private variables
+    m_oldNotes = JPlanner.plan.notes();
+    m_newNotes = newNotes;
   }
 
+  /******************************************* redo **********************************************/
   @Override
-  protected void checkSubclass()
+  public void redo()
   {
-    // Disable the check that prevents subclassing of SWT components
+    // TODO Auto-generated method stub
+
   }
 
-  /************************************** updatePlanNotes ****************************************/
-  public void updatePlanNotes()
+  /******************************************* undo **********************************************/
+  @Override
+  public void undo()
   {
-    // if notes not changed, return immediately, otherwise update via command
-    if ( JPlanner.plan.notes().equals( m_notesText.getText() ) )
-      return;
+    // TODO Auto-generated method stub
 
-    JPlanner.plan.undostack().push( new CommandSetPlanNotes( m_notesText.getText() ) );
   }
+
+  /******************************************* text **********************************************/
+  @Override
+  public String text()
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

@@ -22,6 +22,8 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -100,6 +102,19 @@ public class MainTabWidget extends TabFolder
     tabDays.setText( "Days" );
     m_tableDays = new XNatTable( this, XNatTable.TableType.DAY );
     tabDays.setControl( m_tableDays );
+
+    // add listener to detect when selected tab changed
+    addListener( SWT.Selection, new Listener()
+    {
+      @Override
+      public void handleEvent( Event event )
+      {
+        // check if plan properties or notes changed
+        m_planProperties.updatePlanProperties();
+        m_planNotes.updatePlanNotes();
+      }
+    } );
+
   }
 
   @Override

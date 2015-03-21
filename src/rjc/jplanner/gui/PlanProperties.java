@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandSetPlanProperties;
+import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
 /********************************** Widget for plan properties ***********************************/
@@ -37,10 +40,11 @@ public class PlanProperties extends Composite
 {
   private Text           m_titleText;
   private DateTimeEditor m_startDT;
-  private Text           m_firstText;
+  private Text           m_earliestText;
   private Text           m_endText;
   private Combo          m_calCombo;
-  private Text           m_formatText;
+  private Text           m_DTformatText;
+  private Text           m_DformatText;
   private Text           m_filenameText;
   private Text           m_filelocText;
   private Text           m_savedbyText;
@@ -65,17 +69,18 @@ public class PlanProperties extends Composite
 
     Label startLabel = new Label( this, SWT.NONE );
     startLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    startLabel.setText( "Start" );
+    startLabel.setText( "Default Start" );
 
     m_startDT = new DateTimeEditor( this, SWT.NONE );
     m_startDT.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label earliestLabel = new Label( this, SWT.NONE );
     earliestLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    earliestLabel.setText( "First" );
+    earliestLabel.setText( "Earliest" );
 
-    m_firstText = new Text( this, SWT.BORDER );
-    m_firstText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_earliestText = new Text( this, SWT.BORDER );
+    m_earliestText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_earliestText.setEditable( false );
 
     Label endLabel = new Label( this, SWT.NONE );
     endLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -83,6 +88,7 @@ public class PlanProperties extends Composite
 
     m_endText = new Text( this, SWT.BORDER );
     m_endText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_endText.setEditable( false );
 
     Label calLabel = new Label( this, SWT.NONE );
     calLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -91,12 +97,19 @@ public class PlanProperties extends Composite
     m_calCombo = new XComboCalendars( this, SWT.READ_ONLY );
     m_calCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
-    Label formatLabel = new Label( this, SWT.NONE );
-    formatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    formatLabel.setText( "Date time format" );
+    Label DTformatLabel = new Label( this, SWT.NONE );
+    DTformatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
+    DTformatLabel.setText( "Date-time format" );
 
-    m_formatText = new Text( this, SWT.BORDER );
-    m_formatText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_DTformatText = new Text( this, SWT.BORDER );
+    m_DTformatText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+
+    Label DformatLabel = new Label( this, SWT.NONE );
+    DformatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
+    DformatLabel.setText( "Date format" );
+
+    m_DformatText = new Text( this, SWT.BORDER );
+    m_DformatText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     Label filenameLabel = new Label( this, SWT.NONE );
     filenameLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -104,6 +117,7 @@ public class PlanProperties extends Composite
 
     m_filenameText = new Text( this, SWT.BORDER );
     m_filenameText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_filenameText.setEditable( false );
 
     Label filelocLabel = new Label( this, SWT.NONE );
     filelocLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -111,6 +125,7 @@ public class PlanProperties extends Composite
 
     m_filelocText = new Text( this, SWT.BORDER );
     m_filelocText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_filelocText.setEditable( false );
 
     Label savedbyLabel = new Label( this, SWT.NONE );
     savedbyLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -118,6 +133,7 @@ public class PlanProperties extends Composite
 
     m_savedbyText = new Text( this, SWT.BORDER );
     m_savedbyText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_savedbyText.setEditable( false );
 
     Label savedwhenLabel = new Label( this, SWT.NONE );
     savedwhenLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -125,6 +141,7 @@ public class PlanProperties extends Composite
 
     m_savedwhenText = new Text( this, SWT.BORDER );
     m_savedwhenText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_savedwhenText.setEditable( false );
 
     Group grpNumberOf = new Group( this, SWT.NONE );
     grpNumberOf.setLayout( new GridLayout( 2, false ) );
@@ -173,10 +190,30 @@ public class PlanProperties extends Composite
     m_titleText.setText( JPlanner.plan.title() );
     m_startDT.setDateTime( JPlanner.plan.start() );
     m_calCombo.setText( JPlanner.plan.calendar().name() );
-    m_formatText.setText( JPlanner.plan.datetimeFormat() );
+    m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
+    m_DformatText.setText( JPlanner.plan.dateFormat() );
     m_filenameText.setText( JPlanner.plan.filename() );
     m_filelocText.setText( JPlanner.plan.fileLocation() );
     m_savedbyText.setText( JPlanner.plan.savedBy() );
+
+    // if plan earliest or end not available, display blank
+    try
+    {
+      m_earliestText.setText( JPlanner.plan.earliest().toString() );
+    }
+    catch (NullPointerException e)
+    {
+      m_earliestText.setText( "" );
+    }
+
+    try
+    {
+      m_endText.setText( JPlanner.plan.end().toString() );
+    }
+    catch (NullPointerException e)
+    {
+      m_endText.setText( "" );
+    }
 
     // if plan hasn't been saved, the saved-when is null so display blank
     try
@@ -193,5 +230,23 @@ public class PlanProperties extends Composite
     m_resourcesNum.setText( ": " + JPlanner.plan.resourcesNotNullCount() );
     m_calendarsNum.setText( ": " + JPlanner.plan.calendarsCount() );
     m_daysNum.setText( ": " + JPlanner.plan.daysCount() );
+  }
+
+  /************************************ updatePlanProperties *************************************/
+  public void updatePlanProperties()
+  {
+    // if properties not changed, return immediately, otherwise update via command
+    String title = m_titleText.getText();
+    DateTime start = new DateTime( m_startDT.milliseconds() );
+    Calendar cal = JPlanner.plan.calendar( m_calCombo.getSelectionIndex() );
+    String DTformat = m_DTformatText.getText();
+    String Dformat = m_DformatText.getText();
+
+    if ( JPlanner.plan.title().equals( title ) && JPlanner.plan.start().milliseconds() == start.milliseconds()
+        && JPlanner.plan.calendar() == cal && JPlanner.plan.datetimeFormat().equals( DTformat )
+        && JPlanner.plan.dateFormat().equals( Dformat ) )
+      return;
+
+    JPlanner.plan.undostack().push( new CommandSetPlanProperties( title, start, cal, DTformat, Dformat ) );
   }
 }

@@ -16,54 +16,69 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandSetPlanNotes;
+import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
-/**************************** Widget display & editing of plan notes *****************************/
+/*************************** UndoCommand for updating plan properties ****************************/
 /*************************************************************************************************/
 
-public class PlanNotes extends Composite
+public class CommandSetPlanProperties implements UndoCommand
 {
-  StyledText m_notesText;
+  private String   m_oldTitle;
+  private DateTime m_oldStart;
+  private Calendar m_oldCal;
+  private String   m_oldDTformat;
+  private String   m_oldDformat;
+
+  private String   m_newTitle;
+  private DateTime m_newStart;
+  private Calendar m_newCal;
+  private String   m_newDTformat;
+  private String   m_newDformat;
 
   /**************************************** constructor ******************************************/
-  public PlanNotes( Composite parent, int style )
+  public CommandSetPlanProperties( String title, DateTime start, Calendar cal, String DTformat, String Dformat )
   {
-    super( parent, style );
-    setLayout( new GridLayout( 1, false ) );
+    // initialise private variables
+    m_oldTitle = JPlanner.plan.title();
+    m_oldStart = JPlanner.plan.start();
+    m_oldCal = JPlanner.plan.calendar();
+    m_oldDTformat = JPlanner.plan.datetimeFormat();
+    m_oldDformat = JPlanner.plan.dateFormat();
 
-    Label notesLabel = new Label( this, SWT.NONE );
-    notesLabel.setText( "Notes" );
-
-    m_notesText = new StyledText( this, SWT.BORDER | SWT.V_SCROLL );
-    m_notesText.setAlwaysShowScrollBars( false );
-    m_notesText.setWordWrap( true );
-    m_notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    m_newTitle = title;
+    m_newStart = start;
+    m_newCal = cal;
+    m_newDTformat = DTformat;
+    m_newDformat = Dformat;
   }
 
+  /******************************************* redo **********************************************/
   @Override
-  protected void checkSubclass()
+  public void redo()
   {
-    // Disable the check that prevents subclassing of SWT components
+    // TODO Auto-generated method stub
+
   }
 
-  /************************************** updatePlanNotes ****************************************/
-  public void updatePlanNotes()
+  /******************************************* undo **********************************************/
+  @Override
+  public void undo()
   {
-    // if notes not changed, return immediately, otherwise update via command
-    if ( JPlanner.plan.notes().equals( m_notesText.getText() ) )
-      return;
+    // TODO Auto-generated method stub
 
-    JPlanner.plan.undostack().push( new CommandSetPlanNotes( m_notesText.getText() ) );
   }
+
+  /******************************************* text **********************************************/
+  @Override
+  public String text()
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }
