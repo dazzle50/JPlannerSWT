@@ -125,7 +125,7 @@ public class XNatTable extends NatTable
         IDataProvider rowh = new DaysRowHeader( body );
         IConfigLabelAccumulator label = new DaysLabelAccumulator();
         int[] widthD = { 60, 25, 150 };
-        configTable( body, colh, rowh, label, widthD );
+        configTable( body, colh, rowh, label, widthD, -1 );
         MainWindow.dayTables().register( this );
         break;
 
@@ -136,7 +136,7 @@ public class XNatTable extends NatTable
         rowh = new CalendarsRowHeader( body );
         label = new CalendarsLabelAccumulator();
         int[] widthC = { 140, 75 };
-        configTable( body, colh, rowh, label, widthC );
+        configTable( body, colh, rowh, label, widthC, -1 );
         MainWindow.calendarTables().register( this );
         break;
 
@@ -147,7 +147,7 @@ public class XNatTable extends NatTable
         rowh = new ResourcesRowHeader( body );
         label = new ResourcesLabelAccumulator();
         int[] widthR = { 100, 25, 50 };
-        configTable( body, colh, rowh, label, widthR );
+        configTable( body, colh, rowh, label, widthR, -1 );
         MainWindow.resourceTables().register( this );
         break;
 
@@ -158,7 +158,7 @@ public class XNatTable extends NatTable
         rowh = new TasksRowHeader( body );
         label = new TasksLabelAccumulator();
         int[] widthT = { 100, 25, 200, 60, 100, 100, 60 };
-        configTable( body, colh, rowh, label, widthT );
+        configTable( body, colh, rowh, label, widthT, 2 * MainWindow.GANTTSCALE_HEIGHT );
         MainWindow.taskTables().register( this );
         break;
 
@@ -170,7 +170,7 @@ public class XNatTable extends NatTable
 
   /**************************************** configTable ******************************************/
   private void configTable( IDataProvider body, IDataProvider ch, IDataProvider rh, IConfigLabelAccumulator label,
-      int[] widths )
+      int[] widths, int chHeight )
   {
     // create body layer stack
     DataLayer bodyDataLayer = new DataLayer( body, widths[0], 20 );
@@ -184,6 +184,8 @@ public class XNatTable extends NatTable
 
     // create column header layer stack
     DataLayer chDataLayer = new DataLayer( ch );
+    if ( chHeight > 0 )
+      chDataLayer.setRowHeightByPosition( 0, chHeight );
     ColumnHeaderLayer colHeader = new ColumnHeaderLayer( chDataLayer, viewport, selLayer );
 
     // create row header layer stack

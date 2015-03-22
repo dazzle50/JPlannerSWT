@@ -19,11 +19,14 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.DateTime;
+import rjc.jplanner.model.DateTime.Interval;
 
 /*************************************************************************************************/
 /*************** Gantt shows tasks in a gantt plot with upper & lower gantt scales ***************/
@@ -33,7 +36,7 @@ public class Gantt extends Composite
 {
   private DateTime   m_start;
   private DateTime   m_end;
-  private double     m_secsPP;
+  private long       m_millisecondsPP;
 
   private GanttScale m_upperScale;
   private GanttScale m_lowerScale;
@@ -45,6 +48,10 @@ public class Gantt extends Composite
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
     setBackground( getBackground() ); // needed for some strange reason for no_redraw_resize to work!
 
+    m_start = new DateTime( JPlanner.plan.start().milliseconds() - 300000000L );
+    m_end = m_start.addDays( 100 );
+    m_millisecondsPP = 3600 * 6000;
+
     GridLayout gridLayout = new GridLayout( 1, false );
     gridLayout.verticalSpacing = 0;
     gridLayout.marginWidth = 0;
@@ -54,12 +61,22 @@ public class Gantt extends Composite
 
     m_upperScale = new GanttScale( this );
     m_upperScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_upperScale.setConfig( m_start, m_millisecondsPP, Interval.MONTH, "MMM-YYYY" );
 
     m_lowerScale = new GanttScale( this );
     m_lowerScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_lowerScale.setConfig( m_start, m_millisecondsPP, Interval.WEEK, "dd" );
 
     m_chart = new GanttPlot( this );
     m_chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    m_chart.setConfig( m_start, m_millisecondsPP );
+  }
+
+  @Override
+  public Point computeSize( int wHint, int hHint, boolean changed )
+  {
+    // only horizontal size is important, as vertically it stretches
+    return new Point( (int) ( ( m_end.milliseconds() - m_start.milliseconds() ) / m_millisecondsPP ), 1 );
   }
 
   @Override

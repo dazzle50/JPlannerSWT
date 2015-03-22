@@ -40,19 +40,23 @@ public class MainWindow extends Shell
 {
   private static MainTabWidget  m_mainTabWidget;
 
-  public static Color           GANTT_BACKGROUND;
-  public static Color           GANTT_NONWORKING;
+  public static Color           COLOR_GANTT_BACKGROUND;
+  public static Color           COLOR_GANTT_NONWORKING;
+  public static Color           COLOR_GANTT_DIVIDER;
+  public static Color           COLOR_BLACK;
   public static Transform       TRANSFORM;
 
-  public static UndoStackWindow undoWindow;         // window to show plan undo-stack
-  public static MenuItem        actionUndoStackView; // action to show plan undo-stack window
+  public static UndoStackWindow undoWindow;            // window to show plan undo-stack
+  public static MenuItem        actionUndoStackView;   // action to show plan undo-stack window
   public static MenuItem        actionUndo;
   public static MenuItem        actionRedo;
 
-  private static TableRegister  m_taskTables;       // register of tables showing tasks
-  private static TableRegister  m_resourceTables;   // register of tables showing resources
-  private static TableRegister  m_calendarTables;   // register of tables showing calendars
-  private static TableRegister  m_dayTables;        // register of tables showing day-types
+  public static int             GANTTSCALE_HEIGHT = 15;
+
+  private static TableRegister  m_taskTables;          // register of tables showing tasks
+  private static TableRegister  m_resourceTables;      // register of tables showing resources
+  private static TableRegister  m_calendarTables;      // register of tables showing calendars
+  private static TableRegister  m_dayTables;           // register of tables showing day-types
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -64,8 +68,10 @@ public class MainWindow extends Shell
     setLayout( new FillLayout( SWT.HORIZONTAL ) );
 
     // initialise some static variables for use elsewhere
-    GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
-    GANTT_NONWORKING = new Color( display, 240, 240, 240 );
+    COLOR_GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
+    COLOR_GANTT_NONWORKING = new Color( display, 240, 240, 240 );
+    COLOR_GANTT_DIVIDER = display.getSystemColor( SWT.COLOR_GRAY );
+    COLOR_BLACK = display.getSystemColor( SWT.COLOR_BLACK );
     TRANSFORM = new Transform( display );
 
     // add menus

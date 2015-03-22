@@ -43,9 +43,6 @@ public class GanttPlot extends Composite
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
 
-    m_start = new DateTime( 0 );
-    m_millisecondsPP = 3600 * 2000;
-
     addPaintListener( new PaintListener()
     {
       @Override
@@ -97,7 +94,7 @@ public class GanttPlot extends Composite
     GC gc = event.gc;
 
     // fill in white background
-    gc.setBackground( MainWindow.GANTT_BACKGROUND );
+    gc.setBackground( MainWindow.COLOR_GANTT_BACKGROUND );
     gc.fillRectangle( x, y, w, h );
 
     // calculate start-date and end-date etc
@@ -106,9 +103,9 @@ public class GanttPlot extends Composite
     Date dateEnd = datetime( x + w ).date();
     int xs = -1;
     int xe = 0;
-    gc.setBackground( MainWindow.GANTT_NONWORKING );
 
     // for each date check if working and shade accordingly
+    gc.setBackground( MainWindow.COLOR_GANTT_NONWORKING );
     do
     {
       if ( xs < 0 && !calendar.isWorking( date ) )
@@ -134,4 +131,11 @@ public class GanttPlot extends Composite
       gc.fillRectangle( xs, y, this.getSize().x, h );
   }
 
+  /****************************************** setConfig ******************************************/
+  public void setConfig( DateTime start, long msPP )
+  {
+    // set gantt-plot configuration
+    m_start = start;
+    m_millisecondsPP = msPP;
+  }
 }

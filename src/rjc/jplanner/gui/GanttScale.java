@@ -46,11 +46,6 @@ public class GanttScale extends Composite
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
     setDragDetect( false );
 
-    m_start = new DateTime( 0 );
-    m_millisecondsPP = 3600 * 2000;
-    m_interval = Interval.WEEK;
-    m_format = "dd MMM uuuu";
-
     addPaintListener( new PaintListener()
     {
       @Override
@@ -61,6 +56,13 @@ public class GanttScale extends Composite
       }
     } );
 
+  }
+
+  @Override
+  public Point computeSize( int wHint, int hHint, boolean changed )
+  {
+    // only vertical size is important, as horizontally it stretches
+    return new Point( 1, MainWindow.GANTTSCALE_HEIGHT );
   }
 
   @Override
@@ -98,8 +100,9 @@ public class GanttScale extends Composite
     GC gc = event.gc;
 
     // fill in background & draw line at bottom
-    gc.setBackground( MainWindow.GANTT_NONWORKING );
+    gc.setBackground( MainWindow.COLOR_GANTT_NONWORKING );
     gc.fillRectangle( x, y, w, h );
+    gc.setForeground( MainWindow.COLOR_GANTT_DIVIDER );
     gc.drawLine( x, this.getSize().y - 1, x + w, this.getSize().y - 1 );
 
     // calculate the start & end of first internal
@@ -110,6 +113,7 @@ public class GanttScale extends Composite
 
     // draw internal line and label
     gc.drawLine( xs, y, xs, y + h );
+    gc.setForeground( MainWindow.COLOR_BLACK );
     drawLabel( gc, dts.toString( m_format ), xs, xe );
 
     // move through subsequent internals until end of paint area
@@ -120,7 +124,9 @@ public class GanttScale extends Composite
       dte = dts.addInterval( m_interval );
       xe = x( dte );
 
+      gc.setForeground( MainWindow.COLOR_GANTT_DIVIDER );
       gc.drawLine( xs, y, xs, y + h );
+      gc.setForeground( MainWindow.COLOR_BLACK );
       drawLabel( gc, dts.toString( m_format ), xs, xe );
     }
 
@@ -132,17 +138,15 @@ public class GanttScale extends Composite
     // draw the label between xs & xe scaling smaller if necessary
     Point labelSize = gc.stringExtent( label );
     int xOffset = ( xe - xs - labelSize.x ) / 2;
-    int yOffset = ( getSize().y - labelSize.y ) / 2;
+    int yOffset = ( getSize().y - labelSize.y ) / 2 - 1;
 
-    if ( xOffset < 2 )
+    if ( xOffset < 1 )
     {
       // scaling on x-axis needed to fit label
-      float scale = ( xe - xs - 3.0f ) / labelSize.x;
+      float scale = ( xe - xs - 2.0f ) / labelSize.x;
       MainWindow.TRANSFORM.scale( scale, 1.0f );
       gc.setTransform( MainWindow.TRANSFORM );
-
-      xOffset = 2;
-      gc.drawString( label, (int) ( ( xs + xOffset ) / scale ), yOffset );
+      gc.drawString( label, (int) ( ( xs + 2 ) / scale ), yOffset, true );
 
       MainWindow.TRANSFORM.identity();
       gc.setTransform( MainWindow.TRANSFORM );
@@ -150,8 +154,18 @@ public class GanttScale extends Composite
     else
     {
       // no scaling needed to fit label
-      gc.drawString( label, xs + xOffset, yOffset );
+      gc.drawString( label, xs + xOffset, yOffset, true );
     }
 
+  }
+
+  /****************************************** setConfig ******************************************/
+  public void setConfig( DateTime start, long msPP, Interval interval, String format )
+  {
+    // set gantt-scale configuration
+    m_start = start;
+    m_millisecondsPP = msPP;
+    m_interval = interval;
+    m_format = format;
   }
 }
