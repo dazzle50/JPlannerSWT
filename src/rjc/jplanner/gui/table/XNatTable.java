@@ -26,7 +26,6 @@ import org.eclipse.nebula.widgets.nattable.config.IConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
-import org.eclipse.nebula.widgets.nattable.edit.editor.DateCellEditor;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
@@ -46,7 +45,7 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.gui.MainWindow;
-import rjc.jplanner.gui.editor.IntSpinEditor;
+import rjc.jplanner.gui.editor.DayCellEditor;
 
 /*************************************************************************************************/
 /**************************** JPlanner table based on Nebula NatTable ****************************/
@@ -61,6 +60,16 @@ public class XNatTable extends NatTable
   {
     DAY, CALENDAR, RESOURCE, TASK
   }
+
+  final public static String CONFIG_SHADE           = "Shade";
+  final public static String CONFIG_ALIGN_LEFT      = "Left";
+  final public static String CONFIG_ALIGN_RIGHT     = "Right";
+  final public static String CONFIG_WRAP_TEXT       = "Wrap";
+  final public static String CONFIG_CELL_EDITABLE   = "Edit";
+  final public static String CONFIG_DAY_EDITOR      = "Day";
+  final public static String CONFIG_CALENDAR_EDITOR = "Cal";
+  final public static String CONFIG_RESOURCE_EDITOR = "Res";
+  final public static String CONFIG_TASK_EDITOR     = "Task";
 
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
@@ -83,36 +92,32 @@ public class XNatTable extends NatTable
         @Override
         public void configureRegistry( IConfigRegistry reg )
         {
-          // Style "SHADE" gray cell background colour
+          // Style gray cell background colour
           Style shade = new Style();
           shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, "SHADE" );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, CONFIG_SHADE );
 
-          // Style "LEFT" align left text horizontally
+          // Style align left text horizontally
           Style left = new Style();
           left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, "LEFT" );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, CONFIG_ALIGN_LEFT );
 
-          // Style "RIGHT" align right text horizontally
+          // Style align right text horizontally
           Style right = new Style();
           right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, "RIGHT" );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, CONFIG_ALIGN_RIGHT );
 
-          // Cell config "WRAP" cell text word wraps
+          // Cell config cell text word wraps
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
-              DisplayMode.NORMAL, "WRAP" );
+              DisplayMode.NORMAL, CONFIG_WRAP_TEXT );
 
-          // Edit config "EDITABLE" cell is editable 
+          // Edit config cell is editable 
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
-              DisplayMode.EDIT, "EDITABLE" );
+              DisplayMode.EDIT, CONFIG_CELL_EDITABLE );
 
-          // Edit config "INT_EDITOR" use date editor 
-          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new IntSpinEditor(), DisplayMode.EDIT,
-              "INT_EDITOR" );
-
-          // Edit config "DATE_EDITOR" use date editor 
-          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DateCellEditor(), DisplayMode.EDIT,
-              "DATE_EDITOR" );
+          // Edit config use day cell editor
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
+              CONFIG_DAY_EDITOR );
         }
       };
 

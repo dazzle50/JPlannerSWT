@@ -40,16 +40,22 @@ public class ResourcesLabelAccumulator implements IConfigLabelAccumulator
     if ( res.isNull() )
     {
       if ( col == Resource.SECTION_ID )
-        labels.addLabel( "EDITABLE" );
+      {
+        labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
+        labels.addLabel( XNatTable.CONFIG_RESOURCE_EDITOR );
+      }
       else
-        labels.addLabel( "SHADE" );
+        labels.addLabel( XNatTable.CONFIG_SHADE );
     }
     else
-      labels.addLabel( "EDITABLE" );
+    {
+      labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
+      labels.addLabel( XNatTable.CONFIG_RESOURCE_EDITOR );
+    }
 
     // left align comment
     if ( col == Resource.SECTION_COMMENT )
-      labels.addLabel( "LEFT" );
+      labels.addLabel( XNatTable.CONFIG_ALIGN_LEFT );
   }
 
 }

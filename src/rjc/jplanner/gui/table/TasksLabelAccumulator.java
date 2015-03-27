@@ -40,20 +40,26 @@ public class TasksLabelAccumulator implements IConfigLabelAccumulator
     if ( task.isNull() )
     {
       if ( col == Task.SECTION_TITLE )
-        labels.addLabel( "EDITABLE" );
+      {
+        labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
+        labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+      }
       else
-        labels.addLabel( "SHADE" );
+        labels.addLabel( XNatTable.CONFIG_SHADE );
     }
     else
-      labels.addLabel( "EDITABLE" );
+    {
+      labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
+      labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+    }
 
     // left align some columns
     if ( col == Task.SECTION_TITLE || col == Task.SECTION_PRED || col == Task.SECTION_RES
         || col == Task.SECTION_COMMENT )
-      labels.addLabel( "LEFT" );
+      labels.addLabel( XNatTable.CONFIG_ALIGN_LEFT );
 
     // right align some columns
     if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
-      labels.addLabel( "RIGHT" );
+      labels.addLabel( XNatTable.CONFIG_ALIGN_RIGHT );
   }
 }
