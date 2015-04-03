@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  http://code.google.com/p/jplanner/                                    *
+ *  https://github.com/dazzle50/JPlanner                                  *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -21,6 +21,9 @@ package rjc.jplanner.gui.table;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandSetCalendarCycleLength;
+import rjc.jplanner.command.CommandSetCalendarExceptions;
+import rjc.jplanner.command.CommandSetCalendarValue;
 import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
@@ -63,9 +66,18 @@ public class CalendarsBody implements IDataProvider
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // TODO !!!!!!!!!!!!!!
-    JPlanner.trace( "Calendar setDataValue = " + newValue );
+    // if new value equals old value, exit with no command
+    Object oldValue = getDataValue( col, row );
+    if ( newValue.equals( oldValue ) )
+      return;
 
+    // special command for setting number of work periods, otherwise generic
+    if ( row == Calendar.SECTION_EXCEPTIONS )
+      JPlanner.plan.undostack().push( new CommandSetCalendarExceptions( col, newValue, oldValue ) );
+    else if ( row == Calendar.SECTION_CYCLE )
+      JPlanner.plan.undostack().push( new CommandSetCalendarCycleLength( col, newValue, oldValue ) );
+    else
+      JPlanner.plan.undostack().push( new CommandSetCalendarValue( col, row, newValue, oldValue ) );
   }
 
 }

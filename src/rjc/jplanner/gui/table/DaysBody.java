@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  http://code.google.com/p/jplanner/                                    *
+ *  https://github.com/dazzle50/JPlanner                                  *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -74,7 +74,7 @@ public class DaysBody implements IDataProvider
     if ( col == Day.SECTION_PERIODS )
       JPlanner.plan.undostack().push( new CommandSetDayNumPeriods( row, newValue, oldValue ) );
     else
-      JPlanner.plan.undostack().push( new CommandSetDayValue( col, row, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandSetDayValue( row, col, newValue, oldValue ) );
   }
 
 }

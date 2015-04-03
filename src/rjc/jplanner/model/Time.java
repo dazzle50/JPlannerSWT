@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  http://code.google.com/p/jplanner/                                    *
+ *  https://github.com/dazzle50/JPlanner                                  *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -26,9 +26,9 @@ import java.time.LocalTime;
 
 public class Time
 {
-  private int      m_milliseconds;        // milliseconds from 00:00:00.000 start of day
+  private int             m_milliseconds;        // milliseconds from 00:00:00.000 start of day
 
-  static final int MAX = 24 * 3600 * 1000; // milliseconds in day
+  public static final int MAX = 24 * 3600 * 1000; // milliseconds in day
 
   // anything between Zero and MAX inclusive is valid, anything else invalid
 
@@ -108,7 +108,7 @@ public class Time
     if ( hours < 0.0 || hours > 24.0 )
       throw new IllegalArgumentException( "hours=" + hours );
 
-    return new Time( (int) ( hours * 3600_000.0 ) );
+    return new Time( (int) Math.round( hours * 3600_000.0 ) );
   }
 
   /************************************** fromMilliseconds ***************************************/

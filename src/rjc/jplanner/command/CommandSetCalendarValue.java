@@ -16,57 +16,43 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
-
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
-
-import rjc.jplanner.model.Calendar;
+package rjc.jplanner.command;
 
 /*************************************************************************************************/
-/************************ Row header data provider for calendars NatTable ************************/
+/************* UndoCommand for updating calendars (except cycle-length & exceptions) *************/
 /*************************************************************************************************/
 
-public class CalendarsRowHeader implements IDataProvider
+public class CommandSetCalendarValue implements IUndoCommand
 {
-  private IDataProvider m_body; // data provider for the table body
 
   /**************************************** constructor ******************************************/
-  public CalendarsRowHeader( IDataProvider body )
+  public CommandSetCalendarValue( int calID, int section, Object newValue, Object oldValue )
   {
-    // initialise variable
-    m_body = body;
+    // TODO Auto-generated constructor stub
   }
 
-  /************************************** getColumnCount *****************************************/
+  /******************************************* redo **********************************************/
   @Override
-  public int getColumnCount()
+  public void redo()
   {
-    // must be one
-    return 1;
+    // TODO Auto-generated method stub
+
   }
 
-  /*************************************** getDataValue ******************************************/
+  /******************************************* undo **********************************************/
   @Override
-  public Object getDataValue( int col, int row )
+  public void undo()
   {
-    // return column title
-    return Calendar.sectionName( row );
+    // TODO Auto-generated method stub
+
   }
 
-  /**************************************** getRowCount ******************************************/
+  /******************************************* text **********************************************/
   @Override
-  public int getRowCount()
+  public String text()
   {
-    // must be same as body
-    return m_body.getRowCount();
-  }
-
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

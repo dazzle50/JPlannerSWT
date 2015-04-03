@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  http://code.google.com/p/jplanner/                                    *
+ *  https://github.com/dazzle50/JPlanner                                  *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -28,21 +28,21 @@ import rjc.jplanner.model.Day;
 
 public class CommandSetDayValue implements IUndoCommand
 {
-  private int    m_column;  // table column
-  private int    m_row;     // table row
+  private int    m_dayID;   // day number in plan
+  private int    m_section; // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetDayValue( int col, int row, Object newValue, Object oldValue )
+  public CommandSetDayValue( int dayID, int section, Object newValue, Object oldValue )
   {
     // check not being used for updating number of work periods
-    if ( col == Day.SECTION_PERIODS )
+    if ( section == Day.SECTION_PERIODS )
       throw new UnsupportedOperationException( "Number of work-periods" );
 
     // initialise private variables
-    m_column = col;
-    m_row = row;
+    m_dayID = dayID;
+    m_section = section;
     m_newValue = newValue;
     m_oldValue = oldValue;
   }
@@ -52,11 +52,11 @@ public class CommandSetDayValue implements IUndoCommand
   public void redo()
   {
     // action command
-    JPlanner.plan.day( m_row ).setData( m_column, m_newValue );
+    JPlanner.plan.day( m_dayID ).setData( m_section, m_newValue );
 
     // update day-types table, and if name section also update calendars table
     MainWindow.dayTables().refresh();
-    if ( m_column == Day.SECTION_NAME )
+    if ( m_section == Day.SECTION_NAME )
       MainWindow.calendarTables().refresh();
   }
 
@@ -65,11 +65,11 @@ public class CommandSetDayValue implements IUndoCommand
   public void undo()
   {
     // revert command
-    JPlanner.plan.day( m_row ).setData( m_column, m_oldValue );
+    JPlanner.plan.day( m_dayID ).setData( m_section, m_oldValue );
 
     // update day-types table, and if name section also update calendars table
     MainWindow.dayTables().refresh();
-    if ( m_column == Day.SECTION_NAME )
+    if ( m_section == Day.SECTION_NAME )
       MainWindow.calendarTables().refresh();
   }
 
@@ -78,7 +78,7 @@ public class CommandSetDayValue implements IUndoCommand
   public String text()
   {
     // command description
-    return "Day " + ( m_row + 1 ) + " " + Day.sectionName( m_column ) + " = " + m_newValue;
+    return "Day " + ( m_dayID + 1 ) + " " + Day.sectionName( m_section ) + " = " + m_newValue;
   }
 
 }
