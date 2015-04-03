@@ -3,6 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/Richard/EclipseWS/SWT/swt.jar" sourcepath="C:/Users/Richard/EclipseWS/SWT/src.zip"/>
-	<classpathentry kind="lib" path="C:/Users/Richard/EclipseWS/NatTable/NatTableExamples-1.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Richard/EclipseWS/NatTable/NatTableExamples-1.3.0.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://download.eclipse.org/nattable/releases/1.3.0/apidocs/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

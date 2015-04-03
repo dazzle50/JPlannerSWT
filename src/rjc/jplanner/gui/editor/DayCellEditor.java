@@ -18,9 +18,7 @@
 
 package rjc.jplanner.gui.editor;
 
-import org.eclipse.nebula.widgets.nattable.edit.editor.AbstractCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -32,23 +30,16 @@ import rjc.jplanner.model.Day;
 /******************************** Editor for day-type table cells ********************************/
 /*************************************************************************************************/
 
-public class DayCellEditor extends AbstractCellEditor
+public class DayCellEditor extends XAbstractCellEditor
 {
-  private Control m_editor; // editor for cell
-
-  /************************************ createEditorControl **************************************/
+  /**************************************** createEditor *****************************************/
   @Override
-  public Control createEditorControl( Composite parent )
+  public Control createEditor( int row, int col )
   {
     // create editor based on column
-    m_editor = null;
-    int row = getRowIndex();
-    int col = getColumnIndex();
-    JPlanner.trace( "DayCellEditor - createEditorControl    col=" + col + "   row=" + row );
-
     if ( col == Day.SECTION_NAME )
     {
-      m_editor = new Text( parent, SWT.SINGLE );
+      return new Text( parent, SWT.SINGLE );
     }
 
     if ( col == Day.SECTION_WORK )
@@ -59,7 +50,7 @@ public class DayCellEditor extends AbstractCellEditor
       spin.setMaximum( 1000 ); // max 10.00
       spin.setIncrement( 10 ); // step 0.10
       spin.setPageIncrement( 100 ); // page 1.00
-      m_editor = spin;
+      return spin;
     }
 
     if ( col == Day.SECTION_PERIODS )
@@ -67,108 +58,56 @@ public class DayCellEditor extends AbstractCellEditor
       Spinner spin = new Spinner( parent, SWT.NONE );
       spin.setMinimum( 0 ); // min 0
       spin.setMaximum( 9 ); // max 9
-      m_editor = spin;
+      return spin;
     }
 
-    if ( col >= Day.SECTION_START1 )
-    {
-      // TODO - use Text editor until find/write something better
-      m_editor = new Text( parent, SWT.SINGLE );
-    }
-
-    m_editor.addKeyListener( new XKeyAdapter( this, m_editor ) );
-    return m_editor;
+    // none of above, therefore must be a work-period start or end time
+    // TODO - use Text editor until find/write something better
+    return new Text( parent, SWT.SINGLE );
   }
 
-  /************************************* getEditorControl ****************************************/
+  /****************************************** setEditor ******************************************/
   @Override
-  public Control getEditorControl()
-  {
-    // return the editor
-    return m_editor;
-  }
-
-  /************************************** getEditorValue *****************************************/
-  @Override
-  public Object getEditorValue()
-  {
-    // return editor value (as a String)
-    int col = getColumnIndex();
-
-    if ( col == Day.SECTION_NAME )
-      return ( (Text) m_editor ).getText();
-
-    if ( col == Day.SECTION_WORK || col == Day.SECTION_PERIODS )
-      return ( (Spinner) m_editor ).getText();
-
-    // must be a work period start or end
-    return ( (Text) m_editor ).getText();
-  }
-
-  /************************************** setEditorValue *****************************************/
-  @Override
-  public void setEditorValue( Object value )
+  public void setEditor( Control editor, String value, int row, int col )
   {
     // set editor value
-    int col = getColumnIndex();
-    String str = value.toString();
-    JPlanner.trace( "setEditorValue '" + value + "'" );
-
-    // if day name, set text
-    if ( col == Day.SECTION_NAME )
+    if ( editor instanceof Text )
     {
-      ( (Text) m_editor ).setText( str );
-      ( (Text) m_editor ).selectAll();
+      ( (Text) editor ).setText( value );
+      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
     }
 
-    // if day work, set spinner catching if not valid number
+    // if day work, set spinner catching if not valid float
     if ( col == Day.SECTION_WORK )
     {
-      if ( str.equals( "." ) )
-        str = "0.";
+      if ( value.equals( "." ) )
+        value = "0.";
+
       try
       {
-        ( (Spinner) m_editor ).setSelection( (int) ( 100 * Float.parseFloat( str ) ) );
+        ( (Spinner) editor ).setSelection( (int) ( 100 * Float.parseFloat( value ) ) );
       }
       catch (NumberFormatException e)
       {
-        Double work = JPlanner.plan.day( getRowIndex() ).work();
-        ( (Spinner) m_editor ).setSelection( (int) ( 100 * work ) );
+        Double work = JPlanner.plan.day( row ).work();
+        ( (Spinner) editor ).setSelection( (int) ( 100 * work ) );
       }
     }
 
-    // if day number of work periods, set spinner catching if not valid number
+    // if day number of work periods, set spinner catching if not valid integer
     if ( col == Day.SECTION_PERIODS )
     {
       try
       {
-        ( (Spinner) m_editor ).setSelection( Integer.parseInt( str ) );
+        ( (Spinner) editor ).setSelection( Integer.parseInt( value ) );
       }
       catch (NumberFormatException e)
       {
-        int periods = JPlanner.plan.day( getRowIndex() ).numPeriods();
-        ( (Spinner) m_editor ).setSelection( periods );
+        int periods = JPlanner.plan.day( row ).numPeriods();
+        ( (Spinner) editor ).setSelection( periods );
       }
     }
 
-    // otherwise its a work period start or end
-    if ( col >= Day.SECTION_START1 )
-    {
-      ( (Text) m_editor ).setText( str );
-      ( (Text) m_editor ).selectAll();
-    }
-
-  }
-
-  /*************************************** activateCell ******************************************/
-  @Override
-  protected Control activateCell( Composite parent, Object value )
-  {
-    // create editor, set value and focus
-    createEditorControl( parent );
-    setEditorValue( value );
-    m_editor.setFocus();
-    return m_editor;
   }
 
 }

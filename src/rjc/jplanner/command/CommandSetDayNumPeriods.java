@@ -24,7 +24,7 @@ import rjc.jplanner.JPlanner;
 /****************** UndoCommand for updating day-types number of work periods ********************/
 /*************************************************************************************************/
 
-public class CommandSetDayNumPeriods implements UndoCommand
+public class CommandSetDayNumPeriods implements IUndoCommand
 {
   private int m_row;     // table row
   private int m_newValue; // new value after command

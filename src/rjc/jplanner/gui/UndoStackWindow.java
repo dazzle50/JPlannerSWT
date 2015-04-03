@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.UndoCommand;
+import rjc.jplanner.command.IUndoCommand;
 
 /*************************************************************************************************/
 /**************************** Window for plan undo-stack command list ****************************/
@@ -118,7 +118,7 @@ public class UndoStackWindow extends Shell
   }
 
   /***************************************** updateList ******************************************/
-  public void updateList( UndoCommand command, int index )
+  public void updateList( IUndoCommand command, int index )
   {
     // update list with command at position index, first delete any items below new index
     for ( int i = m_list.getItemCount() - 1; i >= index; i-- )

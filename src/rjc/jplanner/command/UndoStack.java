@@ -30,19 +30,19 @@ import rjc.jplanner.gui.MainWindow;
 
 public class UndoStack
 {
-  private ArrayList<UndoCommand> m_stack; // stack of undo commands
+  private ArrayList<IUndoCommand> m_stack; // stack of undo commands
   private int                    m_index; // current command
 
   /**************************************** constructor ******************************************/
   public UndoStack()
   {
     // initialise private variables
-    m_stack = new ArrayList<UndoCommand>();
+    m_stack = new ArrayList<IUndoCommand>();
     m_index = 0;
   }
 
   /******************************************** push *********************************************/
-  public void push( UndoCommand command )
+  public void push( IUndoCommand command )
   {
     // remove any commands from stack that haven't been actioned (i.e. above index)
     while ( m_stack.size() > m_index )

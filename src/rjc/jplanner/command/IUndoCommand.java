@@ -22,7 +22,7 @@ package rjc.jplanner.command;
 /**************************** Interface for all commands on UndoStack ****************************/
 /*************************************************************************************************/
 
-public interface UndoCommand
+public interface IUndoCommand
 {
   // applies the command
   void redo();

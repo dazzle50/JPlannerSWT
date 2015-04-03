@@ -23,81 +23,81 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer.MoveDirectio
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
 
 /*************************************************************************************************/
-/*********************** Specialised editor for integers using SWT Spinner ***********************/
+/**************************** Abstract cell editor to JPlanner tables ****************************/
 /*************************************************************************************************/
 
-public class IntSpinEditor extends AbstractCellEditor
+public abstract class XAbstractCellEditor extends AbstractCellEditor
 {
-  private Spinner spinner; // SWT spinner
+  private Control m_editor; // editor for cell
 
   /************************************ createEditorControl **************************************/
   @Override
   public Control createEditorControl( Composite parent )
   {
-    // create editor
-    spinner = new Spinner( parent, SWT.CENTER );
-    spinner.setMaximum( 10 );
-    spinner.setPageIncrement( 1 );
+    // create editor based on column
+    m_editor = createEditor( getRowIndex(), getColumnIndex() );
 
-    // add a modify listener to prevent spinner text going above max
-    spinner.addModifyListener( new ModifyListener()
-    {
-      @Override
-      public void modifyText( ModifyEvent e )
-      {
-        int num = Integer.parseInt( spinner.getText() );
-        if ( num > spinner.getMaximum() )
-          spinner.setSelection( spinner.getMaximum() );
-      }
-    } );
-
-    // add a key listener to commit or close the editor for special key strokes
-    spinner.addKeyListener( new KeyAdapter()
+    m_editor.addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
       {
-        if ( event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR )
-        {
-          boolean commit = ( event.stateMask == SWT.ALT ) ? false : true;
-          MoveDirectionEnum move = MoveDirectionEnum.NONE;
-          if ( event.stateMask == 0 )
-            move = MoveDirectionEnum.DOWN;
-          else if ( event.stateMask == SWT.SHIFT )
-            move = MoveDirectionEnum.UP;
-
-          if ( commit )
-            commit( move );
-        }
-        else if ( event.keyCode == SWT.ESC && event.stateMask == 0 )
+        // if escape pressed, close without committing
+        if ( event.keyCode == SWT.ESC )
           close();
+
+        // if carriage-return pressed, commit
+        if ( event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR )
+          commit( MoveDirectionEnum.NONE );
+
+        // if arrow-up pressed, commit and move up
+        if ( event.keyCode == SWT.ARROW_UP && m_editor instanceof Spinner == false )
+          commit( MoveDirectionEnum.UP );
+
+        // if arrow-down pressed, commit and move down
+        if ( event.keyCode == SWT.ARROW_DOWN && m_editor instanceof Spinner == false )
+          commit( MoveDirectionEnum.DOWN );
+
+        // if tab pressed, commit and move
+        if ( event.keyCode == SWT.TAB )
+        {
+          if ( event.stateMask == SWT.SHIFT )
+            commit( MoveDirectionEnum.LEFT );
+          else
+            commit( MoveDirectionEnum.RIGHT );
+        }
+
       }
     } );
 
-    return spinner;
+    return m_editor;
   }
+
+  protected abstract Control createEditor( int row, int col );
 
   /************************************* getEditorControl ****************************************/
   @Override
   public Control getEditorControl()
   {
     // return the editor
-    return spinner;
+    return m_editor;
   }
 
   /************************************** getEditorValue *****************************************/
   @Override
   public Object getEditorValue()
   {
-    // return editor value (as a String)
-    return String.format( "%d", spinner.getSelection() );
+    if ( m_editor instanceof Spinner )
+      return ( (Spinner) m_editor ).getText();
+
+    // none of above, therefore must be a Text editor
+    return ( (Text) m_editor ).getText();
   }
 
   /************************************** setEditorValue *****************************************/
@@ -105,8 +105,10 @@ public class IntSpinEditor extends AbstractCellEditor
   public void setEditorValue( Object value )
   {
     // set editor value
-    spinner.setSelection( Integer.parseInt( value.toString() ) );
+    setEditor( m_editor, value.toString(), getRowIndex(), getColumnIndex() );
   }
+
+  protected abstract void setEditor( Control editor, String value, int row, int col );
 
   /*************************************** activateCell ******************************************/
   @Override
@@ -115,8 +117,8 @@ public class IntSpinEditor extends AbstractCellEditor
     // create editor, set value and focus
     createEditorControl( parent );
     setEditorValue( value );
-    spinner.setFocus();
-    return spinner;
+    m_editor.setFocus();
+    return m_editor;
   }
 
 }

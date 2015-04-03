@@ -18,84 +18,36 @@
 
 package rjc.jplanner.gui.editor;
 
-import org.eclipse.nebula.widgets.nattable.edit.editor.AbstractCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
 /********************************** Editor for task table cells **********************************/
 /*************************************************************************************************/
 
-public class TaskCellEditor extends AbstractCellEditor
+public class TaskCellEditor extends XAbstractCellEditor
 {
-  private Control m_editor; // editor for cell
-
-  /************************************ createEditorControl **************************************/
+  /**************************************** createEditor *****************************************/
   @Override
-  public Control createEditorControl( Composite parent )
+  public Control createEditor( int row, int col )
   {
-    // create editor based on column
-    m_editor = null;
-    int row = getRowIndex();
-    int col = getColumnIndex();
-    JPlanner.trace( "TaskCellEditor - createEditorControl    col=" + col + "   row=" + row );
 
-    if ( col == Task.SECTION_TITLE )
-    {
-      m_editor = new Text( parent, SWT.SINGLE );
-    }
-
-    // TODO
-
-    m_editor.addKeyListener( new XKeyAdapter( this, m_editor ) );
-    return m_editor;
+    // TODO - use Text editor until find/write something better
+    return new Text( parent, SWT.SINGLE );
   }
 
-  /************************************* getEditorControl ****************************************/
+  /****************************************** setEditor ******************************************/
   @Override
-  public Control getEditorControl()
-  {
-    // return the editor
-    return m_editor;
-  }
-
-  /************************************** getEditorValue *****************************************/
-  @Override
-  public Object getEditorValue()
-  {
-    // return editor value (as a String)
-    int col = getColumnIndex();
-
-    // TODO
-    return ( (Text) m_editor ).getText();
-  }
-
-  /************************************** setEditorValue *****************************************/
-  @Override
-  public void setEditorValue( Object value )
+  public void setEditor( Control editor, String value, int row, int col )
   {
     // set editor value
-    int col = getColumnIndex();
-    String str = value.toString();
-    JPlanner.trace( "setEditorValue '" + value + "'" );
+    if ( editor instanceof Text )
+    {
+      ( (Text) editor ).setText( value );
+      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
+    }
 
-    // TODO
-  }
-
-  /*************************************** activateCell ******************************************/
-  @Override
-  protected Control activateCell( Composite parent, Object value )
-  {
-    // create editor, set value and focus
-    createEditorControl( parent );
-    setEditorValue( value );
-    m_editor.setFocus();
-    return m_editor;
   }
 
 }

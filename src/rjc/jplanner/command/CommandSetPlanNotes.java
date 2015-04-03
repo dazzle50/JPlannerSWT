@@ -25,7 +25,7 @@ import rjc.jplanner.gui.MainWindow;
 /****************************** UndoCommand for updating plan notes ******************************/
 /*************************************************************************************************/
 
-public class CommandSetPlanNotes implements UndoCommand
+public class CommandSetPlanNotes implements IUndoCommand
 {
   private String m_oldNotes;
   private String m_newNotes;

@@ -26,7 +26,7 @@ import rjc.jplanner.model.Day;
 /****************** UndoCommand for updating day-types (except num of periods) *******************/
 /*************************************************************************************************/
 
-public class CommandSetDayValue implements UndoCommand
+public class CommandSetDayValue implements IUndoCommand
 {
   private int    m_column;  // table column
   private int    m_row;     // table row
