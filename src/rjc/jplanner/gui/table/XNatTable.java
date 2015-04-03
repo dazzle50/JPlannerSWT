@@ -45,7 +45,10 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.gui.MainWindow;
+import rjc.jplanner.gui.editor.CalendarCellEditor;
 import rjc.jplanner.gui.editor.DayCellEditor;
+import rjc.jplanner.gui.editor.ResourceCellEditor;
+import rjc.jplanner.gui.editor.TaskCellEditor;
 
 /*************************************************************************************************/
 /**************************** JPlanner table based on Nebula NatTable ****************************/
@@ -74,7 +77,7 @@ public class XNatTable extends NatTable
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
   {
-    // constructor call must be the first statement in a constructor
+    // call super constructor with autoconfig off
     super( parent, false );
 
     // check private variables are initialised
@@ -118,6 +121,18 @@ public class XNatTable extends NatTable
           // Edit config use day cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
               CONFIG_DAY_EDITOR );
+
+          // Edit config use calendar cell editor
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new CalendarCellEditor(), DisplayMode.EDIT,
+              CONFIG_CALENDAR_EDITOR );
+
+          // Edit config use resource cell editor
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new ResourceCellEditor(), DisplayMode.EDIT,
+              CONFIG_RESOURCE_EDITOR );
+
+          // Edit config use task cell editor
+          reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new TaskCellEditor(), DisplayMode.EDIT,
+              CONFIG_TASK_EDITOR );
         }
       };
 
@@ -202,7 +217,8 @@ public class XNatTable extends NatTable
     CornerLayer corner = new CornerLayer( cDataLayer, rowHeader, colHeader );
 
     // create grid layer composite
-    GridLayer grid = new GridLayer( viewport, colHeader, rowHeader, corner );
+    GridLayer grid = new GridLayer( viewport, colHeader, rowHeader, corner, false );
+    grid.addConfiguration( new XGridLayerConfiguration() );
 
     // configure NatTable with grid, theme, and labels
     setLayer( grid );

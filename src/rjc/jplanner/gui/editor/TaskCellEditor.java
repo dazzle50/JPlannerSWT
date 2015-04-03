@@ -22,17 +22,16 @@ import org.eclipse.nebula.widgets.nattable.edit.editor.AbstractCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/******************************** Editor for day-type table cells ********************************/
+/********************************** Editor for task table cells **********************************/
 /*************************************************************************************************/
 
-public class DayCellEditor extends AbstractCellEditor
+public class TaskCellEditor extends AbstractCellEditor
 {
   private Control m_editor; // editor for cell
 
@@ -44,37 +43,14 @@ public class DayCellEditor extends AbstractCellEditor
     m_editor = null;
     int row = getRowIndex();
     int col = getColumnIndex();
-    JPlanner.trace( "DayCellEditor - createEditorControl    col=" + col + "   row=" + row );
+    JPlanner.trace( "TaskCellEditor - createEditorControl    col=" + col + "   row=" + row );
 
-    if ( col == Day.SECTION_NAME )
+    if ( col == Task.SECTION_TITLE )
     {
       m_editor = new Text( parent, SWT.SINGLE );
     }
 
-    if ( col == Day.SECTION_WORK )
-    {
-      Spinner spin = new Spinner( parent, SWT.NONE );
-      spin.setDigits( 2 ); // 2 decimal places
-      spin.setMinimum( 0 ); // min 0.00
-      spin.setMaximum( 1000 ); // max 10.00
-      spin.setIncrement( 10 ); // step 0.10
-      spin.setPageIncrement( 100 ); // page 1.00
-      m_editor = spin;
-    }
-
-    if ( col == Day.SECTION_PERIODS )
-    {
-      Spinner spin = new Spinner( parent, SWT.NONE );
-      spin.setMinimum( 0 ); // min 0
-      spin.setMaximum( 9 ); // max 9
-      m_editor = spin;
-    }
-
-    if ( col >= Day.SECTION_START1 )
-    {
-      // TODO - use Text editor until find/write something better
-      m_editor = new Text( parent, SWT.SINGLE );
-    }
+    // TODO
 
     m_editor.addKeyListener( new XKeyAdapter( this, m_editor ) );
     return m_editor;
@@ -95,13 +71,7 @@ public class DayCellEditor extends AbstractCellEditor
     // return editor value (as a String)
     int col = getColumnIndex();
 
-    if ( col == Day.SECTION_NAME )
-      return ( (Text) m_editor ).getText();
-
-    if ( col == Day.SECTION_WORK || col == Day.SECTION_PERIODS )
-      return ( (Spinner) m_editor ).getText();
-
-    // must be a work period start or end
+    // TODO
     return ( (Text) m_editor ).getText();
   }
 
@@ -114,50 +84,7 @@ public class DayCellEditor extends AbstractCellEditor
     String str = value.toString();
     JPlanner.trace( "setEditorValue '" + value + "'" );
 
-    // if day name, set text
-    if ( col == Day.SECTION_NAME )
-    {
-      ( (Text) m_editor ).setText( str );
-      ( (Text) m_editor ).selectAll();
-    }
-
-    // if day work, set spinner catching if not valid number
-    if ( col == Day.SECTION_WORK )
-    {
-      if ( str.equals( "." ) )
-        str = "0.";
-      try
-      {
-        ( (Spinner) m_editor ).setSelection( (int) ( 100 * Float.parseFloat( str ) ) );
-      }
-      catch (NumberFormatException e)
-      {
-        Double work = JPlanner.plan.day( getRowIndex() ).work();
-        ( (Spinner) m_editor ).setSelection( (int) ( 100 * work ) );
-      }
-    }
-
-    // if day number of work periods, set spinner catching if not valid number
-    if ( col == Day.SECTION_PERIODS )
-    {
-      try
-      {
-        ( (Spinner) m_editor ).setSelection( Integer.parseInt( str ) );
-      }
-      catch (NumberFormatException e)
-      {
-        int periods = JPlanner.plan.day( getRowIndex() ).numPeriods();
-        ( (Spinner) m_editor ).setSelection( periods );
-      }
-    }
-
-    // otherwise its a work period start or end
-    if ( col >= Day.SECTION_START1 )
-    {
-      ( (Text) m_editor ).setText( str );
-      ( (Text) m_editor ).selectAll();
-    }
-
+    // TODO
   }
 
   /*************************************** activateCell ******************************************/
