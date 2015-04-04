@@ -20,6 +20,9 @@ package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
 
+import org.eclipse.nebula.widgets.nattable.coordinate.PositionCoordinate;
+import org.eclipse.nebula.widgets.nattable.selection.command.SelectCellCommand;
+
 /*************************************************************************************************/
 /****************** Distributes table refresh requests to all registered tables ******************/
 /*************************************************************************************************/
@@ -31,14 +34,29 @@ public class TableRegister
   /***************************************** addListener *****************************************/
   public void register( XNatTable toAdd )
   {
+    // register each table in array-list
     m_tables.add( toAdd );
   }
 
   /******************************************* refresh *******************************************/
   public void refresh()
   {
+    // refresh each table that has been registered
     for ( XNatTable table : m_tables )
-      table.refresh();
+    {
+      // if cell selected, need to re-select after refresh
+      PositionCoordinate pc = table.selectionLayer.getLastSelectedCellPosition();
+      if ( pc != null )
+      {
+        int col = pc.columnPosition;
+        int row = pc.rowPosition;
+        table.refresh();
+        table.doCommand( new SelectCellCommand( table.selectionLayer, col, row, false, false ) );
+      }
+      else
+        table.refresh();
+    }
+
   }
 
 }

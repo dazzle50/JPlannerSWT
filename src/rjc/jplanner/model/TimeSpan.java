@@ -18,7 +18,61 @@
 
 package rjc.jplanner.model;
 
+/*************************************************************************************************/
+/********************************** Quantity of time with units **********************************/
+/*************************************************************************************************/
+
 public class TimeSpan
 {
+  private double              m_num;
+  private char                m_units;
+
+  final public static char    UNIT_SECONDS = 'S';
+  final public static char    UNIT_MINUTES = 'M';
+  final public static char    UNIT_HOURS   = 'H';
+  final public static char    UNIT_DAYS    = 'd';
+  final public static char    UNIT_WEEKS   = 'w';
+  final public static char    UNIT_MONTHS  = 'm';
+  final public static char    UNIT_YEARS   = 'y';
+
+  final private static String NUMPOINT     = "01234567890.";
+  final private static String UNITS        = "SMHdwmy";
+
+  /**************************************** constructor ******************************************/
+  public TimeSpan( String str )
+  {
+    // construct time-span from string
+    str = str.replaceAll( "\\s+", "" );
+    char lastchr = str.charAt( str.length() - 1 );
+
+    if ( NUMPOINT.indexOf( lastchr ) >= 0 )
+      m_units = UNIT_DAYS; // no units specified so assume 'days'
+    else
+    {
+      if ( UNITS.indexOf( lastchr ) >= 0 ) // check if valid units
+      {
+        m_units = lastchr;
+        str = str.substring( 0, str.length() - 1 );
+      }
+      else
+      {
+        throw new IllegalArgumentException( "Invalid units '" + str + "'" );
+      }
+    }
+
+    m_num = Double.parseDouble( str );
+  }
+
+  /***************************************** toString ********************************************/
+  @Override
+  public String toString()
+  {
+    // returns string representation, suppressing any ".0" on number
+    String str = Double.toString( m_num );
+    if ( str.substring( str.length() - 2 ).equals( ".0" ) )
+      str = str.substring( 0, str.length() - 2 );
+
+    return str + " " + m_units;
+  }
 
 }

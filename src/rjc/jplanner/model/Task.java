@@ -18,8 +18,10 @@
 
 package rjc.jplanner.model;
 
+import rjc.jplanner.JPlanner;
+
 /*************************************************************************************************/
-/*************************************** Single plan task ****************************************/
+/******************************** Single task within overall plan ********************************/
 /*************************************************************************************************/
 
 public class Task
@@ -51,6 +53,18 @@ public class Task
   final public static int SECTION_COMMENT  = 11;
   final public static int SECTION_MAX      = 11;
 
+  /***************************************** initialise ******************************************/
+  public void initialise()
+  {
+    // initialise private variables
+    m_duration = new TimeSpan( "1d" );
+    m_work = new TimeSpan( "0d" );
+    m_start = JPlanner.plan.start();
+    m_end = JPlanner.plan.start();
+    m_predecessors = new Predecessors();
+    m_resources = new TaskResources();
+  }
+
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
@@ -66,10 +80,10 @@ public class Task
       return m_duration.toString();
 
     if ( section == SECTION_START )
-      return m_start.toString();
+      return m_start.toString( JPlanner.plan.datetimeFormat() );
 
     if ( section == SECTION_END )
-      return m_end.toString();
+      return m_end.toString( JPlanner.plan.datetimeFormat() );
 
     if ( section == SECTION_WORK )
       return m_work.toString();
@@ -87,7 +101,12 @@ public class Task
       return String.format( "%d", m_priority / 1_000_000 );
 
     if ( section == SECTION_DEADLINE )
-      return m_deadline.toString();
+    {
+      if ( m_deadline == null )
+        return "NA";
+
+      return m_deadline.toString( JPlanner.plan.datetimeFormat() );
+    }
 
     if ( section == SECTION_COST )
       return m_cost;
@@ -103,7 +122,33 @@ public class Task
   {
     // set task data for given section 
     if ( section == SECTION_TITLE )
+    {
+      if ( isNull() )
+        initialise();
+
       m_title = (String) newValue;
+    }
+
+    else if ( section == SECTION_DURATION )
+      m_duration = (TimeSpan) newValue;
+
+    else if ( section == SECTION_START )
+      m_start = (DateTime) newValue;
+
+    else if ( section == SECTION_END )
+      m_end = (DateTime) newValue;
+
+    else if ( section == SECTION_WORK )
+      m_work = (TimeSpan) newValue;
+
+    else if ( section == SECTION_PRIORITY )
+      m_priority = 1_000_000 * (int) newValue;
+
+    else if ( section == SECTION_DEADLINE )
+      m_deadline = (DateTime) newValue;
+
+    else if ( section == SECTION_COMMENT )
+      m_comment = (String) newValue;
 
     // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
 

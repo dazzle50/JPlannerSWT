@@ -74,6 +74,8 @@ public class XNatTable extends NatTable
   final public static String CONFIG_RESOURCE_EDITOR = "Res";
   final public static String CONFIG_TASK_EDITOR     = "Task";
 
+  public SelectionLayer      selectionLayer;
+
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
   {
@@ -177,7 +179,7 @@ public class XNatTable extends NatTable
         colh = new TasksColumnHeader( body );
         rowh = new TasksRowHeader( body );
         label = new TasksLabelAccumulator();
-        int[] widthT = { 100, 25, 200, 60, 100, 100, 60 };
+        int[] widthT = { 100, 25, 200, 60, 130, 130, 60 };
         configTable( body, colh, rowh, label, widthT, 2 * MainWindow.GANTTSCALE_HEIGHT );
         MainWindow.taskTables().register( this );
         break;
@@ -195,8 +197,8 @@ public class XNatTable extends NatTable
     // create body layer stack
     DataLayer bodyDataLayer = new DataLayer( body, widths[0], 20 );
     bodyDataLayer.setConfigLabelAccumulator( label );
-    SelectionLayer selLayer = new SelectionLayer( bodyDataLayer );
-    ViewportLayer viewport = new ViewportLayer( selLayer );
+    selectionLayer = new SelectionLayer( bodyDataLayer );
+    ViewportLayer viewport = new ViewportLayer( selectionLayer );
 
     // widths - first is default, then row header, then columns
     for ( int i = 2; i < widths.length; i++ )
@@ -206,11 +208,11 @@ public class XNatTable extends NatTable
     DataLayer chDataLayer = new DataLayer( ch );
     if ( chHeight > 0 )
       chDataLayer.setRowHeightByPosition( 0, chHeight );
-    ColumnHeaderLayer colHeader = new ColumnHeaderLayer( chDataLayer, viewport, selLayer );
+    ColumnHeaderLayer colHeader = new ColumnHeaderLayer( chDataLayer, viewport, selectionLayer );
 
     // create row header layer stack
     DataLayer rhDataLayer = new DataLayer( rh, widths[1], 20 );
-    RowHeaderLayer rowHeader = new RowHeaderLayer( rhDataLayer, viewport, selLayer );
+    RowHeaderLayer rowHeader = new RowHeaderLayer( rhDataLayer, viewport, selectionLayer );
 
     // create corner later stack
     DataLayer cDataLayer = new DataLayer( new DefaultCornerDataProvider( ch, rh ) );

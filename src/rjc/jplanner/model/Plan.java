@@ -94,7 +94,7 @@ public class Plan
     m_title = "";
     m_calendar = calendar( 0 );
     m_start = m_calendar.workUp( new DateTime( Date.now(), Time.fromMilliseconds( 0 ) ) );
-    m_datetimeFormat = "ddd dd/MM/yyyy hh:mm";
+    m_datetimeFormat = "EEE dd/MM/yyyy hh:mm";
     m_dateFormat = "dd/MM/yyyy";
     m_filename = "";
     m_fileLocation = "";
