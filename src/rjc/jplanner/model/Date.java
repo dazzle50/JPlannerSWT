@@ -75,6 +75,21 @@ public class Date
     return new Date( (int) localDate.toEpochDay() );
   }
 
+  /***************************************** fromString ******************************************/
+  public static Date fromString( String str )
+  {
+    // if string of type YYYY-MM-DD or YYYY/MM/DD
+    if ( str.matches( "\\d\\d\\d\\d-\\d\\d-\\d\\d" ) || str.matches( "\\d\\d\\d\\d/\\d\\d/\\d\\d" ) )
+    {
+      int year = Integer.parseInt( str.substring( 0, 4 ) );
+      int mon = Integer.parseInt( str.substring( 5, 7 ) );
+      int day = Integer.parseInt( str.substring( 8, 10 ) );
+      return new Date( year, mon, day );
+    }
+
+    throw new IllegalArgumentException( "String=" + str );
+  }
+
   /******************************************** year *********************************************/
   public int year()
   {

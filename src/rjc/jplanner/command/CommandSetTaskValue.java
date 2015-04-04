@@ -20,24 +20,24 @@ package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.MainWindow;
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/************* UndoCommand for updating calendars (except cycle-length & exceptions) *************/
+/******************************** UndoCommand for updating tasks *********************************/
 /*************************************************************************************************/
 
-public class CommandSetCalendarValue implements IUndoCommand
+public class CommandSetTaskValue implements IUndoCommand
 {
-  private int    m_calID;   // calendar number in plan
+  private int    m_taskID;  // task number in plan
   private int    m_section; // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetCalendarValue( int calID, int section, Object newValue, Object oldValue )
+  public CommandSetTaskValue( int taskID, int section, Object newValue, Object oldValue )
   {
     // initialise private variables
-    m_calID = calID;
+    m_taskID = taskID;
     m_section = section;
     m_newValue = newValue;
     m_oldValue = oldValue;
@@ -48,10 +48,10 @@ public class CommandSetCalendarValue implements IUndoCommand
   public void redo()
   {
     // action command
-    JPlanner.plan.calendar( m_calID ).setData( m_section, m_newValue );
+    JPlanner.plan.task( m_taskID ).setData( m_section, m_newValue );
 
-    // update calendars tables
-    MainWindow.calendarTables().refresh();
+    // update tasks tables
+    MainWindow.taskTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -59,10 +59,10 @@ public class CommandSetCalendarValue implements IUndoCommand
   public void undo()
   {
     // revert command
-    JPlanner.plan.calendar( m_calID ).setData( m_section, m_oldValue );
+    JPlanner.plan.task( m_taskID ).setData( m_section, m_oldValue );
 
-    // update calendars tables
-    MainWindow.calendarTables().refresh();
+    // update tasks tables
+    MainWindow.taskTables().refresh();
   }
 
   /******************************************* text **********************************************/
@@ -70,7 +70,7 @@ public class CommandSetCalendarValue implements IUndoCommand
   public String text()
   {
     // command description
-    return "Day " + ( m_calID + 1 ) + " " + Calendar.sectionName( m_section ) + " = " + m_newValue;
+    return "Task " + ( m_taskID + 1 ) + " " + Task.sectionName( m_section ) + " = " + m_newValue;
   }
 
 }

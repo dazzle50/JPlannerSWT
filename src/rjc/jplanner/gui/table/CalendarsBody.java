@@ -71,7 +71,7 @@ public class CalendarsBody implements IDataProvider
     if ( newValue.equals( oldValue ) )
       return;
 
-    // special command for setting number of work periods, otherwise generic
+    // special command for setting exceptions & cycle-length, otherwise generic
     if ( row == Calendar.SECTION_EXCEPTIONS )
       JPlanner.plan.undostack().push( new CommandSetCalendarExceptions( col, newValue, oldValue ) );
     else if ( row == Calendar.SECTION_CYCLE )

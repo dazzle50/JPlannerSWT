@@ -164,6 +164,12 @@ public class Calendar
     return m_normal.get( index );
   }
 
+  /******************************************* normals *******************************************/
+  public ArrayList<Day> normals()
+  {
+    return m_normal;
+  }
+
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
@@ -192,13 +198,24 @@ public class Calendar
   }
 
   /****************************************** setData ********************************************/
+  @SuppressWarnings( "unchecked" )
   public void setData( int section, Object newValue )
   {
     // set calendar data for given section 
     if ( section == SECTION_NAME )
       m_name = (String) newValue;
 
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
+    else if ( section == SECTION_ANCHOR )
+      m_cycleAnchor = Date.fromString( (String) newValue );
+
+    else if ( section == SECTION_CYCLE )
+      m_normal = (ArrayList<Day>) newValue;
+
+    else if ( section == SECTION_EXCEPTIONS )
+      m_exceptions = (HashMap<Date, Day>) newValue;
+
+    else if ( section >= SECTION_NORMAL1 )
+      m_normal.set( section - SECTION_NORMAL1, (Day) newValue );
 
     else
       throw new IllegalArgumentException( "Section=" + section );

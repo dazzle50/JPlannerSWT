@@ -52,7 +52,7 @@ public class CommandSetCalendarExceptions implements IUndoCommand
   public String text()
   {
     // TODO Auto-generated method stub
-    return null;
+    return "Exceptions TBD";
   }
 
 }

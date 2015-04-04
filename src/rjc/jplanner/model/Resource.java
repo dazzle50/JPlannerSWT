@@ -18,6 +18,8 @@
 
 package rjc.jplanner.model;
 
+import rjc.jplanner.JPlanner;
+
 /*************************************************************************************************/
 /************************************* Single plan resource **************************************/
 /*************************************************************************************************/
@@ -78,10 +80,20 @@ public class Resource
       return m_alias;
 
     if ( section == SECTION_START )
-      return m_start.toString();
+    {
+      if ( m_start == null )
+        return "NA";
+      else
+        return m_start.toString();
+    }
 
     if ( section == SECTION_END )
-      return m_end.toString();
+    {
+      if ( m_end == null )
+        return "NA";
+      else
+        return m_end.toString();
+    }
 
     if ( section == SECTION_AVAIL )
       return String.format( "%.2f", m_availability );
@@ -103,7 +115,30 @@ public class Resource
   {
     // set resource data for given section 
     if ( section == SECTION_ID )
+    {
+      if ( isNull() )
+        m_calendar = JPlanner.plan.calendar();
+
       m_id = (String) newValue;
+    }
+
+    else if ( section == SECTION_NAME )
+      m_name = (String) newValue;
+
+    else if ( section == SECTION_ORG )
+      m_org = (String) newValue;
+
+    else if ( section == SECTION_GROUP )
+      m_group = (String) newValue;
+
+    else if ( section == SECTION_ROLE )
+      m_role = (String) newValue;
+
+    else if ( section == SECTION_ALIAS )
+      m_alias = (String) newValue;
+
+    else if ( section == SECTION_COMMENT )
+      m_comment = (String) newValue;
 
     // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
 

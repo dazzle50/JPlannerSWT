@@ -31,7 +31,7 @@ import rjc.jplanner.gui.MainWindow;
 public class UndoStack
 {
   private ArrayList<IUndoCommand> m_stack; // stack of undo commands
-  private int                    m_index; // current command
+  private int                     m_index; // current command
 
   /**************************************** constructor ******************************************/
   public UndoStack()

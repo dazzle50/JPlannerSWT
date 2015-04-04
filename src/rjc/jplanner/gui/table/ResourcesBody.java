@@ -21,6 +21,7 @@ package rjc.jplanner.gui.table;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandSetResourceValue;
 import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
@@ -58,8 +59,12 @@ public class ResourcesBody implements IDataProvider
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // TODO !!!!!!!!!!!!!!
+    // if new value equals old value, exit with no command
+    Object oldValue = getDataValue( col, row );
+    if ( newValue.equals( oldValue ) )
+      return;
 
+    JPlanner.plan.undostack().push( new CommandSetResourceValue( row, col, newValue, oldValue ) );
   }
 
 }
