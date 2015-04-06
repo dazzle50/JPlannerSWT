@@ -19,8 +19,12 @@
 package rjc.jplanner.gui.editor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import rjc.jplanner.model.Task;
+import rjc.jplanner.model.TaskType;
 
 /*************************************************************************************************/
 /********************************** Editor for task table cells **********************************/
@@ -32,6 +36,17 @@ public class TaskCellEditor extends XAbstractCellEditor
   @Override
   public Control createEditor( int row, int col )
   {
+    // create editor based on column
+    if ( col == Task.SECTION_TYPE )
+    {
+      Combo combo = new Combo( parent, SWT.READ_ONLY );
+      combo.add( TaskType.ASAP_FDUR );
+      combo.add( TaskType.ASAP_FWORK );
+      combo.add( TaskType.SON_FDUR );
+      combo.add( TaskType.SON_FWORK );
+      combo.add( TaskType.FIXED_PERIOD );
+      return combo;
+    }
 
     // TODO - use Text editor until find/write something better
     return new Text( parent, SWT.SINGLE );
@@ -47,6 +62,9 @@ public class TaskCellEditor extends XAbstractCellEditor
       ( (Text) editor ).setText( value );
       ( (Text) editor ).setSelection( Integer.MAX_VALUE );
     }
+
+    if ( editor instanceof Combo )
+      ( (Combo) editor ).setText( value );
 
   }
 

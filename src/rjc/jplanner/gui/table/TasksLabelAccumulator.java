@@ -49,8 +49,13 @@ public class TasksLabelAccumulator implements IConfigLabelAccumulator
     }
     else
     {
-      labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
-      labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+      if ( task.type().isSectionEditable( col ) )
+      {
+        labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
+        labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+      }
+      else
+        labels.addLabel( XNatTable.CONFIG_SHADE );
     }
 
     // left align some columns

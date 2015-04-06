@@ -25,6 +25,12 @@ package rjc.jplanner.model;
 public class Predecessors
 {
 
+  /**************************************** constructor ******************************************/
+  public Predecessors( String newValue )
+  {
+    // TODO Auto-generated constructor stub
+  }
+
   /***************************************** toString ********************************************/
   @Override
   public String toString()

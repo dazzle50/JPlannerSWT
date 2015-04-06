@@ -33,7 +33,7 @@ public class Task
   private TimeSpan        m_work;               // work effort for task
   private Predecessors    m_predecessors;       // task predecessors
   private TaskResources   m_resources;          // resources allocated to task
-  private String          m_type;               // task type
+  private TaskType        m_type;               // task type
   private int             m_priority;           // overall task priority (0 to 999 times one million)
   private DateTime        m_deadline;           // task warning deadline
   private String          m_cost;               // calculated cost based on resource use
@@ -61,8 +61,9 @@ public class Task
     m_work = new TimeSpan( "0d" );
     m_start = JPlanner.plan.start();
     m_end = JPlanner.plan.start();
-    m_predecessors = new Predecessors();
+    m_predecessors = new Predecessors( "" );
     m_resources = new TaskResources();
+    m_type = new TaskType( TaskType.ASAP_FDUR );
   }
 
   /****************************************** toString *******************************************/
@@ -95,7 +96,7 @@ public class Task
       return m_resources.toString();
 
     if ( section == SECTION_TYPE )
-      return m_type;
+      return m_type.toString();
 
     if ( section == SECTION_PRIORITY )
       return String.format( "%d", m_priority / 1_000_000 );
@@ -130,7 +131,7 @@ public class Task
     }
 
     else if ( section == SECTION_DURATION )
-      m_duration = (TimeSpan) newValue;
+      m_duration = new TimeSpan( (String) newValue );
 
     else if ( section == SECTION_START )
       m_start = (DateTime) newValue;
@@ -139,7 +140,13 @@ public class Task
       m_end = (DateTime) newValue;
 
     else if ( section == SECTION_WORK )
-      m_work = (TimeSpan) newValue;
+      m_work = new TimeSpan( (String) newValue );
+
+    else if ( section == SECTION_PRED )
+      m_predecessors = new Predecessors( (String) newValue );
+
+    else if ( section == SECTION_TYPE )
+      m_type = new TaskType( (String) newValue );
 
     else if ( section == SECTION_PRIORITY )
       m_priority = 1_000_000 * (int) newValue;
@@ -204,6 +211,12 @@ public class Task
       return "Comment";
 
     throw new IllegalArgumentException( "Section=" + num );
+  }
+
+  /******************************************* type **********************************************/
+  public TaskType type()
+  {
+    return m_type;
   }
 
 }

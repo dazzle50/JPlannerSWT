@@ -179,7 +179,7 @@ public class XNatTable extends NatTable
         colh = new TasksColumnHeader( body );
         rowh = new TasksRowHeader( body );
         label = new TasksLabelAccumulator();
-        int[] widthT = { 100, 25, 200, 60, 130, 130, 60 };
+        int[] widthT = { 110, 25, 200, 60, 130, 130, 60 };
         configTable( body, colh, rowh, label, widthT, 2 * MainWindow.GANTTSCALE_HEIGHT );
         MainWindow.taskTables().register( this );
         break;

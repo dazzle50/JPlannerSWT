@@ -23,6 +23,7 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer.MoveDirectio
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Spinner;
@@ -95,6 +96,9 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   {
     if ( m_editor instanceof Spinner )
       return ( (Spinner) m_editor ).getText();
+
+    if ( m_editor instanceof Combo )
+      return ( (Combo) m_editor ).getText();
 
     // none of above, therefore must be a Text editor
     return ( (Text) m_editor ).getText();
