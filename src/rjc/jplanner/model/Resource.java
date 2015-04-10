@@ -18,6 +18,9 @@
 
 package rjc.jplanner.model;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
@@ -194,6 +197,16 @@ public class Resource
       return "Comment";
 
     throw new IllegalArgumentException( "Section=" + num );
+  }
+
+  /****************************************** saveToXML ******************************************/
+  public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write resource data to xml stream
+    xsw.writeStartElement( Plan.XML_RESOURCE );
+    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+
+    xsw.writeEndElement(); // XML_RESOURCE
   }
 
 }

@@ -18,11 +18,17 @@
 
 package rjc.jplanner.model;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.command.UndoStack;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.Day.DefaultDayTypes;
+
+import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 /*************************************************************************************************/
 /************************** Holds the complete data model for the plan ***************************/
@@ -30,23 +36,49 @@ import rjc.jplanner.model.Day.DefaultDayTypes;
 
 public class Plan
 {
-  private String              m_title;         // plan title as set in properties
-  private DateTime            m_start;         // plan start date-time as set in properties
-  private Calendar            m_calendar;      // plan's default calendar
-  private String              m_datetimeFormat; // format to display date-times
-  private String              m_dateFormat;    // format to display dates
-  private String              m_filename;      // filename when saved or loaded
-  private String              m_fileLocation;  // file location
-  private String              m_savedBy;       // who saved last
-  private DateTime            m_savedWhen;     // when was last saved
-  private String              m_notes;         // plan notes as on plan tab
+  private String              m_title;                              // plan title as set in properties
+  private DateTime            m_start;                              // plan start date-time as set in properties
+  private Calendar            m_calendar;                           // plan's default calendar
+  private String              m_datetimeFormat;                     // format to display date-times
+  private String              m_dateFormat;                         // format to display dates
+  private String              m_filename;                           // filename when saved or loaded
+  private String              m_fileLocation;                       // file location
+  private String              m_savedBy;                            // who saved last
+  private DateTime            m_savedWhen;                          // when was last saved
+  private String              m_notes;                              // plan notes as on plan tab
 
-  private UndoStack           m_undostack;     // undo stack for plan editing
+  private UndoStack           m_undostack;                          // undo stack for plan editing
 
-  private ArrayList<Task>     m_tasks;         // list of plan tasks
-  private ArrayList<Resource> m_resources;     // list of plan resources
-  private ArrayList<Calendar> m_calendars;     // list of plan calendars
-  private ArrayList<Day>      m_daytypes;      // list of plan day types
+  private ArrayList<Task>     m_tasks;                              // list of plan tasks
+  private ArrayList<Resource> m_resources;                          // list of plan resources
+  private ArrayList<Calendar> m_calendars;                          // list of plan calendars
+  private ArrayList<Day>      m_daytypes;                           // list of plan day types
+
+  public static final String  XML_JPLANNER      = "JPlanner";
+  public static final String  XML_VERSION       = "version";
+  public static final String  XML_USER          = "user";
+  public static final String  XML_WHEN          = "when";
+  public static final String  XML_DAY_DATA      = "days-data";
+  public static final String  XML_CAL_DATA      = "calendars-data";
+  public static final String  XML_RES_DATA      = "resources-data";
+  public static final String  XML_TASK_DATA     = "task-data";
+  public static final String  XML_PLAN_DATA     = "plan-data";
+  public static final String  XML_PLAN_TITLE    = "title";
+  public static final String  XML_PLAN_START    = "start";
+  public static final String  XML_PLAN_CALENDAR = "calendar";
+  public static final String  XML_PLAN_DTF      = "datetime-format";
+  public static final String  XML_PLAN_DF       = "date-format";
+  public static final String  XML_PLAN_NOTES    = "notes";
+  public static final String  XML_ID            = "id";
+  public static final String  XML_DAY           = "day";
+  public static final String  XML_CALENDAR      = "calendar";
+  public static final String  XML_RESOURCE      = "resource";
+  public static final String  XML_TASK          = "task";
+  public static final String  XML_DAY_NAME      = "name";
+  public static final String  XML_DAY_WORK      = "work";
+  public static final String  XML_DAY_PERIOD    = "period";
+  public static final String  XML_PERIOD_START  = "start";
+  public static final String  XML_PERIOD_END    = "end";
 
   /**************************************** constructor ******************************************/
   public Plan()
@@ -182,6 +214,27 @@ public class Plan
     return m_daytypes.get( index );
   }
 
+  /******************************************** index ********************************************/
+  public int index( Day day )
+  {
+    return m_daytypes.indexOf( day );
+  }
+
+  public int index( Calendar cal )
+  {
+    return m_calendars.indexOf( cal );
+  }
+
+  public int index( Resource res )
+  {
+    return m_resources.indexOf( res );
+  }
+
+  public int index( Task task )
+  {
+    return m_tasks.indexOf( task );
+  }
+
   /******************************************** title ********************************************/
   public String title()
   {
@@ -296,6 +349,77 @@ public class Plan
   public void setDateFormat( String Dformat )
   {
     m_dateFormat = Dformat;
+  }
+
+  /****************************************** savePlan *******************************************/
+  public boolean savePlan( String fileName )
+  {
+    // if no file-name passed in, exit immediately returning false
+    if ( fileName == null )
+      return false;
+
+    // attempt to save plan as XML to specified file
+    try
+    {
+      // create XML stream writer
+      XMLOutputFactory xof = XMLOutputFactory.newInstance();
+      FileOutputStream file = new FileOutputStream( fileName );
+      XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( file, "UTF-8" ) );
+
+      // start XML document
+      xsw.writeStartDocument( "UTF-8", "1.0" );
+      xsw.writeStartElement( XML_JPLANNER );
+      xsw.writeAttribute( XML_VERSION, "2015-04" );
+      xsw.writeAttribute( XML_USER, System.getProperty( "user.name" ) );
+      xsw.writeAttribute( XML_WHEN, DateTime.now().toString() );
+
+      // write day-types data to XML stream
+      xsw.writeStartElement( XML_DAY_DATA );
+      for ( Day day : m_daytypes )
+        day.saveToXML( xsw );
+      xsw.writeEndElement(); // XML_DAY_DATA
+
+      // write calendars data to XML stream
+      xsw.writeStartElement( XML_CAL_DATA );
+      for ( Calendar cal : m_calendars )
+        cal.saveToXML( xsw );
+      xsw.writeEndElement(); // XML_CAL_DATA
+
+      // write resources data to XML stream
+      xsw.writeStartElement( XML_RES_DATA );
+      for ( Resource res : m_resources )
+        res.saveToXML( xsw );
+      xsw.writeEndElement(); // XML_RES_DATA
+
+      // write tasks data to XML stream
+      xsw.writeStartElement( XML_TASK_DATA );
+      for ( Task task : m_tasks )
+        task.saveToXML( xsw );
+      xsw.writeEndElement(); // XML_TASK_DATA
+
+      // write plan data to XML stream
+      xsw.writeEmptyElement( XML_PLAN_DATA );
+      xsw.writeAttribute( XML_PLAN_TITLE, m_title );
+      xsw.writeAttribute( XML_PLAN_START, m_start.toString() );
+      xsw.writeAttribute( XML_PLAN_CALENDAR, Integer.toString( index( m_calendar ) ) );
+      xsw.writeAttribute( XML_PLAN_DTF, m_datetimeFormat );
+      xsw.writeAttribute( XML_PLAN_DF, m_dateFormat );
+      xsw.writeAttribute( XML_PLAN_NOTES, m_notes );
+
+      // close XML document
+      xsw.writeEndElement(); // XML_JPLANNER
+      xsw.writeEndDocument();
+      xsw.flush();
+      xsw.close();
+      file.close();
+      return true;
+    }
+    catch (Exception exception)
+    {
+      // some sort of exception thrown
+      exception.printStackTrace();
+      return false;
+    }
   }
 
 }

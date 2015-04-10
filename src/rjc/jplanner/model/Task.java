@@ -18,6 +18,9 @@
 
 package rjc.jplanner.model;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
@@ -217,6 +220,16 @@ public class Task
   public TaskType type()
   {
     return m_type;
+  }
+
+  /****************************************** saveToXML ******************************************/
+  public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write task data to xml stream
+    xsw.writeStartElement( Plan.XML_TASK );
+    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+
+    xsw.writeEndElement(); // XML_TASK
   }
 
 }

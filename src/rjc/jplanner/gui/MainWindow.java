@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -50,6 +51,10 @@ public class MainWindow extends Shell
   public static MenuItem        actionUndoStackView;   // action to show plan undo-stack window
   public static MenuItem        actionUndo;
   public static MenuItem        actionRedo;
+  public static MenuItem        actionNew;
+  public static MenuItem        actionOpen;
+  public static MenuItem        actionSave;
+  public static MenuItem        actionSaveAs;
 
   public static int             GANTTSCALE_HEIGHT = 15;
 
@@ -108,24 +113,36 @@ public class MainWindow extends Shell
     menuFile.setMenu( fileMenu );
 
     // add file menu items
-    MenuItem actionNew = new MenuItem( fileMenu, SWT.NONE );
+    actionNew = new MenuItem( fileMenu, SWT.NONE );
     actionNew.setAccelerator( SWT.CTRL + 'N' );
     actionNew.setText( "New\tCtrl+N" );
     actionNew.setEnabled( false );
 
-    MenuItem actionOpen = new MenuItem( fileMenu, SWT.NONE );
+    actionOpen = new MenuItem( fileMenu, SWT.NONE );
     actionOpen.setAccelerator( SWT.CTRL + 'O' );
     actionOpen.setText( "Open...\tCtrl+O" );
     actionOpen.setEnabled( false );
 
-    MenuItem actionSave = new MenuItem( fileMenu, SWT.NONE );
+    actionSave = new MenuItem( fileMenu, SWT.NONE );
     actionSave.setAccelerator( SWT.CTRL + 'S' );
     actionSave.setText( "Save\tCtrl+S" );
     actionSave.setEnabled( false );
 
-    MenuItem actionSaveAs = new MenuItem( fileMenu, SWT.NONE );
+    actionSaveAs = new MenuItem( fileMenu, SWT.NONE );
     actionSaveAs.setText( "Save As..." );
-    actionSaveAs.setEnabled( false );
+    actionSaveAs.setEnabled( true );
+    actionSaveAs.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        // open file-dialog to ask for filename & location
+        FileDialog fd = new FileDialog( MainWindow.this, SWT.SAVE );
+        String[] filterExt = { "*.xml", "*.*" };
+        fd.setFilterExtensions( filterExt );
+        JPlanner.plan.savePlan( fd.open() );
+      }
+    } );
 
     new MenuItem( fileMenu, SWT.SEPARATOR );
 

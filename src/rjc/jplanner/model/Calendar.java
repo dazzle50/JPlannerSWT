@@ -21,6 +21,9 @@ package rjc.jplanner.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day.DefaultDayTypes;
 
@@ -301,6 +304,16 @@ public class Calendar
     }
 
     return new DateTime( date, newTime );
+  }
+
+  /****************************************** saveToXML ******************************************/
+  public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write calendar data to xml stream
+    xsw.writeStartElement( Plan.XML_CALENDAR );
+    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+
+    xsw.writeEndElement(); // XML_CALENDAR
   }
 
 }
