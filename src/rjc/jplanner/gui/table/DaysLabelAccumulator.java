@@ -39,15 +39,15 @@ public class DaysLabelAccumulator implements IConfigLabelAccumulator
     // all cells editable except shaded unused start/end cells
     if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
     {
-      labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
-      labels.addLabel( XNatTable.CONFIG_DAY_EDITOR );
+      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+      labels.addLabel( XNatTable.LABEL_DAY_EDITOR );
     }
     else
-      labels.addLabel( XNatTable.CONFIG_SHADE );
+      labels.addLabel( XNatTable.LABEL_SHADE );
 
     // left align name
     if ( col == Day.SECTION_NAME )
-      labels.addLabel( XNatTable.CONFIG_ALIGN_LEFT );
+      labels.addLabel( XNatTable.LABEL_ALIGN_LEFT );
   }
 
 }

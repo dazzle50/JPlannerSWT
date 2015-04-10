@@ -36,49 +36,39 @@ import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 public class Plan
 {
-  private String              m_title;                              // plan title as set in properties
-  private DateTime            m_start;                              // plan start date-time as set in properties
-  private Calendar            m_calendar;                           // plan's default calendar
-  private String              m_datetimeFormat;                     // format to display date-times
-  private String              m_dateFormat;                         // format to display dates
-  private String              m_filename;                           // filename when saved or loaded
-  private String              m_fileLocation;                       // file location
-  private String              m_savedBy;                            // who saved last
-  private DateTime            m_savedWhen;                          // when was last saved
-  private String              m_notes;                              // plan notes as on plan tab
+  private String              m_title;                          // plan title as set in properties
+  private DateTime            m_start;                          // plan start date-time as set in properties
+  private Calendar            m_calendar;                       // plan's default calendar
+  private String              m_datetimeFormat;                 // format to display date-times
+  private String              m_dateFormat;                     // format to display dates
+  private String              m_filename;                       // filename when saved or loaded
+  private String              m_fileLocation;                   // file location
+  private String              m_savedBy;                        // who saved last
+  private DateTime            m_savedWhen;                      // when was last saved
+  private String              m_notes;                          // plan notes as on plan tab
 
-  private UndoStack           m_undostack;                          // undo stack for plan editing
+  private UndoStack           m_undostack;                      // undo stack for plan editing
 
-  private ArrayList<Task>     m_tasks;                              // list of plan tasks
-  private ArrayList<Resource> m_resources;                          // list of plan resources
-  private ArrayList<Calendar> m_calendars;                          // list of plan calendars
-  private ArrayList<Day>      m_daytypes;                           // list of plan day types
+  private ArrayList<Task>     m_tasks;                          // list of plan tasks
+  private ArrayList<Resource> m_resources;                      // list of plan resources
+  private ArrayList<Calendar> m_calendars;                      // list of plan calendars
+  private ArrayList<Day>      m_daytypes;                       // list of plan day types
 
-  public static final String  XML_JPLANNER      = "JPlanner";
-  public static final String  XML_VERSION       = "version";
-  public static final String  XML_USER          = "user";
-  public static final String  XML_WHEN          = "when";
-  public static final String  XML_DAY_DATA      = "days-data";
-  public static final String  XML_CAL_DATA      = "calendars-data";
-  public static final String  XML_RES_DATA      = "resources-data";
-  public static final String  XML_TASK_DATA     = "task-data";
-  public static final String  XML_PLAN_DATA     = "plan-data";
-  public static final String  XML_PLAN_TITLE    = "title";
-  public static final String  XML_PLAN_START    = "start";
-  public static final String  XML_PLAN_CALENDAR = "calendar";
-  public static final String  XML_PLAN_DTF      = "datetime-format";
-  public static final String  XML_PLAN_DF       = "date-format";
-  public static final String  XML_PLAN_NOTES    = "notes";
-  public static final String  XML_ID            = "id";
-  public static final String  XML_DAY           = "day";
-  public static final String  XML_CALENDAR      = "calendar";
-  public static final String  XML_RESOURCE      = "resource";
-  public static final String  XML_TASK          = "task";
-  public static final String  XML_DAY_NAME      = "name";
-  public static final String  XML_DAY_WORK      = "work";
-  public static final String  XML_DAY_PERIOD    = "period";
-  public static final String  XML_PERIOD_START  = "start";
-  public static final String  XML_PERIOD_END    = "end";
+  public static final String  XML_JPLANNER  = "JPlanner";
+  public static final String  XML_VERSION   = "version";
+  public static final String  XML_USER      = "user";
+  public static final String  XML_WHEN      = "when";
+  public static final String  XML_DAY_DATA  = "days-data";
+  public static final String  XML_CAL_DATA  = "calendars-data";
+  public static final String  XML_RES_DATA  = "resources-data";
+  public static final String  XML_TASK_DATA = "task-data";
+  public static final String  XML_PLAN_DATA = "plan-data";
+  public static final String  XML_TITLE     = "title";
+  public static final String  XML_START     = "start";
+  public static final String  XML_CALENDAR  = "calendar";
+  public static final String  XML_DT_FORMAT = "datetime-format";
+  public static final String  XML_D_FORMAT  = "date-format";
+  public static final String  XML_NOTES     = "notes";
 
   /**************************************** constructor ******************************************/
   public Plan()
@@ -399,12 +389,12 @@ public class Plan
 
       // write plan data to XML stream
       xsw.writeEmptyElement( XML_PLAN_DATA );
-      xsw.writeAttribute( XML_PLAN_TITLE, m_title );
-      xsw.writeAttribute( XML_PLAN_START, m_start.toString() );
-      xsw.writeAttribute( XML_PLAN_CALENDAR, Integer.toString( index( m_calendar ) ) );
-      xsw.writeAttribute( XML_PLAN_DTF, m_datetimeFormat );
-      xsw.writeAttribute( XML_PLAN_DF, m_dateFormat );
-      xsw.writeAttribute( XML_PLAN_NOTES, m_notes );
+      xsw.writeAttribute( XML_TITLE, m_title );
+      xsw.writeAttribute( XML_START, m_start.toString() );
+      xsw.writeAttribute( XML_CALENDAR, Integer.toString( index( m_calendar ) ) );
+      xsw.writeAttribute( XML_DT_FORMAT, m_datetimeFormat );
+      xsw.writeAttribute( XML_D_FORMAT, m_dateFormat );
+      xsw.writeAttribute( XML_NOTES, m_notes );
 
       // close XML document
       xsw.writeEndElement(); // XML_JPLANNER

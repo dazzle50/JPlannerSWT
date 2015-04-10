@@ -27,16 +27,16 @@ public class TimeSpan
   private double              m_num;
   private char                m_units;
 
-  final public static char    UNIT_SECONDS = 'S';
-  final public static char    UNIT_MINUTES = 'M';
-  final public static char    UNIT_HOURS   = 'H';
-  final public static char    UNIT_DAYS    = 'd';
-  final public static char    UNIT_WEEKS   = 'w';
-  final public static char    UNIT_MONTHS  = 'm';
-  final public static char    UNIT_YEARS   = 'y';
+  public static final char    UNIT_SECONDS = 'S';
+  public static final char    UNIT_MINUTES = 'M';
+  public static final char    UNIT_HOURS   = 'H';
+  public static final char    UNIT_DAYS    = 'd';
+  public static final char    UNIT_WEEKS   = 'w';
+  public static final char    UNIT_MONTHS  = 'm';
+  public static final char    UNIT_YEARS   = 'y';
 
-  final private static String NUMPOINT     = "01234567890.";
-  final private static String UNITS        = "SMHdwmy";
+  private static final String NUMPOINT     = "01234567890.";
+  private static final String UNITS        = "SMHdwmy";
 
   /**************************************** constructor ******************************************/
   public TimeSpan( String str )

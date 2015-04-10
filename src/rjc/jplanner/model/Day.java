@@ -40,11 +40,19 @@ public class Day
     NONWORK, STANDARDWORK, SHORT, EVENING, TWENTYFOURHOURS
   }
 
-  final public static int SECTION_NAME    = 0;
-  final public static int SECTION_WORK    = 1;
-  final public static int SECTION_PERIODS = 2;
-  final public static int SECTION_START1  = 3;
-  final public static int SECTION_END1    = 4;
+  public static final int     SECTION_NAME    = 0;
+  public static final int     SECTION_WORK    = 1;
+  public static final int     SECTION_PERIODS = 2;
+  public static final int     SECTION_START1  = 3;
+  public static final int     SECTION_END1    = 4;
+
+  private static final String XML_DAY         = "day";
+  private static final String XML_ID          = "id";
+  private static final String XML_NAME        = "name";
+  private static final String XML_WORK        = "work";
+  private static final String XML_PERIOD      = "period";
+  private static final String XML_START       = "start";
+  private static final String XML_END         = "end";
 
   /**************************************** constructor ******************************************/
   public Day()
@@ -277,18 +285,18 @@ public class Day
   /****************************************** saveToXML ******************************************/
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
-    // write day-type data to xml stream
-    xsw.writeStartElement( Plan.XML_DAY );
-    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
-    xsw.writeAttribute( Plan.XML_DAY_NAME, m_name );
-    xsw.writeAttribute( Plan.XML_DAY_WORK, Double.toString( m_work ) );
+    // write day-type data to XML stream
+    xsw.writeStartElement( XML_DAY );
+    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XML_NAME, m_name );
+    xsw.writeAttribute( XML_WORK, Double.toString( m_work ) );
 
     for ( int p = 0; p < m_periods.size(); p++ )
     {
-      xsw.writeEmptyElement( Plan.XML_DAY_PERIOD );
-      xsw.writeAttribute( Plan.XML_ID, Integer.toString( p ) );
-      xsw.writeAttribute( Plan.XML_PERIOD_START, m_periods.get( p ).m_start.toString() );
-      xsw.writeAttribute( Plan.XML_PERIOD_END, m_periods.get( p ).m_end.toString() );
+      xsw.writeEmptyElement( XML_PERIOD );
+      xsw.writeAttribute( XML_ID, Integer.toString( p ) );
+      xsw.writeAttribute( XML_START, m_periods.get( p ).m_start.toString() );
+      xsw.writeAttribute( XML_END, m_periods.get( p ).m_end.toString() );
     }
 
     xsw.writeEndElement(); // XML_DAY

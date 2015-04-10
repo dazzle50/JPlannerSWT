@@ -18,18 +18,17 @@
 
 package rjc.jplanner.model;
 
-
 /*************************************************************************************************/
 /***************************** Task type regarding starting & length *****************************/
 /*************************************************************************************************/
 
 public class TaskType
 {
-  final public static String ASAP_FDUR    = "ASAP - duration";    // Early as possible - fixed duration
-  final public static String ASAP_FWORK   = "ASAP - work";        // Early as possible - fixed work
-  final public static String SON_FDUR     = "Start on - duration"; // Start on - fixed duration
-  final public static String SON_FWORK    = "Start on - work";    // Start on - fixed work
-  final public static String FIXED_PERIOD = "Fixed period";       // Fixed period
+  public static final String ASAP_FDUR    = "ASAP - duration";    // Early as possible - fixed duration
+  public static final String ASAP_FWORK   = "ASAP - work";        // Early as possible - fixed work
+  public static final String SON_FDUR     = "Start on - duration"; // Start on - fixed duration
+  public static final String SON_FWORK    = "Start on - work";    // Start on - fixed work
+  public static final String FIXED_PERIOD = "Fixed period";       // Fixed period
 
   private String             m_type;
 

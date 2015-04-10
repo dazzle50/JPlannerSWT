@@ -43,11 +43,20 @@ public class Calendar
     STANDARD, FULLTIME, FANCY
   };
 
-  final public static int SECTION_NAME       = 0;
-  final public static int SECTION_ANCHOR     = 1;
-  final public static int SECTION_EXCEPTIONS = 2;
-  final public static int SECTION_CYCLE      = 3;
-  final public static int SECTION_NORMAL1    = 4;
+  public static final int     SECTION_NAME       = 0;
+  public static final int     SECTION_ANCHOR     = 1;
+  public static final int     SECTION_EXCEPTIONS = 2;
+  public static final int     SECTION_CYCLE      = 3;
+  public static final int     SECTION_NORMAL1    = 4;
+
+  private static final String XML_CALENDAR       = "calendar";
+  private static final String XML_ID             = "id";
+  private static final String XML_NAME           = "name";
+  private static final String XML_ANCHOR         = "anchor";
+  private static final String XML_NORMAL         = "normal";
+  private static final String XML_DAY            = "day";
+  private static final String XML_EXCEPTION      = "exception";
+  private static final String XML_DATE           = "date";
 
   /**************************************** constructor ******************************************/
   public Calendar()
@@ -309,11 +318,26 @@ public class Calendar
   /****************************************** saveToXML ******************************************/
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
-    // write calendar data to xml stream
-    xsw.writeStartElement( Plan.XML_CALENDAR );
-    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    // write calendar data to XML stream
+    xsw.writeStartElement( XML_CALENDAR );
+    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XML_NAME, m_name );
+    xsw.writeAttribute( XML_ANCHOR, m_cycleAnchor.toString() );
+
+    for ( int p = 0; p < m_normal.size(); p++ )
+    {
+      xsw.writeEmptyElement( XML_NORMAL );
+      xsw.writeAttribute( XML_ID, Integer.toString( p ) );
+      xsw.writeAttribute( XML_DAY, Integer.toString( JPlanner.plan.index( m_normal.get( p ) ) ) );
+    }
+
+    for ( HashMap.Entry<Date, Day> except : m_exceptions.entrySet() )
+    {
+      xsw.writeEmptyElement( XML_EXCEPTION );
+      xsw.writeAttribute( XML_DATE, except.getKey().toString() );
+      xsw.writeAttribute( XML_DAY, Integer.toString( JPlanner.plan.index( except.getValue() ) ) );
+    }
 
     xsw.writeEndElement(); // XML_CALENDAR
   }
-
 }

@@ -39,14 +39,14 @@ public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
     // all cells editable except shaded unused normal cells
     if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
     {
-      labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
-      labels.addLabel( XNatTable.CONFIG_CALENDAR_EDITOR );
+      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+      labels.addLabel( XNatTable.LABEL_CALENDAR_EDITOR );
     }
     else
-      labels.addLabel( XNatTable.CONFIG_SHADE );
+      labels.addLabel( XNatTable.LABEL_SHADE );
 
     // all cells left align
-    labels.addLabel( XNatTable.CONFIG_ALIGN_LEFT );
+    labels.addLabel( XNatTable.LABEL_ALIGN_LEFT );
   }
 
 }

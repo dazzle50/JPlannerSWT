@@ -41,30 +41,30 @@ public class TasksLabelAccumulator implements IConfigLabelAccumulator
     {
       if ( col == Task.SECTION_TITLE )
       {
-        labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
-        labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+        labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+        labels.addLabel( XNatTable.LABEL_TASK_EDITOR );
       }
       else
-        labels.addLabel( XNatTable.CONFIG_SHADE );
+        labels.addLabel( XNatTable.LABEL_SHADE );
     }
     else
     {
       if ( task.type().isSectionEditable( col ) )
       {
-        labels.addLabel( XNatTable.CONFIG_CELL_EDITABLE );
-        labels.addLabel( XNatTable.CONFIG_TASK_EDITOR );
+        labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+        labels.addLabel( XNatTable.LABEL_TASK_EDITOR );
       }
       else
-        labels.addLabel( XNatTable.CONFIG_SHADE );
+        labels.addLabel( XNatTable.LABEL_SHADE );
     }
 
     // left align some columns
     if ( col == Task.SECTION_TITLE || col == Task.SECTION_PRED || col == Task.SECTION_RES
         || col == Task.SECTION_COMMENT )
-      labels.addLabel( XNatTable.CONFIG_ALIGN_LEFT );
+      labels.addLabel( XNatTable.LABEL_ALIGN_LEFT );
 
     // right align some columns
     if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
-      labels.addLabel( XNatTable.CONFIG_ALIGN_RIGHT );
+      labels.addLabel( XNatTable.LABEL_ALIGN_RIGHT );
   }
 }

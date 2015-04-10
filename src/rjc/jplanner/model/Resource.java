@@ -29,32 +29,47 @@ import rjc.jplanner.JPlanner;
 
 public class Resource
 {
-  private String          m_id;                 // must be unique across all resources in model
-  private String          m_name;               // free text
-  private String          m_org;                // free text
-  private String          m_group;              // free text
-  private String          m_role;               // free text
-  private String          m_alias;              // free text
-  private Date            m_start;              // date availability starts inclusive
-  private Date            m_end;                // date availability end inclusive
-  private double          m_availability;       // number available
-  private double          m_cost;               // cost TODO
-  private Calendar        m_calendar;           // calendar for resource
-  private String          m_comment;            // free text
+  private String              m_initials;                       // must be unique across all resources in model
+  private String              m_name;                           // free text
+  private String              m_org;                            // free text
+  private String              m_group;                          // free text
+  private String              m_role;                           // free text
+  private String              m_alias;                          // free text
+  private Date                m_start;                          // date availability starts inclusive
+  private Date                m_end;                            // date availability end inclusive
+  private double              m_availability;                   // number available
+  private double              m_cost;                           // cost TODO
+  private Calendar            m_calendar;                       // calendar for resource
+  private String              m_comment;                        // free text
 
-  final public static int SECTION_ID       = 0;
-  final public static int SECTION_NAME     = 1;
-  final public static int SECTION_ORG      = 2;
-  final public static int SECTION_GROUP    = 3;
-  final public static int SECTION_ROLE     = 4;
-  final public static int SECTION_ALIAS    = 5;
-  final public static int SECTION_START    = 6;
-  final public static int SECTION_END      = 7;
-  final public static int SECTION_AVAIL    = 8;
-  final public static int SECTION_COST     = 9;
-  final public static int SECTION_CALENDAR = 10;
-  final public static int SECTION_COMMENT  = 11;
-  final public static int SECTION_MAX      = 11;
+  public static final int     SECTION_INITIALS = 0;
+  public static final int     SECTION_NAME     = 1;
+  public static final int     SECTION_ORG      = 2;
+  public static final int     SECTION_GROUP    = 3;
+  public static final int     SECTION_ROLE     = 4;
+  public static final int     SECTION_ALIAS    = 5;
+  public static final int     SECTION_START    = 6;
+  public static final int     SECTION_END      = 7;
+  public static final int     SECTION_AVAIL    = 8;
+  public static final int     SECTION_COST     = 9;
+  public static final int     SECTION_CALENDAR = 10;
+  public static final int     SECTION_COMMENT  = 11;
+  public static final int     SECTION_MAX      = 11;
+
+  private static final String XML_RESOURCE     = "resource";
+  private static final String XML_ID           = "id";
+  private static final String XML_INITIALS     = "initials";
+  private static final String XML_NAME         = "name";
+  private static final String XML_ORG          = "org";
+  private static final String XML_GROUP        = "group";
+  private static final String XML_ROLE         = "role";
+  private static final String XML_ALIAS        = "alias";
+  private static final String XML_START        = "start";
+  private static final String XML_END          = "end";
+  private static final String XML_AVAIL        = "availability";
+  private static final String XML_COST         = "cost";
+  private static final String XML_CALENDAR     = "calendar";
+  private static final String XML_COMMENT      = "comment";
 
   /****************************************** toString *******************************************/
   public String toString( int section )
@@ -64,8 +79,8 @@ public class Resource
       return "";
 
     // return display string for given section
-    if ( section == SECTION_ID )
-      return m_id;
+    if ( section == SECTION_INITIALS )
+      return m_initials;
 
     if ( section == SECTION_NAME )
       return m_name;
@@ -117,12 +132,12 @@ public class Resource
   public void setData( int section, Object newValue )
   {
     // set resource data for given section 
-    if ( section == SECTION_ID )
+    if ( section == SECTION_INITIALS )
     {
       if ( isNull() )
         m_calendar = JPlanner.plan.calendar();
 
-      m_id = (String) newValue;
+      m_initials = (String) newValue;
     }
 
     else if ( section == SECTION_NAME )
@@ -153,15 +168,15 @@ public class Resource
   public boolean isNull()
   {
     // resource is considered null if id not set
-    return ( m_id == null );
+    return ( m_initials == null );
   }
 
   /**************************************** sectionName ******************************************/
   public static String sectionName( int num )
   {
     // return section title
-    if ( num == SECTION_ID )
-      return "Id";
+    if ( num == SECTION_INITIALS )
+      return "Initials";
 
     if ( num == SECTION_NAME )
       return "Name";
@@ -203,8 +218,32 @@ public class Resource
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write resource data to xml stream
-    xsw.writeStartElement( Plan.XML_RESOURCE );
-    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeStartElement( XML_RESOURCE );
+    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+
+    if ( !isNull() )
+    {
+      xsw.writeAttribute( XML_INITIALS, m_initials );
+      if ( m_name != null )
+        xsw.writeAttribute( XML_NAME, m_name );
+      if ( m_org != null )
+        xsw.writeAttribute( XML_ORG, m_org );
+      if ( m_group != null )
+        xsw.writeAttribute( XML_GROUP, m_group );
+      if ( m_role != null )
+        xsw.writeAttribute( XML_ROLE, m_role );
+      if ( m_alias != null )
+        xsw.writeAttribute( XML_ALIAS, m_alias );
+      if ( m_start != null )
+        xsw.writeAttribute( XML_START, m_start.toString() );
+      if ( m_end != null )
+        xsw.writeAttribute( XML_END, m_end.toString() );
+      xsw.writeAttribute( XML_AVAIL, Double.toString( m_availability ) );
+      xsw.writeAttribute( XML_COST, Double.toString( m_cost ) );
+      xsw.writeAttribute( XML_CALENDAR, Integer.toString( JPlanner.plan.index( m_calendar ) ) );
+      if ( m_comment != null )
+        xsw.writeAttribute( XML_COMMENT, m_comment );
+    }
 
     xsw.writeEndElement(); // XML_RESOURCE
   }

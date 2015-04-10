@@ -64,15 +64,15 @@ public class XNatTable extends NatTable
     DAY, CALENDAR, RESOURCE, TASK
   }
 
-  final public static String CONFIG_SHADE           = "Shade";
-  final public static String CONFIG_ALIGN_LEFT      = "Left";
-  final public static String CONFIG_ALIGN_RIGHT     = "Right";
-  final public static String CONFIG_WRAP_TEXT       = "Wrap";
-  final public static String CONFIG_CELL_EDITABLE   = "Edit";
-  final public static String CONFIG_DAY_EDITOR      = "Day";
-  final public static String CONFIG_CALENDAR_EDITOR = "Cal";
-  final public static String CONFIG_RESOURCE_EDITOR = "Res";
-  final public static String CONFIG_TASK_EDITOR     = "Task";
+  public static final String LABEL_SHADE           = "Shade";
+  public static final String LABEL_ALIGN_LEFT      = "Left";
+  public static final String LABEL_ALIGN_RIGHT     = "Right";
+  public static final String LABEL_WRAP_TEXT       = "Wrap";
+  public static final String LABEL_CELL_EDITABLE   = "Edit";
+  public static final String LABEL_DAY_EDITOR      = "Day";
+  public static final String LABEL_CALENDAR_EDITOR = "Cal";
+  public static final String LABEL_RESOURCE_EDITOR = "Res";
+  public static final String LABEL_TASK_EDITOR     = "Task";
 
   public SelectionLayer      selectionLayer;
 
@@ -100,41 +100,41 @@ public class XNatTable extends NatTable
           // Style gray cell background colour
           Style shade = new Style();
           shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, CONFIG_SHADE );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, LABEL_SHADE );
 
           // Style align left text horizontally
           Style left = new Style();
           left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, CONFIG_ALIGN_LEFT );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, LABEL_ALIGN_LEFT );
 
           // Style align right text horizontally
           Style right = new Style();
           right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, CONFIG_ALIGN_RIGHT );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, LABEL_ALIGN_RIGHT );
 
           // Cell config cell text word wraps
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
-              DisplayMode.NORMAL, CONFIG_WRAP_TEXT );
+              DisplayMode.NORMAL, LABEL_WRAP_TEXT );
 
           // Edit config cell is editable 
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
-              DisplayMode.EDIT, CONFIG_CELL_EDITABLE );
+              DisplayMode.EDIT, LABEL_CELL_EDITABLE );
 
           // Edit config use day cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
-              CONFIG_DAY_EDITOR );
+              LABEL_DAY_EDITOR );
 
           // Edit config use calendar cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new CalendarCellEditor(), DisplayMode.EDIT,
-              CONFIG_CALENDAR_EDITOR );
+              LABEL_CALENDAR_EDITOR );
 
           // Edit config use resource cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new ResourceCellEditor(), DisplayMode.EDIT,
-              CONFIG_RESOURCE_EDITOR );
+              LABEL_RESOURCE_EDITOR );
 
           // Edit config use task cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new TaskCellEditor(), DisplayMode.EDIT,
-              CONFIG_TASK_EDITOR );
+              LABEL_TASK_EDITOR );
         }
       };
 

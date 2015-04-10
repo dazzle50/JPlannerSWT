@@ -29,32 +29,46 @@ import rjc.jplanner.JPlanner;
 
 public class Task
 {
-  private String          m_title;              // free text title
-  private TimeSpan        m_duration;           // duration of task
-  private DateTime        m_start;              // start date-time of task
-  private DateTime        m_end;                // end date-time of task
-  private TimeSpan        m_work;               // work effort for task
-  private Predecessors    m_predecessors;       // task predecessors
-  private TaskResources   m_resources;          // resources allocated to task
-  private TaskType        m_type;               // task type
-  private int             m_priority;           // overall task priority (0 to 999 times one million)
-  private DateTime        m_deadline;           // task warning deadline
-  private String          m_cost;               // calculated cost based on resource use
-  private String          m_comment;            // free text comment
+  private String              m_title;                       // free text title
+  private TimeSpan            m_duration;                    // duration of task
+  private DateTime            m_start;                       // start date-time of task
+  private DateTime            m_end;                         // end date-time of task
+  private TimeSpan            m_work;                        // work effort for task
+  private Predecessors        m_predecessors;                // task predecessors
+  private TaskResources       m_resources;                   // resources allocated to task
+  private TaskType            m_type;                        // task type
+  private int                 m_priority;                    // overall task priority (0 to 999 times one million)
+  private DateTime            m_deadline;                    // task warning deadline
+  private String              m_cost;                        // calculated cost based on resource use
+  private String              m_comment;                     // free text comment
 
-  final public static int SECTION_TITLE    = 0;
-  final public static int SECTION_DURATION = 1;
-  final public static int SECTION_START    = 2;
-  final public static int SECTION_END      = 3;
-  final public static int SECTION_WORK     = 4;
-  final public static int SECTION_PRED     = 5;
-  final public static int SECTION_RES      = 6;
-  final public static int SECTION_TYPE     = 7;
-  final public static int SECTION_PRIORITY = 8;
-  final public static int SECTION_DEADLINE = 9;
-  final public static int SECTION_COST     = 10;
-  final public static int SECTION_COMMENT  = 11;
-  final public static int SECTION_MAX      = 11;
+  public static final int     SECTION_TITLE    = 0;
+  public static final int     SECTION_DURATION = 1;
+  public static final int     SECTION_START    = 2;
+  public static final int     SECTION_END      = 3;
+  public static final int     SECTION_WORK     = 4;
+  public static final int     SECTION_PRED     = 5;
+  public static final int     SECTION_RES      = 6;
+  public static final int     SECTION_TYPE     = 7;
+  public static final int     SECTION_PRIORITY = 8;
+  public static final int     SECTION_DEADLINE = 9;
+  public static final int     SECTION_COST     = 10;
+  public static final int     SECTION_COMMENT  = 11;
+  public static final int     SECTION_MAX      = 11;
+
+  private static final String XML_TASK         = "task";
+  private static final String XML_ID           = "id";
+  private static final String XML_TITLE        = "title";
+  private static final String XML_DURATION     = "duration";
+  private static final String XML_START        = "start";
+  private static final String XML_END          = "end";
+  private static final String XML_WORK         = "work";
+  private static final String XML_RESOURCES    = "resources";
+  private static final String XML_TYPE         = "type";
+  private static final String XML_PRIORITY     = "priority";
+  private static final String XML_DEADLINE     = "deadline";
+  private static final String XML_COST         = "cost";
+  private static final String XML_COMMENT      = "comment";
 
   /***************************************** initialise ******************************************/
   public void initialise()
@@ -67,6 +81,7 @@ public class Task
     m_predecessors = new Predecessors( "" );
     m_resources = new TaskResources();
     m_type = new TaskType( TaskType.ASAP_FDUR );
+    m_priority = 100 * 1_000_000;
   }
 
   /****************************************** toString *******************************************/
@@ -225,9 +240,27 @@ public class Task
   /****************************************** saveToXML ******************************************/
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
-    // write task data to xml stream
-    xsw.writeStartElement( Plan.XML_TASK );
-    xsw.writeAttribute( Plan.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    // write task data to XML stream (except predecessors)
+    xsw.writeStartElement( XML_TASK );
+    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+
+    if ( !isNull() )
+    {
+      xsw.writeAttribute( XML_TITLE, m_title );
+      xsw.writeAttribute( XML_DURATION, m_duration.toString() );
+      xsw.writeAttribute( XML_START, m_start.toString() );
+      xsw.writeAttribute( XML_END, m_end.toString() );
+      xsw.writeAttribute( XML_WORK, m_work.toString() );
+      xsw.writeAttribute( XML_RESOURCES, m_resources.toString() );
+      xsw.writeAttribute( XML_TYPE, m_type.toString() );
+      xsw.writeAttribute( XML_PRIORITY, Integer.toString( m_priority / 1_000_000 ) );
+      if ( m_deadline != null )
+        xsw.writeAttribute( XML_DEADLINE, m_deadline.toString() );
+      if ( m_cost != null )
+        xsw.writeAttribute( XML_COST, m_cost );
+      if ( m_comment != null )
+        xsw.writeAttribute( XML_COMMENT, m_comment.toString() );
+    }
 
     xsw.writeEndElement(); // XML_TASK
   }
