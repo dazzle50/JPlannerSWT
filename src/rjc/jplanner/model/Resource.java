@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
@@ -56,7 +57,7 @@ public class Resource
   public static final int     SECTION_COMMENT  = 11;
   public static final int     SECTION_MAX      = 11;
 
-  private static final String XML_RESOURCE     = "resource";
+  public static final String  XML_RESOURCE     = "resource";
   private static final String XML_ID           = "id";
   private static final String XML_INITIALS     = "initials";
   private static final String XML_NAME         = "name";
@@ -70,6 +71,59 @@ public class Resource
   private static final String XML_COST         = "cost";
   private static final String XML_CALENDAR     = "calendar";
   private static final String XML_COMMENT      = "comment";
+
+  /**************************************** constructor ******************************************/
+  public Resource()
+  {
+    // initialise private variables
+    m_availability = 1.0;
+  }
+
+  /**************************************** constructor ******************************************/
+  public Resource( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    this();
+    // read XML resource attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_INITIALS:
+          m_initials = xsr.getAttributeValue( i );
+          break;
+        case XML_NAME:
+          m_name = xsr.getAttributeValue( i );
+          break;
+        case XML_ORG:
+          m_org = xsr.getAttributeValue( i );
+          break;
+        case XML_GROUP:
+          m_group = xsr.getAttributeValue( i );
+          break;
+        case XML_ROLE:
+          m_role = xsr.getAttributeValue( i );
+          break;
+        case XML_ALIAS:
+          m_alias = xsr.getAttributeValue( i );
+          break;
+        case XML_START:
+          m_start = Date.fromString( xsr.getAttributeValue( i ) );
+          break;
+        case XML_END:
+          m_end = Date.fromString( xsr.getAttributeValue( i ) );
+          break;
+        case XML_AVAIL:
+          m_availability = Double.parseDouble( xsr.getAttributeValue( i ) );
+          break;
+        case XML_COST:
+          m_cost = Double.parseDouble( xsr.getAttributeValue( i ) );
+          break;
+        case XML_CALENDAR:
+          m_calendar = JPlanner.plan.calendar( Integer.parseInt( xsr.getAttributeValue( i ) ) );
+          break;
+        case XML_COMMENT:
+          m_comment = xsr.getAttributeValue( i );
+          break;
+      }
+  }
 
   /****************************************** toString *******************************************/
   public String toString( int section )

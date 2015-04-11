@@ -45,6 +45,16 @@ public class DateTime
   }
 
   /***************************************** constructor *****************************************/
+  public DateTime( String str )
+  {
+    // constructor, date must be split from time by a space
+    int split = str.indexOf( ' ' );
+    Date date = Date.fromString( str.substring( 0, split ) );
+    Time time = Time.fromString( str.substring( split + 1, str.length() ) );
+    m_milliseconds = date.epochday() * MILLISECONDS_IN_DAY + time.milliseconds();
+  }
+
+  /***************************************** constructor *****************************************/
   public DateTime( Date date, Time time )
   {
     // constructor

@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
@@ -56,7 +57,7 @@ public class Task
   public static final int     SECTION_COMMENT  = 11;
   public static final int     SECTION_MAX      = 11;
 
-  private static final String XML_TASK         = "task";
+  public static final String  XML_TASK         = "task";
   private static final String XML_ID           = "id";
   private static final String XML_TITLE        = "title";
   private static final String XML_DURATION     = "duration";
@@ -69,6 +70,56 @@ public class Task
   private static final String XML_DEADLINE     = "deadline";
   private static final String XML_COST         = "cost";
   private static final String XML_COMMENT      = "comment";
+
+  /**************************************** constructor ******************************************/
+  public Task()
+  {
+    // initialise private variables
+    m_predecessors = new Predecessors( "" );
+  }
+
+  /**************************************** constructor ******************************************/
+  public Task( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    this();
+    // read XML resource attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_TITLE:
+          m_title = xsr.getAttributeValue( i );
+          break;
+        case XML_DURATION:
+          m_duration = new TimeSpan( xsr.getAttributeValue( i ) );
+          break;
+        case XML_START:
+          m_start = new DateTime( xsr.getAttributeValue( i ) );
+          break;
+        case XML_END:
+          m_end = new DateTime( xsr.getAttributeValue( i ) );
+          break;
+        case XML_WORK:
+          m_work = new TimeSpan( xsr.getAttributeValue( i ) );
+          break;
+        case XML_RESOURCES:
+          m_resources = new TaskResources( xsr.getAttributeValue( i ) );
+          break;
+        case XML_TYPE:
+          m_type = new TaskType( xsr.getAttributeValue( i ) );
+          break;
+        case XML_PRIORITY:
+          m_priority = 1_000_000 * Integer.parseInt( xsr.getAttributeValue( i ) );
+          break;
+        case XML_DEADLINE:
+          m_deadline = new DateTime( xsr.getAttributeValue( i ) );
+          break;
+        case XML_COST:
+          m_cost = xsr.getAttributeValue( i );
+          break;
+        case XML_COMMENT:
+          m_comment = xsr.getAttributeValue( i );
+          break;
+      }
+  }
 
   /***************************************** initialise ******************************************/
   public void initialise()

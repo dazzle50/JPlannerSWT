@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
@@ -49,7 +50,7 @@ public class Calendar
   public static final int     SECTION_CYCLE      = 3;
   public static final int     SECTION_NORMAL1    = 4;
 
-  private static final String XML_CALENDAR       = "calendar";
+  public static final String  XML_CALENDAR       = "calendar";
   private static final String XML_ID             = "id";
   private static final String XML_NAME           = "name";
   private static final String XML_ANCHOR         = "anchor";
@@ -137,6 +138,61 @@ public class Calendar
       throw new IllegalArgumentException( "Unhandled DefaultCalendarTypes=" + type );
     }
 
+  }
+
+  /**************************************** constructor ******************************************/
+  public Calendar( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    this();
+    // read XML calendar attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_NAME:
+          m_name = xsr.getAttributeValue( i );
+          break;
+        case XML_ANCHOR:
+          m_cycleAnchor = Date.fromString( xsr.getAttributeValue( i ) );
+          break;
+      }
+
+    // check for any normals or exceptions
+    while ( xsr.hasNext() )
+    {
+      // if reached end of calendar, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_CALENDAR ) )
+        return;
+
+      // if a normal element, add it to list
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_NORMAL ) )
+        for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+          switch (xsr.getAttributeLocalName( i )) {
+            case XML_DAY:
+              int dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
+              m_normal.add( JPlanner.plan.day( dayIndex ) );
+              break;
+          }
+
+      // if an exception element, add it to list
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_EXCEPTION ) )
+      {
+        Date date = null;
+        int dayIndex = -1;
+
+        for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+          switch (xsr.getAttributeLocalName( i )) {
+            case XML_DATE:
+              date = Date.fromString( xsr.getAttributeValue( i ) );
+              break;
+            case XML_DAY:
+              dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
+              break;
+          }
+
+        m_exceptions.put( date, JPlanner.plan.day( dayIndex ) );
+      }
+
+      xsr.next();
+    }
   }
 
   /***************************************** toString ********************************************/

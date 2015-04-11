@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.table.TableRegister;
+import rjc.jplanner.model.Plan;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -121,7 +122,24 @@ public class MainWindow extends Shell
     actionOpen = new MenuItem( fileMenu, SWT.NONE );
     actionOpen.setAccelerator( SWT.CTRL + 'O' );
     actionOpen.setText( "Open...\tCtrl+O" );
-    actionOpen.setEnabled( false );
+    actionOpen.setEnabled( true );
+    actionOpen.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        // open file-dialog to ask for filename & location
+        FileDialog fd = new FileDialog( MainWindow.this, SWT.OPEN );
+        String[] filterExt = { "*.xml", "*.*" };
+        fd.setFilterExtensions( filterExt );
+        Plan newPlan = new Plan();
+        Plan oldPlan = JPlanner.plan;
+        JPlanner.plan = newPlan;
+        JPlanner.plan.loadPlan( fd.open() );
+        if ( !newPlan.isOK() )
+          JPlanner.plan = oldPlan;
+      }
+    } );
 
     actionSave = new MenuItem( fileMenu, SWT.NONE );
     actionSave.setAccelerator( SWT.CTRL + 'S' );

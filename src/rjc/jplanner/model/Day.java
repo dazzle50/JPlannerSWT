@@ -21,6 +21,7 @@ package rjc.jplanner.model;
 import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
@@ -46,7 +47,7 @@ public class Day
   public static final int     SECTION_START1  = 3;
   public static final int     SECTION_END1    = 4;
 
-  private static final String XML_DAY         = "day";
+  public static final String  XML_DAY         = "day";
   private static final String XML_ID          = "id";
   private static final String XML_NAME        = "name";
   private static final String XML_WORK        = "work";
@@ -102,6 +103,54 @@ public class Day
     else
     {
       throw new IllegalArgumentException( "Unhandled DefaultDayType=" + type );
+    }
+  }
+
+  /**************************************** constructor ******************************************/
+  public Day( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    this();
+    // read XML day attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_NAME:
+          m_name = xsr.getAttributeValue( i );
+          break;
+        case XML_WORK:
+          m_work = Double.parseDouble( xsr.getAttributeValue( i ) );
+          break;
+      }
+
+    // check for any work-periods
+    while ( xsr.hasNext() )
+    {
+      // if reached end of day, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_DAY ) )
+        return;
+
+      // if a work-period element, construct a period from it
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_PERIOD ) )
+      {
+        Double start = -1.0;
+        Double end = -1.0;
+        Time time;
+
+        for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+          switch (xsr.getAttributeLocalName( i )) {
+            case XML_START:
+              time = Time.fromString( xsr.getAttributeValue( i ) );
+              start = time.milliseconds() / 3600_000.0;
+              break;
+            case XML_END:
+              time = Time.fromString( xsr.getAttributeValue( i ) );
+              end = time.milliseconds() / 3600_000.0;
+              break;
+          }
+
+        m_periods.add( new DayWorkPeriod( start, end ) );
+      }
+
+      xsr.next();
     }
   }
 

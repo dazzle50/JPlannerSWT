@@ -18,10 +18,15 @@
 
 package rjc.jplanner.model;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.command.UndoStack;
@@ -410,6 +415,187 @@ public class Plan
       exception.printStackTrace();
       return false;
     }
+  }
+
+  /****************************************** loadPlan *******************************************/
+  public boolean loadPlan( String fileName )
+  {
+    // if no file-name passed in, exit immediately returning false
+    if ( fileName == null )
+      return false;
+
+    File temp = new File( fileName );
+    m_filename = temp.getName();
+    m_fileLocation = temp.getParent();
+
+    // attempt to save plan as XML to specified file
+    try
+    {
+      // create XML stream reader
+      XMLInputFactory xif = XMLInputFactory.newInstance();
+      FileInputStream file = new FileInputStream( fileName );
+      XMLStreamReader xsr = xif.createXMLStreamReader( file );
+
+      while ( xsr.hasNext() )
+      {
+        if ( xsr.isStartElement() )
+          switch (xsr.getLocalName()) {
+            case XML_JPLANNER:
+              loadXmlJPlanner( xsr );
+              break;
+            case XML_DAY_DATA:
+              loadXmlDays( xsr );
+              break;
+            case XML_CAL_DATA:
+              loadXmlCalendars( xsr );
+              break;
+            case XML_RES_DATA:
+              loadXmlResources( xsr );
+              break;
+            case XML_TASK_DATA:
+              loadXmlTasks( xsr );
+              break;
+            case XML_PLAN_DATA:
+              loadXmlPlan( xsr );
+              break;
+          }
+
+        xsr.next();
+      }
+
+      return true;
+    }
+    catch (Exception exception)
+    {
+      // some sort of exception thrown
+      exception.printStackTrace();
+      return false;
+    }
+
+  }
+
+  /***************************************** loadXmlPlan *****************************************/
+  private void loadXmlPlan( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML plan attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_TITLE:
+          m_title = xsr.getAttributeValue( i );
+          break;
+        case XML_START:
+          m_start = new DateTime( xsr.getAttributeValue( i ) );
+          break;
+        case XML_DT_FORMAT:
+          m_datetimeFormat = xsr.getAttributeValue( i );
+          break;
+        case XML_D_FORMAT:
+          m_dateFormat = xsr.getAttributeValue( i );
+          break;
+        case XML_CALENDAR:
+          m_calendar = calendar( Integer.parseInt( xsr.getAttributeValue( i ) ) );
+          break;
+        case XML_NOTES:
+          m_notes = xsr.getAttributeValue( i );
+          break;
+      }
+  }
+
+  /***************************************** loadXmlTasks ****************************************/
+  private void loadXmlTasks( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML task data
+    while ( xsr.hasNext() )
+    {
+      // if reached end of task data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_TASK_DATA ) )
+        return;
+
+      // if a task element, construct a task from it
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( Task.XML_TASK ) )
+        m_tasks.add( new Task( xsr ) );
+
+      xsr.next();
+    }
+  }
+
+  /*************************************** loadXmlResources **************************************/
+  private void loadXmlResources( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML resource data
+    while ( xsr.hasNext() )
+    {
+      // if reached end of resource data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_RES_DATA ) )
+        return;
+
+      // if a resource element, construct a resource from it
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( Resource.XML_RESOURCE ) )
+        m_resources.add( new Resource( xsr ) );
+
+      xsr.next();
+    }
+  }
+
+  /*************************************** loadXmlCalendars **************************************/
+  private void loadXmlCalendars( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML calendar data
+    while ( xsr.hasNext() )
+    {
+      // if reached end of calendar data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_CAL_DATA ) )
+        return;
+
+      // if a calendar element, construct a calendar from it
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( Calendar.XML_CALENDAR ) )
+        m_calendars.add( new Calendar( xsr ) );
+
+      xsr.next();
+    }
+  }
+
+  /***************************************** loadXmlDays *****************************************/
+  private void loadXmlDays( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML day data
+    while ( xsr.hasNext() )
+    {
+      // if reached end of day data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_DAY_DATA ) )
+        return;
+
+      // if a day element, construct a day-type from it
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( Day.XML_DAY ) )
+        m_daytypes.add( new Day( xsr ) );
+
+      xsr.next();
+    }
+  }
+
+  /*************************************** loadXmlJPlanner ***************************************/
+  private void loadXmlJPlanner( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML JPlanner attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch (xsr.getAttributeLocalName( i )) {
+        case XML_USER:
+          m_savedBy = xsr.getAttributeValue( i );
+          break;
+        case XML_WHEN:
+          m_savedWhen = new DateTime( xsr.getAttributeValue( i ) );
+          break;
+      }
+  }
+
+  /******************************************** isOK *********************************************/
+  public boolean isOK()
+  {
+    // return if plan appears ok
+    if ( daysCount() > 0 && calendarsCount() > 0 && index( calendar() ) >= 0 )
+      return true;
+
+    return false;
   }
 
 }

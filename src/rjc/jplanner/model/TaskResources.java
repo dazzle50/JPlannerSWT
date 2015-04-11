@@ -25,6 +25,18 @@ package rjc.jplanner.model;
 public class TaskResources
 {
 
+  /**************************************** constructor ******************************************/
+  public TaskResources()
+  {
+    // nothing to do
+  }
+
+  /**************************************** constructor ******************************************/
+  public TaskResources( String attributeValue )
+  {
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!
+  }
+
   /***************************************** toString ********************************************/
   @Override
   public String toString()
