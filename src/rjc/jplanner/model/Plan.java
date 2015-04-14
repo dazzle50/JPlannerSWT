@@ -347,26 +347,24 @@ public class Plan
   }
 
   /****************************************** savePlan *******************************************/
-  public boolean savePlan( String fileName )
+  public boolean savePlan( File file )
   {
-    // if no file-name passed in, exit immediately returning false
-    if ( fileName == null )
-      return false;
-
     // attempt to save plan as XML to specified file
     try
     {
       // create XML stream writer
       XMLOutputFactory xof = XMLOutputFactory.newInstance();
-      FileOutputStream file = new FileOutputStream( fileName );
-      XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( file, "UTF-8" ) );
+      FileOutputStream fos = new FileOutputStream( file );
+      XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( fos, "UTF-8" ) );
 
       // start XML document
       xsw.writeStartDocument( "UTF-8", "1.0" );
       xsw.writeStartElement( XML_JPLANNER );
       xsw.writeAttribute( XML_VERSION, "2015-04" );
-      xsw.writeAttribute( XML_USER, System.getProperty( "user.name" ) );
-      xsw.writeAttribute( XML_WHEN, DateTime.now().toString() );
+      String saveUser = System.getProperty( "user.name" );
+      xsw.writeAttribute( XML_USER, saveUser );
+      DateTime saveWhen = DateTime.now();
+      xsw.writeAttribute( XML_WHEN, saveWhen.toString() );
 
       // write day-types data to XML stream
       xsw.writeStartElement( XML_DAY_DATA );
@@ -406,7 +404,12 @@ public class Plan
       xsw.writeEndDocument();
       xsw.flush();
       xsw.close();
-      file.close();
+      fos.close();
+
+      m_filename = file.getName();
+      m_fileLocation = file.getParent();
+      m_savedBy = saveUser;
+      m_savedWhen = saveWhen;
       return true;
     }
     catch (Exception exception)
@@ -418,23 +421,15 @@ public class Plan
   }
 
   /****************************************** loadPlan *******************************************/
-  public boolean loadPlan( String fileName )
+  public boolean loadPlan( File file )
   {
-    // if no file-name passed in, exit immediately returning false
-    if ( fileName == null )
-      return false;
-
-    File temp = new File( fileName );
-    m_filename = temp.getName();
-    m_fileLocation = temp.getParent();
-
     // attempt to save plan as XML to specified file
     try
     {
       // create XML stream reader
       XMLInputFactory xif = XMLInputFactory.newInstance();
-      FileInputStream file = new FileInputStream( fileName );
-      XMLStreamReader xsr = xif.createXMLStreamReader( file );
+      FileInputStream fis = new FileInputStream( file );
+      XMLStreamReader xsr = xif.createXMLStreamReader( fis );
 
       while ( xsr.hasNext() )
       {
@@ -463,6 +458,8 @@ public class Plan
         xsr.next();
       }
 
+      m_filename = file.getName();
+      m_fileLocation = file.getParent();
       return true;
     }
     catch (Exception exception)

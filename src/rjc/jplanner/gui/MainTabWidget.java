@@ -84,6 +84,7 @@ public class MainTabWidget extends TabFolder
     Gantt gantt = new Gantt( ganttView );
     ganttView.setContent( gantt );
     ganttView.setMinSize( gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+    splitterTasksGantt.preferredLeftChildWidth = 650;
     splitterTasksGantt.monitor( m_tableTasks, ganttView );
 
     // Resources tab

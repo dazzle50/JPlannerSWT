@@ -18,17 +18,23 @@
 
 package rjc.jplanner.gui;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.table.TableRegister;
@@ -59,6 +65,9 @@ public class MainWindow extends Shell
 
   public static int             GANTTSCALE_HEIGHT = 15;
 
+  private static Text           m_statusBar;
+  private static MenuListener   m_menuListener;
+
   private static TableRegister  m_taskTables;          // register of tables showing tasks
   private static TableRegister  m_resourceTables;      // register of tables showing resources
   private static TableRegister  m_calendarTables;      // register of tables showing calendars
@@ -69,9 +78,15 @@ public class MainWindow extends Shell
   {
     // create JPlanner main window
     super( display, SWT.SHELL_TRIM );
-    setSize( 650, 500 );
+    setSize( 1100, 510 );
     setText( "JPlanner" );
-    setLayout( new FillLayout( SWT.HORIZONTAL ) );
+
+    GridLayout gridLayout = new GridLayout( 1, false );
+    gridLayout.verticalSpacing = 0;
+    gridLayout.marginWidth = 0;
+    gridLayout.horizontalSpacing = 0;
+    gridLayout.marginHeight = 0;
+    setLayout( gridLayout );
 
     // initialise some static variables for use elsewhere
     COLOR_GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
@@ -79,6 +94,21 @@ public class MainWindow extends Shell
     COLOR_GANTT_DIVIDER = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_BLACK = display.getSystemColor( SWT.COLOR_BLACK );
     TRANSFORM = new Transform( display );
+
+    // listener to clear any old status-bar message when menu shown
+    m_menuListener = new MenuListener()
+    {
+      @Override
+      public void menuShown( MenuEvent e )
+      {
+        MainWindow.message( "" );
+      }
+
+      @Override
+      public void menuHidden( MenuEvent e )
+      {
+      }
+    };
 
     // add menus
     Menu menuBar = new Menu( this, SWT.BAR );
@@ -96,12 +126,24 @@ public class MainWindow extends Shell
     m_dayTables = new TableRegister();
 
     m_mainTabWidget = new MainTabWidget( this );
+    m_mainTabWidget.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+
+    m_statusBar = new Text( this, SWT.SINGLE | SWT.READ_ONLY );
+    m_statusBar.setText( "JPlanner started" );
+    m_statusBar.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
   }
 
   @Override
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /****************************************** message ********************************************/
+  public static void message( String msg )
+  {
+    // display message on status-bar
+    m_statusBar.setText( msg );
   }
 
   /**************************************** addFileMenu ******************************************/
@@ -113,11 +155,22 @@ public class MainWindow extends Shell
     Menu fileMenu = new Menu( menuFile );
     menuFile.setMenu( fileMenu );
 
+    // clear any old status-bar message when menu shown 
+    fileMenu.addMenuListener( m_menuListener );
+
     // add file menu items
     actionNew = new MenuItem( fileMenu, SWT.NONE );
     actionNew.setAccelerator( SWT.CTRL + 'N' );
     actionNew.setText( "New\tCtrl+N" );
-    actionNew.setEnabled( false );
+    actionNew.setEnabled( true );
+    actionNew.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        newPlan();
+      }
+    } );
 
     actionOpen = new MenuItem( fileMenu, SWT.NONE );
     actionOpen.setAccelerator( SWT.CTRL + 'O' );
@@ -128,23 +181,22 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        // open file-dialog to ask for filename & location
-        FileDialog fd = new FileDialog( MainWindow.this, SWT.OPEN );
-        String[] filterExt = { "*.xml", "*.*" };
-        fd.setFilterExtensions( filterExt );
-        Plan newPlan = new Plan();
-        Plan oldPlan = JPlanner.plan;
-        JPlanner.plan = newPlan;
-        JPlanner.plan.loadPlan( fd.open() );
-        if ( !newPlan.isOK() )
-          JPlanner.plan = oldPlan;
+        loadPlan();
       }
     } );
 
     actionSave = new MenuItem( fileMenu, SWT.NONE );
     actionSave.setAccelerator( SWT.CTRL + 'S' );
     actionSave.setText( "Save\tCtrl+S" );
-    actionSave.setEnabled( false );
+    actionSave.setEnabled( true );
+    actionSave.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        savePlan();
+      }
+    } );
 
     actionSaveAs = new MenuItem( fileMenu, SWT.NONE );
     actionSaveAs.setText( "Save As..." );
@@ -154,11 +206,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        // open file-dialog to ask for filename & location
-        FileDialog fd = new FileDialog( MainWindow.this, SWT.SAVE );
-        String[] filterExt = { "*.xml", "*.*" };
-        fd.setFilterExtensions( filterExt );
-        JPlanner.plan.savePlan( fd.open() );
+        saveAsPlan();
       }
     } );
 
@@ -188,6 +236,9 @@ public class MainWindow extends Shell
     menuEdit.setText( "Edit" );
     Menu editMenu = new Menu( menuEdit );
     menuEdit.setMenu( editMenu );
+
+    // clear any old status-bar message when menu shown
+    editMenu.addMenuListener( m_menuListener );
 
     // add edit menu items
     actionUndo = new MenuItem( editMenu, SWT.NONE );
@@ -266,6 +317,9 @@ public class MainWindow extends Shell
     Menu taskMenu = new Menu( menuTask );
     menuTask.setMenu( taskMenu );
 
+    // clear any old status-bar message when menu shown
+    taskMenu.addMenuListener( m_menuListener );
+
     // add task menu items
     MenuItem actionIndent = new MenuItem( taskMenu, SWT.NONE );
     actionIndent.setText( "Indent" );
@@ -284,6 +338,9 @@ public class MainWindow extends Shell
     menuView.setText( "View" );
     Menu viewMenu = new Menu( menuView );
     menuView.setMenu( viewMenu );
+
+    // clear any old status-bar message when menu shown
+    viewMenu.addMenuListener( m_menuListener );
 
     // add view menu items
     actionUndoStackView = new MenuItem( viewMenu, SWT.CHECK );
@@ -324,6 +381,9 @@ public class MainWindow extends Shell
     Menu reportMenu = new Menu( menuReport );
     menuReport.setMenu( reportMenu );
 
+    // clear any old status-bar message when menu shown
+    reportMenu.addMenuListener( m_menuListener );
+
     // add report menu items
     MenuItem actionTBD = new MenuItem( reportMenu, SWT.NONE );
     actionTBD.setText( "TBD" );
@@ -338,6 +398,9 @@ public class MainWindow extends Shell
     menuHelp.setText( "Help" );
     Menu helpMenu = new Menu( menuHelp );
     menuHelp.setMenu( helpMenu );
+
+    // clear any old status-bar message when menu shown
+    helpMenu.addMenuListener( m_menuListener );
 
     // add help menu items
     MenuItem actionAboutJplanner = new MenuItem( helpMenu, SWT.NONE );
@@ -381,4 +444,123 @@ public class MainWindow extends Shell
     return m_mainTabWidget.notes();
   }
 
+  /******************************************* newPlan *******************************************/
+  private void newPlan()
+  {
+    // TODO !!!!!!!!!!!!!!!  need to check undo-stack
+    JPlanner.plan = new Plan();
+    JPlanner.plan.initialise();
+
+    properties().updateFromPlan();
+    notes().updateFromPlan();
+    dayTables().refresh();
+    calendarTables().refresh();
+    resourceTables().refresh();
+    taskTables().refresh();
+    message( "New plan" );
+  }
+
+  /****************************************** loadPlan *******************************************/
+  public void loadPlan()
+  {
+    // TODO !!!!!!!!!!!!!!!  need to check undo-stack
+
+    // open file-dialog to ask for filename & location
+    FileDialog fd = new FileDialog( this, SWT.OPEN );
+    String[] filterExt = { "*.xml", "*.*" };
+    fd.setFilterExtensions( filterExt );
+    String filename = fd.open();
+
+    // if user cancels filename is null, so exit immediately
+    if ( filename == null )
+      return;
+
+    // check file exists
+    File file = new File( filename );
+    if ( !file.exists() )
+    {
+      message( "Cannot find '" + filename + "'" );
+      return;
+    }
+
+    // check file can be read
+    if ( !file.canRead() )
+    {
+      message( "Cannot read '" + filename + "'" );
+      return;
+    }
+
+    // attempt to load plan from file
+    Plan oldPlan = JPlanner.plan;
+    JPlanner.plan = new Plan();
+    JPlanner.plan.loadPlan( file );
+
+    // if new plan not okay, revert back to old plan
+    if ( !JPlanner.plan.isOK() )
+    {
+      JPlanner.plan = oldPlan;
+      message( "Failed to load '" + filename + "'" );
+      return;
+    }
+
+    // successfully loaded plan
+    properties().updateFromPlan();
+    notes().updateFromPlan();
+    dayTables().refresh();
+    calendarTables().refresh();
+    resourceTables().refresh();
+    taskTables().refresh();
+    message( "Successfully loaded '" + filename + "'" );
+  }
+
+  /****************************************** savePlan *******************************************/
+  public void savePlan()
+  {
+    // if no existing filename set, use save-as
+    if ( JPlanner.plan.filename() == null || JPlanner.plan.filename().equals( "" ) )
+    {
+      saveAsPlan();
+      return;
+    }
+
+    // check file can be written
+    File file = new File( JPlanner.plan.fileLocation(), JPlanner.plan.filename() );
+    if ( !file.canWrite() )
+    {
+      message( "Cannot write to '" + file.getPath() + "'" );
+      return;
+    }
+
+    // save plan to file
+    JPlanner.plan.savePlan( file );
+    properties().updateFromPlan();
+    message( "Saved plan to '" + file.getPath() + "'" );
+  }
+
+  /****************************************** savePlan *******************************************/
+  public void saveAsPlan()
+  {
+    // open file-dialog to ask for filename & location
+    FileDialog fd = new FileDialog( MainWindow.this, SWT.SAVE );
+    String[] filterExt = { "*.xml", "*.*" };
+    fd.setFilterExtensions( filterExt );
+    String filename = fd.open();
+
+    // if user cancels filename is null, so exit immediately
+    if ( filename == null )
+      return;
+
+    // check file can be written
+    File file = new File( filename );
+    if ( !file.canWrite() )
+    {
+      message( "Cannot write to '" + filename + "'" );
+      return;
+    }
+
+    // save plan to file
+    JPlanner.plan.savePlan( file );
+    properties().updateFromPlan();
+    message( "Saved plan to '" + filename + "'" );
+  }
 }
