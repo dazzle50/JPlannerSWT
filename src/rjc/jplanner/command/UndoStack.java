@@ -30,8 +30,10 @@ import rjc.jplanner.gui.MainWindow;
 
 public class UndoStack
 {
-  private ArrayList<IUndoCommand> m_stack; // stack of undo commands
-  private int                     m_index; // current command
+  private ArrayList<IUndoCommand> m_stack;             // stack of undo commands
+  private int                     m_index;             // current command
+  private int                     m_cleanIndex;        // index when declared clean
+  private boolean                 m_previousCleanState;
 
   /**************************************** constructor ******************************************/
   public UndoStack()
@@ -39,6 +41,23 @@ public class UndoStack
     // initialise private variables
     m_stack = new ArrayList<IUndoCommand>();
     m_index = 0;
+    m_cleanIndex = 0;
+    m_previousCleanState = true;
+  }
+
+  /****************************************** setClean *******************************************/
+  public void setClean()
+  {
+    // declare current index position as being clean
+    m_cleanIndex = m_index;
+    m_previousCleanState = true;
+  }
+
+  /****************************************** isClean ********************************************/
+  public boolean isClean()
+  {
+    // stack is clean if current index equals clean index
+    return m_index == m_cleanIndex;
   }
 
   /******************************************** push *********************************************/
@@ -109,6 +128,11 @@ public class UndoStack
     // also update undo-stack window selected item if exists
     if ( MainWindow.undoWindow != null )
       MainWindow.undoWindow.updateSelection();
+
+    // if clean state changed, update window titles
+    if ( m_previousCleanState != isClean() )
+      MainWindow.updateTitles();
+    m_previousCleanState = isClean();
   }
 
   /****************************************** undoText *******************************************/
@@ -138,6 +162,8 @@ public class UndoStack
     // clean the stack
     m_stack.clear();
     m_index = 0;
+    m_cleanIndex = 0;
+    m_previousCleanState = true;
     updateUndoRedoMenuItems();
   }
 
