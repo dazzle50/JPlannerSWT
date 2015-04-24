@@ -54,10 +54,10 @@ public class UndoStackWindow extends Shell
       @Override
       public void widgetDisposed( DisposeEvent e )
       {
-        MainWindow.undoWindow = null;
+        JPlanner.main.undoWindow = null;
 
-        if ( !MainWindow.actionUndoStackView.isDisposed() )
-          MainWindow.actionUndoStackView.setSelection( false );
+        if ( !JPlanner.main.actionUndoStackView.isDisposed() )
+          JPlanner.main.actionUndoStackView.setSelection( false );
       }
     } );
 

@@ -46,8 +46,8 @@ public class CommandSetPlanNotes implements IUndoCommand
     JPlanner.plan.setNotes( m_newNotes );
 
     // update plan notes on gui
-    MainWindow.notes().updateFromPlan();
-    MainWindow.notes().update();
+    JPlanner.main.notes().updateFromPlan();
+    JPlanner.main.notes().update();
   }
 
   /******************************************* undo **********************************************/
@@ -58,8 +58,8 @@ public class CommandSetPlanNotes implements IUndoCommand
     JPlanner.plan.setNotes( m_oldNotes );
 
     // update plan notes on gui
-    MainWindow.notes().updateFromPlan();
-    MainWindow.notes().update();
+    JPlanner.main.notes().updateFromPlan();
+    JPlanner.main.notes().update();
   }
 
   /******************************************* text **********************************************/

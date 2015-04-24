@@ -94,7 +94,7 @@ public class GanttPlot extends Composite
     GC gc = event.gc;
 
     // fill in white background
-    gc.setBackground( MainWindow.COLOR_GANTT_BACKGROUND );
+    gc.setBackground( JPlanner.main.COLOR_GANTT_BACKGROUND );
     gc.fillRectangle( x, y, w, h );
 
     // calculate start-date and end-date etc
@@ -105,7 +105,7 @@ public class GanttPlot extends Composite
     int xe = 0;
 
     // for each date check if working and shade accordingly
-    gc.setBackground( MainWindow.COLOR_GANTT_NONWORKING );
+    gc.setBackground( JPlanner.main.COLOR_GANTT_NONWORKING );
     do
     {
       if ( xs < 0 && !calendar.isWorking( date ) )

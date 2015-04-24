@@ -35,7 +35,8 @@ import rjc.jplanner.model.Plan;
 
 public class JPlanner
 {
-  public static Plan plan; // globally accessible plan
+  public static Plan       plan; // globally accessible plan
+  public static MainWindow main; // globally accessible main-window
 
   /******************************************** main *********************************************/
   public static void main( String[] args )
@@ -50,11 +51,12 @@ public class JPlanner
 
     // create main application display
     Display display = new Display();
-    MainWindow window = new MainWindow( display );
-    window.open();
+    main = new MainWindow( display );
+    main.initialise();
+    main.open();
 
     // run the event loop as long as the window is open
-    while ( !window.isDisposed() )
+    while ( !main.isDisposed() )
     {
       // read the next OS event queue and transfer it to a SWT event 
       if ( !display.readAndDispatch() )

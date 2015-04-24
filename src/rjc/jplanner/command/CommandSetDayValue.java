@@ -55,9 +55,9 @@ public class CommandSetDayValue implements IUndoCommand
     JPlanner.plan.day( m_dayID ).setData( m_section, m_newValue );
 
     // update day-types table, and if name section also update calendars table
-    MainWindow.dayTables().refresh();
+    JPlanner.main.dayTables().refresh();
     if ( m_section == Day.SECTION_NAME )
-      MainWindow.calendarTables().refresh();
+      JPlanner.main.calendarTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -68,9 +68,9 @@ public class CommandSetDayValue implements IUndoCommand
     JPlanner.plan.day( m_dayID ).setData( m_section, m_oldValue );
 
     // update day-types table, and if name section also update calendars table
-    MainWindow.dayTables().refresh();
+    JPlanner.main.dayTables().refresh();
     if ( m_section == Day.SECTION_NAME )
-      MainWindow.calendarTables().refresh();
+      JPlanner.main.calendarTables().refresh();
   }
 
   /******************************************* text **********************************************/

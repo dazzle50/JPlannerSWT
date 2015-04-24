@@ -50,29 +50,27 @@ import rjc.jplanner.model.Plan;
 
 public class MainWindow extends Shell
 {
-  private static MainTabWidget    m_mainTabWidget;       // MainTabWidget associated with MainWindow
-  private static ArrayList<Shell> m_windows;             // list of windows including this one
+  private MainTabWidget    m_mainTabWidget;       // MainTabWidget associated with MainWindow
+  private ArrayList<Shell> m_windows;             // list of windows including this one
+  private Text             m_statusBar;
+  private MenuListener     m_menuListener;
+  private MenuItem         m_menuTask;
+  private TableRegister    m_taskTables;          // register of tables showing tasks
+  private TableRegister    m_resourceTables;      // register of tables showing resources
+  private TableRegister    m_calendarTables;      // register of tables showing calendars
+  private TableRegister    m_dayTables;           // register of tables showing day-types
 
-  public static Color             COLOR_GANTT_BACKGROUND;
-  public static Color             COLOR_GANTT_NONWORKING;
-  public static Color             COLOR_GANTT_DIVIDER;
-  public static Color             COLOR_BLACK;
-  public static Transform         TRANSFORM;
+  public UndoStackWindow   undoWindow;            // window to show plan undo-stack
+  public MenuItem          actionUndoStackView;   // action to show plan undo-stack window
+  public MenuItem          actionUndo;
+  public MenuItem          actionRedo;
 
-  public static UndoStackWindow   undoWindow;            // window to show plan undo-stack
-  public static MenuItem          actionUndoStackView;   // action to show plan undo-stack window
-  public static MenuItem          actionUndo;
-  public static MenuItem          actionRedo;
-
-  public static int               GANTTSCALE_HEIGHT = 15;
-
-  private static Text             m_statusBar;
-  private static MenuListener     m_menuListener;
-
-  private static TableRegister    m_taskTables;          // register of tables showing tasks
-  private static TableRegister    m_resourceTables;      // register of tables showing resources
-  private static TableRegister    m_calendarTables;      // register of tables showing calendars
-  private static TableRegister    m_dayTables;           // register of tables showing day-types
+  public Color             COLOR_GANTT_BACKGROUND;
+  public Color             COLOR_GANTT_NONWORKING;
+  public Color             COLOR_GANTT_DIVIDER;
+  public Color             COLOR_BLACK;
+  public Transform         TRANSFORM;
+  public int               GANTTSCALE_HEIGHT = 15;
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -82,27 +80,26 @@ public class MainWindow extends Shell
     setSize( 1100, 510 );
     setText( "JPlanner" );
 
-    GridLayout gridLayout = new GridLayout( 1, false );
-    gridLayout.verticalSpacing = 0;
-    gridLayout.marginWidth = 0;
-    gridLayout.horizontalSpacing = 0;
-    gridLayout.marginHeight = 0;
-    setLayout( gridLayout );
-
-    // initialise some static variables for use elsewhere
+    // initialise some public variables for use elsewhere
     COLOR_GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
     COLOR_GANTT_NONWORKING = new Color( display, 240, 240, 240 );
     COLOR_GANTT_DIVIDER = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_BLACK = display.getSystemColor( SWT.COLOR_BLACK );
     TRANSFORM = new Transform( display );
 
-    // listener to clear any old status-bar message when menu shown
+    // prepare the table registers for the different types of tables
+    m_taskTables = new TableRegister();
+    m_resourceTables = new TableRegister();
+    m_calendarTables = new TableRegister();
+    m_dayTables = new TableRegister();
+
+    // prepare listener to clear any old status-bar message when menu shown
     m_menuListener = new MenuListener()
     {
       @Override
       public void menuShown( MenuEvent e )
       {
-        MainWindow.message( "" );
+        JPlanner.main.message( "" );
       }
 
       @Override
@@ -110,34 +107,69 @@ public class MainWindow extends Shell
       {
       }
     };
+  }
 
+  /**************************************** initialise *******************************************/
+  public void initialise()
+  {
     // add menus
     Menu menuBar = new Menu( this, SWT.BAR );
     setMenuBar( menuBar );
     addFileMenu( menuBar );
     addEditMenu( menuBar );
-    addTaskMenu( menuBar );
     addReportMenu( menuBar );
     addViewMenu( menuBar );
     addHelpMenu( menuBar );
 
-    m_taskTables = new TableRegister();
-    m_resourceTables = new TableRegister();
-    m_calendarTables = new TableRegister();
-    m_dayTables = new TableRegister();
+    // layout the MainTabWidget + status-bar using a GridLayout
+    GridLayout gridLayout = new GridLayout( 1, false );
+    gridLayout.verticalSpacing = 0;
+    gridLayout.marginWidth = 0;
+    gridLayout.horizontalSpacing = 0;
+    gridLayout.marginHeight = 0;
+    setLayout( gridLayout );
 
-    m_mainTabWidget = new MainTabWidget( this );
+    // add main tab widget
+    m_mainTabWidget = new MainTabWidget( this, true );
     m_mainTabWidget.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
 
+    // listener to detect when selected tab changed
+    m_mainTabWidget.addListener( SWT.Selection, new Listener()
+    {
+      @Override
+      public void handleEvent( Event event )
+      {
+        // ensure plan is kept up-to-date with the properties and notes
+        m_mainTabWidget.properties().updatePlan();
+        m_mainTabWidget.notes().updatePlan();
+
+        // show Task menu when Tasks tab selected, otherwise hide it
+        if ( m_mainTabWidget.getSelection()[0] == m_mainTabWidget.tasksTab() )
+        {
+          if ( m_menuTask == null )
+            addTaskMenu( menuBar );
+        }
+        else
+        {
+          if ( m_menuTask != null )
+          {
+            m_menuTask.dispose();
+            m_menuTask = null;
+          }
+        }
+      }
+    } );
+
+    // add status bar
     m_statusBar = new Text( this, SWT.SINGLE | SWT.READ_ONLY );
     m_statusBar.setText( "JPlanner started" );
     m_statusBar.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
-    // list of windows used for example when updating titles
+    // add this window to list used for example when updating titles
     m_windows = new ArrayList<Shell>();
     m_windows.add( this );
 
-    // add listener to trap close event to check user doesn't loss data
+    // listener to trap window close event to check user doesn't loss data
     getShell().addListener( SWT.Close, new Listener()
     {
       @Override
@@ -177,7 +209,7 @@ public class MainWindow extends Shell
   }
 
   /*************************************** updateTitles ******************************************/
-  public static void updateTitles()
+  public void updateTitles()
   {
     // refresh title on each JPlanner window
     for ( Shell window : m_windows )
@@ -197,7 +229,7 @@ public class MainWindow extends Shell
   }
 
   /****************************************** message ********************************************/
-  public static void message( String msg )
+  public void message( String msg )
   {
     // display message on status-bar
     m_statusBar.setText( msg );
@@ -377,10 +409,10 @@ public class MainWindow extends Shell
   private void addTaskMenu( Menu menuBar )
   {
     // create task menu
-    MenuItem menuTask = new MenuItem( menuBar, SWT.CASCADE );
-    menuTask.setText( "Task" );
-    Menu taskMenu = new Menu( menuTask );
-    menuTask.setMenu( taskMenu );
+    m_menuTask = new MenuItem( menuBar, SWT.CASCADE, 2 );
+    m_menuTask.setText( "Task" );
+    Menu taskMenu = new Menu( m_menuTask );
+    m_menuTask.setMenu( taskMenu );
 
     // clear any old status-bar message when menu shown
     taskMenu.addMenuListener( m_menuListener );
@@ -474,37 +506,37 @@ public class MainWindow extends Shell
   }
 
   /****************************************** dayTables ******************************************/
-  public static TableRegister dayTables()
+  public TableRegister dayTables()
   {
     return m_dayTables;
   }
 
   /**************************************** calendarTables ***************************************/
-  public static TableRegister calendarTables()
+  public TableRegister calendarTables()
   {
     return m_calendarTables;
   }
 
   /**************************************** resourceTables ***************************************/
-  public static TableRegister resourceTables()
+  public TableRegister resourceTables()
   {
     return m_resourceTables;
   }
 
   /****************************************** taskTables *****************************************/
-  public static TableRegister taskTables()
+  public TableRegister taskTables()
   {
     return m_taskTables;
   }
 
   /***************************************** properties ******************************************/
-  public static PlanProperties properties()
+  public PlanProperties properties()
   {
     return m_mainTabWidget.properties();
   }
 
   /******************************************** notes ********************************************/
-  public static PlanNotes notes()
+  public PlanNotes notes()
   {
     return m_mainTabWidget.notes();
   }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.widgets.MenuItem;
 
-import rjc.jplanner.gui.MainWindow;
+import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
 /********************************** Stack of UndoCommand objects *********************************/
@@ -74,8 +74,8 @@ public class UndoStack
     updateUndoRedoMenuItems();
 
     // update undo-stack window if exists
-    if ( MainWindow.undoWindow != null )
-      MainWindow.undoWindow.updateList( command, m_index );
+    if ( JPlanner.main.undoWindow != null )
+      JPlanner.main.undoWindow.updateList( command, m_index );
   }
 
   /******************************************** undo *********************************************/
@@ -100,7 +100,7 @@ public class UndoStack
   private void updateUndoRedoMenuItems()
   {
     // update undo menu-item
-    MenuItem undo = MainWindow.actionUndo;
+    MenuItem undo = JPlanner.main.actionUndo;
     if ( m_index > 0 )
     {
       undo.setText( "Undo " + undoText() + "\tCtrl+Z" );
@@ -113,7 +113,7 @@ public class UndoStack
     }
 
     // update redo menu-item
-    MenuItem redo = MainWindow.actionRedo;
+    MenuItem redo = JPlanner.main.actionRedo;
     if ( m_index < size() )
     {
       redo.setText( "Redo " + redoText() + "\tCtrl+Y" );
@@ -126,12 +126,12 @@ public class UndoStack
     }
 
     // also update undo-stack window selected item if exists
-    if ( MainWindow.undoWindow != null )
-      MainWindow.undoWindow.updateSelection();
+    if ( JPlanner.main.undoWindow != null )
+      JPlanner.main.undoWindow.updateSelection();
 
     // if clean state changed, update window titles
     if ( m_previousCleanState != isClean() )
-      MainWindow.updateTitles();
+      JPlanner.main.updateTitles();
     m_previousCleanState = isClean();
   }
 

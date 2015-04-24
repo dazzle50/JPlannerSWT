@@ -51,7 +51,7 @@ public class CommandSetCalendarValue implements IUndoCommand
     JPlanner.plan.calendar( m_calID ).setData( m_section, m_newValue );
 
     // update calendars tables
-    MainWindow.calendarTables().refresh();
+    JPlanner.main.calendarTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -62,7 +62,7 @@ public class CommandSetCalendarValue implements IUndoCommand
     JPlanner.plan.calendar( m_calID ).setData( m_section, m_oldValue );
 
     // update calendars tables
-    MainWindow.calendarTables().refresh();
+    JPlanner.main.calendarTables().refresh();
   }
 
   /******************************************* text **********************************************/

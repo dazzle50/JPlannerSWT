@@ -70,8 +70,8 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setDateFormat( m_newDformat );
 
     // update plan properties on gui
-    MainWindow.properties().updateFromPlan();
-    MainWindow.properties().update();
+    JPlanner.main.properties().updateFromPlan();
+    JPlanner.main.properties().update();
   }
 
   /******************************************* undo **********************************************/
@@ -86,8 +86,8 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setDateFormat( m_oldDformat );
 
     // update plan properties on gui
-    MainWindow.properties().updateFromPlan();
-    MainWindow.properties().update();
+    JPlanner.main.properties().updateFromPlan();
+    JPlanner.main.properties().update();
   }
 
   /******************************************* text **********************************************/

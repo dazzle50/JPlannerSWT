@@ -94,7 +94,7 @@ public class CommandSetDayNumPeriods implements IUndoCommand
     JPlanner.plan.day( m_dayID ).setData( Day.SECTION_PERIODS, m_newPeriods );
 
     // update day-types table
-    MainWindow.dayTables().refresh();
+    JPlanner.main.dayTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -105,7 +105,7 @@ public class CommandSetDayNumPeriods implements IUndoCommand
     JPlanner.plan.day( m_dayID ).setData( Day.SECTION_PERIODS, m_oldPeriods );
 
     // update day-types table
-    MainWindow.dayTables().refresh();
+    JPlanner.main.dayTables().refresh();
   }
 
   /******************************************* text **********************************************/
