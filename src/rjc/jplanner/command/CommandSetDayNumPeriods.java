@@ -21,7 +21,6 @@ package rjc.jplanner.command;
 import java.util.ArrayList;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Day;
 import rjc.jplanner.model.DayWorkPeriod;
 import rjc.jplanner.model.Time;

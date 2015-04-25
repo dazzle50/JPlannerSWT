@@ -21,7 +21,6 @@ package rjc.jplanner.gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -38,21 +37,21 @@ import rjc.jplanner.model.DateTime;
 
 public class PlanProperties extends Composite
 {
-  private Text           m_titleText;
-  private DateTimeEditor m_startDT;
-  private Text           m_earliestText;
-  private Text           m_endText;
-  private Combo          m_calCombo;
-  private Text           m_DTformatText;
-  private Text           m_DformatText;
-  private Text           m_filenameText;
-  private Text           m_filelocText;
-  private Text           m_savedbyText;
-  private Text           m_savedwhenText;
-  private Label          m_tasksNum;
-  private Label          m_resourcesNum;
-  private Label          m_calendarsNum;
-  private Label          m_daysNum;
+  private Text            m_titleText;
+  private DateTimeEditor  m_startDT;
+  private Text            m_earliestText;
+  private Text            m_endText;
+  private XComboCalendars m_calCombo;
+  private Text            m_DTformatText;
+  private Text            m_DformatText;
+  private Text            m_filenameText;
+  private Text            m_filelocText;
+  private Text            m_savedbyText;
+  private Text            m_savedwhenText;
+  private Label           m_tasksNum;
+  private Label           m_resourcesNum;
+  private Label           m_calendarsNum;
+  private Label           m_daysNum;
 
   /**************************************** constructor ******************************************/
   public PlanProperties( Composite parent, int style )
@@ -189,6 +188,7 @@ public class PlanProperties extends Composite
     // update the gui property widgets with values from plan
     m_titleText.setText( JPlanner.plan.title() );
     m_startDT.setDateTime( JPlanner.plan.start() );
+    m_calCombo.setCalendarItems();
     m_calCombo.setText( JPlanner.plan.calendar().name() );
     m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
     m_DformatText.setText( JPlanner.plan.dateFormat() );

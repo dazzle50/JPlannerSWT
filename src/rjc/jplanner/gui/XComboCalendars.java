@@ -18,8 +18,6 @@
 
 package rjc.jplanner.gui;
 
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
@@ -37,28 +35,12 @@ public class XComboCalendars extends Combo
   {
     super( parent, style );
 
-    // set drop-down list items to calendar names, and refresh every time widget gets focus
+    // set drop-down list items to calendar names
     setCalendarItems();
-    addFocusListener( new FocusListener()
-    {
-      @Override
-      public void focusLost( FocusEvent e )
-      {
-        // do nothing
-      }
-
-      @Override
-      public void focusGained( FocusEvent e )
-      {
-        // ensure drop-down list items are up to date
-        setCalendarItems();
-      }
-    } );
-
   }
 
   /************************************** setCalendarItems ***************************************/
-  private void setCalendarItems()
+  public void setCalendarItems()
   {
     // ensure drop-down list items are up to date
     int current = indexOf( getText() );

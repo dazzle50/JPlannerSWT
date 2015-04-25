@@ -19,7 +19,6 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.gui.MainWindow;
 
 /*************************************************************************************************/
 /****************************** UndoCommand for updating plan notes ******************************/
@@ -47,7 +46,6 @@ public class CommandSetPlanNotes implements IUndoCommand
 
     // update plan notes on gui
     JPlanner.gui.notes().updateFromPlan();
-    JPlanner.gui.notes().update();
   }
 
   /******************************************* undo **********************************************/
@@ -59,7 +57,6 @@ public class CommandSetPlanNotes implements IUndoCommand
 
     // update plan notes on gui
     JPlanner.gui.notes().updateFromPlan();
-    JPlanner.gui.notes().update();
   }
 
   /******************************************* text **********************************************/

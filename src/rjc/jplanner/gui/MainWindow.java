@@ -95,13 +95,15 @@ public class MainWindow extends Shell
     m_calendarTables = new TableRegister();
     m_dayTables = new TableRegister();
 
-    // prepare listener to clear any old status-bar message when menu shown
+    // prepare listener to clear any old status-bar message when menu shown & check for properties/notes changes
     m_menuListener = new MenuListener()
     {
       @Override
       public void menuShown( MenuEvent e )
       {
         message( "" );
+        properties().updatePlan();
+        notes().updatePlan();
       }
 
       @Override
@@ -109,6 +111,18 @@ public class MainWindow extends Shell
       {
       }
     };
+
+    // check for properties/notes changes when window deactivate (i.e. other window activated)
+    addListener( SWT.Deactivate, new Listener()
+    {
+      @Override
+      public void handleEvent( Event event )
+      {
+        properties().updatePlan();
+        notes().updatePlan();
+      }
+    } );
+
   }
 
   /**************************************** initialise *******************************************/
@@ -177,6 +191,9 @@ public class MainWindow extends Shell
       @Override
       public void handleEvent( Event event )
       {
+        properties().updatePlan();
+        notes().updatePlan();
+
         if ( !JPlanner.plan.undostack().isClean() )
         {
           boolean ask = true;

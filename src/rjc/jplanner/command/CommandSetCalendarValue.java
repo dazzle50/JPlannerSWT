@@ -19,7 +19,6 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
@@ -52,6 +51,13 @@ public class CommandSetCalendarValue implements IUndoCommand
 
     // update calendars tables
     JPlanner.gui.calendarTables().refresh();
+
+    // if name being changed, update resources table and properties in case name displayed there
+    if ( m_section == Calendar.SECTION_NAME )
+    {
+      JPlanner.gui.resourceTables().refresh();
+      JPlanner.gui.properties().updateFromPlan();
+    }
   }
 
   /******************************************* undo **********************************************/
@@ -63,6 +69,13 @@ public class CommandSetCalendarValue implements IUndoCommand
 
     // update calendars tables
     JPlanner.gui.calendarTables().refresh();
+
+    // if name being changed, update resources table and properties in case name displayed there
+    if ( m_section == Calendar.SECTION_NAME )
+    {
+      JPlanner.gui.resourceTables().refresh();
+      JPlanner.gui.properties().updateFromPlan();
+    }
   }
 
   /******************************************* text **********************************************/

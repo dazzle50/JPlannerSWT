@@ -70,7 +70,6 @@ public class CommandSetPlanProperties implements IUndoCommand
 
     // update plan properties on gui
     JPlanner.gui.properties().updateFromPlan();
-    JPlanner.gui.properties().update();
   }
 
   /******************************************* undo **********************************************/
@@ -86,7 +85,6 @@ public class CommandSetPlanProperties implements IUndoCommand
 
     // update plan properties on gui
     JPlanner.gui.properties().updateFromPlan();
-    JPlanner.gui.properties().update();
   }
 
   /******************************************* text **********************************************/

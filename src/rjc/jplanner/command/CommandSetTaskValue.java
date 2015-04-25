@@ -19,7 +19,6 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
