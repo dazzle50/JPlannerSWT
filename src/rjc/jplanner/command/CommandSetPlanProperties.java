@@ -19,7 +19,6 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.gui.MainWindow;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.DateTime;
 
@@ -70,8 +69,8 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setDateFormat( m_newDformat );
 
     // update plan properties on gui
-    JPlanner.main.properties().updateFromPlan();
-    JPlanner.main.properties().update();
+    JPlanner.gui.properties().updateFromPlan();
+    JPlanner.gui.properties().update();
   }
 
   /******************************************* undo **********************************************/
@@ -86,8 +85,8 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setDateFormat( m_oldDformat );
 
     // update plan properties on gui
-    JPlanner.main.properties().updateFromPlan();
-    JPlanner.main.properties().update();
+    JPlanner.gui.properties().updateFromPlan();
+    JPlanner.gui.properties().update();
   }
 
   /******************************************* text **********************************************/

@@ -19,6 +19,7 @@
 package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.nebula.widgets.nattable.coordinate.PositionCoordinate;
 import org.eclipse.nebula.widgets.nattable.selection.command.SelectCellCommand;
@@ -42,8 +43,17 @@ public class TableRegister
   public void refresh()
   {
     // refresh each table that has been registered
-    for ( XNatTable table : m_tables )
+    Iterator<XNatTable> iter = m_tables.iterator();
+    while ( iter.hasNext() )
     {
+      // if table has been disposed, remove from list and skip
+      XNatTable table = iter.next();
+      if ( table.isDisposed() )
+      {
+        iter.remove();
+        continue;
+      }
+
       // if cell selected, need to re-select after refresh
       PositionCoordinate pc = table.selectionLayer.getLastSelectedCellPosition();
       if ( pc != null )

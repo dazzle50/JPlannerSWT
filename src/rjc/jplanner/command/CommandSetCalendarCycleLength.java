@@ -69,7 +69,7 @@ public class CommandSetCalendarCycleLength implements IUndoCommand
     JPlanner.plan.calendar( m_calID ).setData( Calendar.SECTION_CYCLE, m_newNormals );
 
     // update calendar table
-    JPlanner.main.calendarTables().refresh();
+    JPlanner.gui.calendarTables().refresh();
   }
 
   /******************************************* undo **********************************************/
@@ -80,7 +80,7 @@ public class CommandSetCalendarCycleLength implements IUndoCommand
     JPlanner.plan.calendar( m_calID ).setData( Calendar.SECTION_CYCLE, m_oldNormals );
 
     // update calendar table
-    JPlanner.main.calendarTables().refresh();
+    JPlanner.gui.calendarTables().refresh();
   }
 
   /******************************************* text **********************************************/

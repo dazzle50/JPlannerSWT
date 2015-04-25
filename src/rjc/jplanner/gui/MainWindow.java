@@ -20,6 +20,7 @@ package rjc.jplanner.gui;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -29,6 +30,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -99,7 +101,7 @@ public class MainWindow extends Shell
       @Override
       public void menuShown( MenuEvent e )
       {
-        JPlanner.main.message( "" );
+        message( "" );
       }
 
       @Override
@@ -212,8 +214,17 @@ public class MainWindow extends Shell
   public void updateTitles()
   {
     // refresh title on each JPlanner window
-    for ( Shell window : m_windows )
+    Iterator<Shell> iter = m_windows.iterator();
+    while ( iter.hasNext() )
     {
+      // if table has been disposed, remove from list and skip
+      Shell window = iter.next();
+      if ( window.isDisposed() )
+      {
+        iter.remove();
+        continue;
+      }
+
       if ( JPlanner.plan.filename() == null || JPlanner.plan.filename().equals( "" ) )
       {
         window.setText( "JPlanner" );
@@ -460,7 +471,21 @@ public class MainWindow extends Shell
 
     MenuItem actionNewWindow = new MenuItem( viewMenu, SWT.NONE );
     actionNewWindow.setText( "New window..." );
-    actionNewWindow.setEnabled( false );
+    actionNewWindow.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        Shell newWindow = new Shell( MainWindow.this.getDisplay(), SWT.SHELL_TRIM );
+        newWindow.setSize( 700, 400 );
+        newWindow.setLayout( new FillLayout( SWT.FILL ) );
+        new MainTabWidget( newWindow, false );
+        newWindow.open();
+
+        m_windows.add( newWindow );
+        updateTitles();
+      }
+    } );
 
     new MenuItem( viewMenu, SWT.SEPARATOR );
 

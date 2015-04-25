@@ -63,7 +63,7 @@ public class GanttScale extends Composite
   public Point computeSize( int wHint, int hHint, boolean changed )
   {
     // only vertical size is important, as horizontally it stretches
-    return new Point( 1, JPlanner.main.GANTTSCALE_HEIGHT );
+    return new Point( 1, JPlanner.gui.GANTTSCALE_HEIGHT );
   }
 
   @Override
@@ -101,9 +101,9 @@ public class GanttScale extends Composite
     GC gc = event.gc;
 
     // fill in background & draw line at bottom
-    gc.setBackground( JPlanner.main.COLOR_GANTT_NONWORKING );
+    gc.setBackground( JPlanner.gui.COLOR_GANTT_NONWORKING );
     gc.fillRectangle( x, y, w, h );
-    gc.setForeground( JPlanner.main.COLOR_GANTT_DIVIDER );
+    gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
     gc.drawLine( x, this.getSize().y - 1, x + w, this.getSize().y - 1 );
 
     // calculate the start & end of first internal
@@ -114,7 +114,7 @@ public class GanttScale extends Composite
 
     // draw internal line and label
     gc.drawLine( xs, y, xs, y + h );
-    gc.setForeground( JPlanner.main.COLOR_BLACK );
+    gc.setForeground( JPlanner.gui.COLOR_BLACK );
     drawLabel( gc, dts.toString( m_format ), xs, xe );
 
     // move through subsequent internals until end of paint area
@@ -125,9 +125,9 @@ public class GanttScale extends Composite
       dte = dts.addInterval( m_interval );
       xe = x( dte );
 
-      gc.setForeground( JPlanner.main.COLOR_GANTT_DIVIDER );
+      gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
       gc.drawLine( xs, y, xs, y + h );
-      gc.setForeground( JPlanner.main.COLOR_BLACK );
+      gc.setForeground( JPlanner.gui.COLOR_BLACK );
       drawLabel( gc, dts.toString( m_format ), xs, xe );
     }
 
@@ -145,12 +145,12 @@ public class GanttScale extends Composite
     {
       // scaling on x-axis needed to fit label
       float scale = ( xe - xs - 2.0f ) / labelSize.x;
-      JPlanner.main.TRANSFORM.scale( scale, 1.0f );
-      gc.setTransform( JPlanner.main.TRANSFORM );
+      JPlanner.gui.TRANSFORM.scale( scale, 1.0f );
+      gc.setTransform( JPlanner.gui.TRANSFORM );
       gc.drawString( label, (int) ( ( xs + 2 ) / scale ), yOffset, true );
 
-      JPlanner.main.TRANSFORM.identity();
-      gc.setTransform( JPlanner.main.TRANSFORM );
+      JPlanner.gui.TRANSFORM.identity();
+      gc.setTransform( JPlanner.gui.TRANSFORM );
     }
     else
     {
