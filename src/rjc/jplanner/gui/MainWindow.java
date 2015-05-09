@@ -67,10 +67,14 @@ public class MainWindow extends Shell
   public MenuItem          actionUndo;
   public MenuItem          actionRedo;
 
+  public Color             COLOR_BLACK;
+  public Color             COLOR_WHITE;
+  public Color             COLOR_RED;
+  public Color             COLOR_GRAY_DARK;
+  public Color             COLOR_GRAY_LIGHT;
   public Color             COLOR_GANTT_BACKGROUND;
   public Color             COLOR_GANTT_NONWORKING;
   public Color             COLOR_GANTT_DIVIDER;
-  public Color             COLOR_BLACK;
   public Transform         TRANSFORM;
   public int               GANTTSCALE_HEIGHT = 15;
 
@@ -83,10 +87,14 @@ public class MainWindow extends Shell
     setText( "JPlanner" );
 
     // initialise some public variables for use elsewhere
-    COLOR_GANTT_BACKGROUND = display.getSystemColor( SWT.COLOR_WHITE );
-    COLOR_GANTT_NONWORKING = new Color( display, 240, 240, 240 );
-    COLOR_GANTT_DIVIDER = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_BLACK = display.getSystemColor( SWT.COLOR_BLACK );
+    COLOR_WHITE = display.getSystemColor( SWT.COLOR_WHITE );
+    COLOR_RED = display.getSystemColor( SWT.COLOR_RED );
+    COLOR_GRAY_DARK = display.getSystemColor( SWT.COLOR_GRAY );
+    COLOR_GRAY_LIGHT = new Color( display, 240, 240, 240 );
+    COLOR_GANTT_BACKGROUND = COLOR_WHITE;
+    COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
+    COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
     TRANSFORM = new Transform( display );
 
     // prepare the table registers for the different types of tables

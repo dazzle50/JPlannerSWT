@@ -138,13 +138,13 @@ public class Task
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
-    // if task is null return blank
-    if ( isNull() )
-      return "";
-
     // return display string for given section
     if ( section == SECTION_TITLE )
       return m_title;
+
+    // if task is null return blank for all other sections
+    if ( isNull() )
+      return "";
 
     if ( section == SECTION_DURATION )
       return m_duration.toString();

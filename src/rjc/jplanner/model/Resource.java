@@ -128,13 +128,13 @@ public class Resource
   /****************************************** toString *******************************************/
   public String toString( int section )
   {
-    // if resource is null return blank
-    if ( isNull() )
-      return "";
-
     // return display string for given section
     if ( section == SECTION_INITIALS )
       return m_initials;
+
+    // if resource is null return blank for all other sections
+    if ( isNull() )
+      return "";
 
     if ( section == SECTION_NAME )
       return m_name;

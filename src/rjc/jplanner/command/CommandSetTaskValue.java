@@ -51,6 +51,10 @@ public class CommandSetTaskValue implements IUndoCommand
 
     // update tasks tables
     JPlanner.gui.taskTables().refresh();
+
+    // if title and old value was null, update properties so it shows new count of tasks
+    if ( m_section == Task.SECTION_TITLE && m_oldValue == null )
+      JPlanner.gui.properties().updateFromPlan();
   }
 
   /******************************************* undo **********************************************/
@@ -62,6 +66,10 @@ public class CommandSetTaskValue implements IUndoCommand
 
     // update tasks tables
     JPlanner.gui.taskTables().refresh();
+
+    // if title and old value was null, update properties so it shows new count of tasks
+    if ( m_section == Task.SECTION_TITLE && m_oldValue == null )
+      JPlanner.gui.properties().updateFromPlan();
   }
 
   /******************************************* text **********************************************/
