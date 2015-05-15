@@ -35,7 +35,8 @@ import org.eclipse.swt.widgets.Text;
 
 public abstract class XAbstractCellEditor extends AbstractCellEditor
 {
-  private Control m_editor; // editor for cell
+  private Control m_editor;            // editor for cell
+  private boolean m_upDownArrowsCommit;
 
   /************************************ createEditorControl **************************************/
   @Override
@@ -44,7 +45,19 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     // create editor based on column
     m_editor = createEditor( getRowIndex(), getColumnIndex() );
 
-    m_editor.addKeyListener( new KeyAdapter()
+    // identify control that receives key presses & whether arrow-up & down should commit
+    Control editor = m_editor;
+    m_upDownArrowsCommit = true;
+    if ( m_editor instanceof TimeSpanEditor )
+    {
+      editor = ( (TimeSpanEditor) m_editor ).getEditor();
+      m_upDownArrowsCommit = false;
+    }
+    if ( m_editor instanceof Spinner )
+      m_upDownArrowsCommit = false;
+
+    // add key listener for closing & committing
+    editor.addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
@@ -57,23 +70,16 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
         if ( event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR )
           commit( MoveDirectionEnum.NONE );
 
-        // if arrow-up pressed, commit and move up
-        if ( event.keyCode == SWT.ARROW_UP && m_editor instanceof Spinner == false )
-          commit( MoveDirectionEnum.UP );
-
-        // if arrow-down pressed, commit and move down
-        if ( event.keyCode == SWT.ARROW_DOWN && m_editor instanceof Spinner == false )
-          commit( MoveDirectionEnum.DOWN );
-
-        // if tab pressed, commit and move
-        if ( event.keyCode == SWT.TAB )
+        if ( m_upDownArrowsCommit )
         {
-          if ( event.stateMask == SWT.SHIFT )
-            commit( MoveDirectionEnum.LEFT );
-          else
-            commit( MoveDirectionEnum.RIGHT );
-        }
+          // if arrow-up pressed, commit and move up
+          if ( event.keyCode == SWT.ARROW_UP )
+            commit( MoveDirectionEnum.UP );
 
+          // if arrow-down pressed, commit and move down
+          if ( event.keyCode == SWT.ARROW_DOWN )
+            commit( MoveDirectionEnum.DOWN );
+        }
       }
     } );
 
@@ -100,6 +106,9 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     if ( m_editor instanceof Combo )
       return ( (Combo) m_editor ).getText();
 
+    if ( m_editor instanceof TimeSpanEditor )
+      return ( (TimeSpanEditor) m_editor ).getText();
+
     // none of above, therefore must be a Text editor
     return ( (Text) m_editor ).getText();
   }
@@ -109,6 +118,8 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   public void setEditorValue( Object value )
   {
     // set editor value
+    if ( value == null )
+      value = "";
     setEditor( m_editor, value.toString(), getRowIndex(), getColumnIndex() );
   }
 

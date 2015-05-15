@@ -24,19 +24,19 @@ package rjc.jplanner.model;
 
 public class TimeSpan
 {
-  private double              m_num;
-  private char                m_units;
+  private double             m_num;
+  private char               m_units;
 
-  public static final char    UNIT_SECONDS = 'S';
-  public static final char    UNIT_MINUTES = 'M';
-  public static final char    UNIT_HOURS   = 'H';
-  public static final char    UNIT_DAYS    = 'd';
-  public static final char    UNIT_WEEKS   = 'w';
-  public static final char    UNIT_MONTHS  = 'm';
-  public static final char    UNIT_YEARS   = 'y';
+  public static final char   UNIT_SECONDS = 'S';
+  public static final char   UNIT_MINUTES = 'M';
+  public static final char   UNIT_HOURS   = 'H';
+  public static final char   UNIT_DAYS    = 'd';
+  public static final char   UNIT_WEEKS   = 'w';
+  public static final char   UNIT_MONTHS  = 'm';
+  public static final char   UNIT_YEARS   = 'y';
 
-  private static final String NUMPOINT     = "01234567890.";
-  private static final String UNITS        = "SMHdwmy";
+  public static final String NUMPOINT     = "01234567890.";
+  public static final String UNITS        = "SMHdwmy";
 
   /**************************************** constructor ******************************************/
   public TimeSpan( String str )
@@ -73,6 +73,18 @@ public class TimeSpan
       str = str.substring( 0, str.length() - 2 );
 
     return str + " " + m_units;
+  }
+
+  /******************************************** units ********************************************/
+  public char units()
+  {
+    return m_units;
+  }
+
+  /******************************************* number ********************************************/
+  public double number()
+  {
+    return m_num;
   }
 
 }

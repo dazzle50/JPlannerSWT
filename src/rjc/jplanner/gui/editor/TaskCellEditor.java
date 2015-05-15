@@ -23,8 +23,10 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Task;
 import rjc.jplanner.model.TaskType;
+import rjc.jplanner.model.TimeSpan;
 
 /*************************************************************************************************/
 /********************************** Editor for task table cells **********************************/
@@ -48,6 +50,13 @@ public class TaskCellEditor extends XAbstractCellEditor
       return combo;
     }
 
+    if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
+    {
+      TimeSpan sp = new TimeSpan( JPlanner.plan.task( row ).toString( col ) );
+      TimeSpanEditor editor = new TimeSpanEditor( parent, sp );
+      return editor;
+    }
+
     // TODO - use Text editor until find/write something better
     return new Text( parent, SWT.SINGLE );
   }
@@ -66,6 +75,8 @@ public class TaskCellEditor extends XAbstractCellEditor
     if ( editor instanceof Combo )
       ( (Combo) editor ).setText( value );
 
+    if ( editor instanceof TimeSpanEditor )
+      ( (TimeSpanEditor) editor ).setText( value );
   }
 
 }

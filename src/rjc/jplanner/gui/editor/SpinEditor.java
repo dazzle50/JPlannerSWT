@@ -19,10 +19,12 @@
 package rjc.jplanner.gui.editor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -41,22 +43,23 @@ import rjc.jplanner.JPlanner;
 
 public class SpinEditor extends Composite
 {
-  private Text   m_text;  // widget showing value
+  private Text    m_editor;       // control which accepts the key presses etc
 
-  private String m_prefix;
-  private String m_suffix;
-  private double m_value;
-  private double m_step;
-  private double m_page;
-  private double m_min;
-  private double m_max;
-  private int    m_places; // number of decimal places
+  private String  m_prefix;
+  private String  m_suffix;
+  private double  m_value;
+  private double  m_step;
+  private double  m_page;
+  private double  m_min;
+  private double  m_max;
+  private int     m_decimalPlaces; // number of decimal places
+  private boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
 
   /**************************************** constructor ******************************************/
-  public SpinEditor( Composite parent, int style )
+  public SpinEditor( Composite parent, boolean suppressZeros )
   {
     // build composite with grid-layout
-    super( parent, style );
+    super( parent, SWT.NONE );
     GridLayout gridLayout = new GridLayout( 2, false );
     gridLayout.verticalSpacing = 0;
     gridLayout.marginWidth = 0;
@@ -66,8 +69,8 @@ public class SpinEditor extends Composite
     setBackground( JPlanner.gui.COLOR_WHITE );
 
     // text editor
-    m_text = new Text( this, SWT.NONE );
-    m_text.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_editor = new Text( this, SWT.NONE );
+    m_editor.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     // up & down buttons
     UpDownButtons buttons = new UpDownButtons( this );
@@ -77,11 +80,12 @@ public class SpinEditor extends Composite
     m_prefix = "";
     m_suffix = "";
     m_value = 0.0;
-    m_step = 0.1;
+    m_step = 1.0;
     m_page = 10.0;
     m_min = 0.0;
-    m_max = 100.0;
-    m_places = 2;
+    m_max = 9999.0;
+    m_decimalPlaces = 2;
+    m_suppressZeros = suppressZeros;
     displayValue();
 
     // give focus to text editor if composite clicked
@@ -90,7 +94,7 @@ public class SpinEditor extends Composite
       @Override
       public void handleEvent( Event event )
       {
-        m_text.setFocus();
+        m_editor.setFocus();
       }
     } );
 
@@ -121,12 +125,12 @@ public class SpinEditor extends Composite
           stepDown();
 
         // also give text editor focus
-        m_text.setFocus();
+        m_editor.setFocus();
       }
     } );
 
     // react to arrow-up/arrow-down/page-up/page-down/home/end key presses
-    m_text.addKeyListener( new KeyAdapter()
+    m_editor.addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
@@ -167,14 +171,14 @@ public class SpinEditor extends Composite
     } );
 
     // verify any changes to editor text are valid
-    m_text.addVerifyListener( new VerifyListener()
+    m_editor.addVerifyListener( new VerifyListener()
     {
       @Override
       public void verifyText( VerifyEvent event )
       {
         try
         {
-          String oldS = m_text.getText();
+          String oldS = m_editor.getText();
           String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
           String preS = newS.substring( 0, m_prefix.length() );
           String sufS = newS.substring( newS.length() - m_suffix.length() );
@@ -194,8 +198,8 @@ public class SpinEditor extends Composite
               regex += "-?"; // only min <0 so mught start with -
           }
           regex += "\\d*"; // zero or more digits
-          if ( m_places > 0 )
-            regex += "\\.?\\d{0," + m_places + "}"; // optional . with at most m_places digits
+          if ( m_decimalPlaces > 0 )
+            regex += "\\.?\\d{0," + m_decimalPlaces + "}"; // optional . with at most decimal digits
           if ( !valueS.matches( regex ) )
             event.doit = false;
 
@@ -215,9 +219,9 @@ public class SpinEditor extends Composite
 
           // if value is out of range, highlight text red to indicated invalid
           if ( value < m_min || value > m_max )
-            m_text.setForeground( JPlanner.gui.COLOR_RED );
+            m_editor.setForeground( JPlanner.gui.COLOR_RED );
           else
-            m_text.setForeground( JPlanner.gui.COLOR_BLACK );
+            m_editor.setForeground( JPlanner.gui.COLOR_BLACK );
         }
         catch (Exception e)
         {
@@ -232,6 +236,20 @@ public class SpinEditor extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  @Override
+  public void addFocusListener( FocusListener listener )
+  {
+    // interested in when Text editor loses focus, not the extended composite
+    m_editor.addFocusListener( listener );
+  }
+
+  @Override
+  public void addTraverseListener( TraverseListener listener )
+  {
+    // interested in when Text editor hears tab, not the extended composite
+    m_editor.addTraverseListener( listener );
   }
 
   /****************************************** stepUp *********************************************/
@@ -275,18 +293,76 @@ public class SpinEditor extends Composite
     if ( m_value < m_min )
       m_value = m_min;
 
-    // display the value to specified number of decimals places, selected
-    String format = "%." + m_places + "f";
+    // display the value
+    String format = "%." + m_decimalPlaces + "f";
     String value = String.format( format, m_value );
-    m_text.setText( m_prefix + value + m_suffix );
-    m_text.setSelection( new Point( m_prefix.length(), m_prefix.length() + value.length() ) );
+
+    // suppress unneeded zeros & dp at end of displayed value
+    if ( m_suppressZeros && value.indexOf( '.' ) >= 0 )
+    {
+      while ( value.charAt( value.length() - 1 ) == '0' )
+        value = value.substring( 0, value.length() - 1 );
+      if ( value.charAt( value.length() - 1 ) == '.' )
+        value = value.substring( 0, value.length() - 1 );
+    }
+
+    m_editor.setText( m_prefix + value + m_suffix );
+    m_editor.setSelection( new Point( m_prefix.length(), m_prefix.length() + value.length() ) );
   }
 
-  /***************************************** getValue ********************************************/
+  /************************************ positonCursorValueEnd ************************************/
+  public void positonCursorValueEnd()
+  {
+    // position editor selection cursor to end of number
+    m_editor.setSelection( getText().length() - m_suffix.length() );
+  }
+
+  /****************************************** getEditor ******************************************/
+  public Text getEditor()
+  {
+    // return SWT editor actually used to accept key presses
+    return m_editor;
+  }
+
+  /******************************************* getText *******************************************/
+  public String getText()
+  {
+    // text displayed by editor (including prefix and suffix)
+    return m_editor.getText();
+  }
+
+  /****************************************** getValue *******************************************/
   public double getValue()
   {
     // value displayed by the editor
     return m_value;
+  }
+
+  /****************************************** getSuffix ******************************************/
+  public String getSuffix()
+  {
+    return m_suffix;
+  }
+
+  /****************************************** setValue *******************************************/
+  public void setValue( double value )
+  {
+    m_value = value;
+    displayValue();
+  }
+
+  /****************************************** setSuffix ******************************************/
+  public void setSuffix( String suffix )
+  {
+    m_suffix = suffix;
+    displayValue();
+  }
+
+  /****************************************** setPrefix ******************************************/
+  public void setPrefix( String prefix )
+  {
+    m_prefix = prefix;
+    displayValue();
   }
 
 }
