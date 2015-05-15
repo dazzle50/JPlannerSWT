@@ -26,8 +26,9 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+
+import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
 /**************************** Abstract cell editor to JPlanner tables ****************************/
@@ -35,8 +36,7 @@ import org.eclipse.swt.widgets.Text;
 
 public abstract class XAbstractCellEditor extends AbstractCellEditor
 {
-  private Control m_editor;            // editor for cell
-  private boolean m_upDownArrowsCommit;
+  private Control m_editor; // editor for cell
 
   /************************************ createEditorControl **************************************/
   @Override
@@ -45,19 +45,8 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     // create editor based on column
     m_editor = createEditor( getRowIndex(), getColumnIndex() );
 
-    // identify control that receives key presses & whether arrow-up & down should commit
-    Control editor = m_editor;
-    m_upDownArrowsCommit = true;
-    if ( m_editor instanceof TimeSpanEditor )
-    {
-      editor = ( (TimeSpanEditor) m_editor ).getEditor();
-      m_upDownArrowsCommit = false;
-    }
-    if ( m_editor instanceof Spinner )
-      m_upDownArrowsCommit = false;
-
-    // add key listener for closing & committing
-    editor.addKeyListener( new KeyAdapter()
+    // add key listener for escape & carriage-return
+    getEditorPrime().addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
@@ -69,8 +58,15 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
         // if carriage-return pressed, commit
         if ( event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR )
           commit( MoveDirectionEnum.NONE );
+      }
+    } );
 
-        if ( m_upDownArrowsCommit )
+    // add key listener for up & down arrow (some editor types only)
+    if ( m_editor instanceof SpinEditor == false )
+      getEditorPrime().addKeyListener( new KeyAdapter()
+      {
+        @Override
+        public void keyPressed( KeyEvent event )
         {
           // if arrow-up pressed, commit and move up
           if ( event.keyCode == SWT.ARROW_UP )
@@ -80,8 +76,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
           if ( event.keyCode == SWT.ARROW_DOWN )
             commit( MoveDirectionEnum.DOWN );
         }
-      }
-    } );
+      } );
 
     return m_editor;
   }
@@ -92,7 +87,21 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public Control getEditorControl()
   {
-    // return the editor
+    // return the control that needs disposing when editor closed etc 
+    return m_editor;
+  }
+
+  /*************************************** getEditorPrime ****************************************/
+  public Control getEditorPrime()
+  {
+    // return control that actually receives the key press events
+    if ( m_editor instanceof SpinEditor )
+      return ( (SpinEditor) m_editor ).getPrimeEditor();
+
+    if ( m_editor instanceof TextEditor )
+      return ( (TextEditor) m_editor ).getPrimeEditor();
+
+    // other editors are simple
     return m_editor;
   }
 
@@ -100,14 +109,14 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public Object getEditorValue()
   {
-    if ( m_editor instanceof Spinner )
-      return ( (Spinner) m_editor ).getText();
-
     if ( m_editor instanceof Combo )
       return ( (Combo) m_editor ).getText();
 
-    if ( m_editor instanceof TimeSpanEditor )
-      return ( (TimeSpanEditor) m_editor ).getText();
+    if ( m_editor instanceof SpinEditor )
+      return ( (SpinEditor) m_editor ).getText();
+
+    if ( m_editor instanceof TextEditor )
+      return ( (TextEditor) m_editor ).getText();
 
     // none of above, therefore must be a Text editor
     return ( (Text) m_editor ).getText();
@@ -118,12 +127,27 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   public void setEditorValue( Object value )
   {
     // set editor value
-    if ( value == null )
-      value = "";
-    setEditor( m_editor, value.toString(), getRowIndex(), getColumnIndex() );
-  }
+    String str = "";
+    if ( value != null )
+      str = (String) value;
 
-  protected abstract void setEditor( Control editor, String value, int row, int col );
+    // set editor value
+    if ( m_editor instanceof TextEditor )
+      ( (TextEditor) m_editor ).setText( str );
+
+    if ( m_editor instanceof TimeSpanEditor )
+      ( (TimeSpanEditor) m_editor ).setText( str );
+
+    if ( m_editor instanceof Combo )
+      ( (Combo) m_editor ).setText( str );
+
+    if ( m_editor instanceof Text )
+    {
+      ( (Text) m_editor ).setText( str );
+      ( (Text) m_editor ).setSelection( Integer.MAX_VALUE );
+    }
+
+  }
 
   /*************************************** activateCell ******************************************/
   @Override
@@ -134,6 +158,18 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     setEditorValue( value );
     m_editor.setFocus();
     return m_editor;
+  }
+
+  /************************************ validateCanonicalValue ***********************************/
+  @Override
+  public boolean validateCanonicalValue( Object canonicalValue )
+  {
+    // simple rule, if editor foreground colour is red, don't allow commit
+    if ( getEditorPrime().getForeground().equals( JPlanner.gui.COLOR_RED ) )
+      return false;
+
+    // not red, so allow commit
+    return true;
   }
 
 }

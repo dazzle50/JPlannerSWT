@@ -40,7 +40,7 @@ public class TimeSpanEditor extends SpinEditor
     setSuffix( " " + sp.units() );
 
     // add key listener to allow user to change time-span units
-    getEditor().addKeyListener( new KeyAdapter()
+    getPrimeEditor().addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
@@ -61,7 +61,7 @@ public class TimeSpanEditor extends SpinEditor
     if ( ".".equals( value ) )
     {
       setValue( 0.0 );
-      getEditor().setText( "0." + getSuffix() );
+      getPrimeEditor().setText( "0." + getSuffix() );
       positonCursorValueEnd();
     }
 

@@ -22,6 +22,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
+import rjc.jplanner.model.Resource;
+
 /*************************************************************************************************/
 /******************************** Editor for resource table cells ********************************/
 /*************************************************************************************************/
@@ -32,22 +34,20 @@ public class ResourceCellEditor extends XAbstractCellEditor
   @Override
   public Control createEditor( int row, int col )
   {
+    // create editor based on column
+    if ( col == Resource.SECTION_INITIALS )
+      return new ResourceInitialsEditor( parent );
+
+    if ( col == Resource.SECTION_NAME || col == Resource.SECTION_ORG || col == Resource.SECTION_GROUP
+        || col == Resource.SECTION_ROLE || col == Resource.SECTION_ALIAS || col == Resource.SECTION_COMMENT )
+    {
+      TextEditor editor = new TextEditor( parent );
+      editor.setTextLimit( 100 );
+      return editor;
+    }
 
     // TODO - use Text editor until find/write something better
     return new Text( parent, SWT.SINGLE );
-  }
-
-  /****************************************** setEditor ******************************************/
-  @Override
-  public void setEditor( Control editor, String value, int row, int col )
-  {
-    // set editor value
-    if ( editor instanceof Text )
-    {
-      ( (Text) editor ).setText( value );
-      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
-    }
-
   }
 
 }

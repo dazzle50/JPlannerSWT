@@ -43,7 +43,7 @@ import rjc.jplanner.JPlanner;
 
 public class SpinEditor extends Composite
 {
-  private Text    m_editor;       // control which accepts the key presses etc
+  private Text    m_prime;        // control which accepts the key presses etc
 
   private String  m_prefix;
   private String  m_suffix;
@@ -69,11 +69,11 @@ public class SpinEditor extends Composite
     setBackground( JPlanner.gui.COLOR_WHITE );
 
     // text editor
-    m_editor = new Text( this, SWT.NONE );
-    m_editor.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    m_prime = new Text( this, SWT.NONE );
+    m_prime.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
     // up & down buttons
-    UpDownButtons buttons = new UpDownButtons( this );
+    SpinUpDownButtons buttons = new SpinUpDownButtons( this );
     buttons.setLayoutData( new GridData( SWT.LEFT, SWT.FILL, false, true, 1, 1 ) );
 
     // initialise private values
@@ -94,7 +94,7 @@ public class SpinEditor extends Composite
       @Override
       public void handleEvent( Event event )
       {
-        m_editor.setFocus();
+        m_prime.setFocus();
       }
     } );
 
@@ -125,12 +125,12 @@ public class SpinEditor extends Composite
           stepDown();
 
         // also give text editor focus
-        m_editor.setFocus();
+        m_prime.setFocus();
       }
     } );
 
     // react to arrow-up/arrow-down/page-up/page-down/home/end key presses
-    m_editor.addKeyListener( new KeyAdapter()
+    m_prime.addKeyListener( new KeyAdapter()
     {
       @Override
       public void keyPressed( KeyEvent event )
@@ -171,14 +171,14 @@ public class SpinEditor extends Composite
     } );
 
     // verify any changes to editor text are valid
-    m_editor.addVerifyListener( new VerifyListener()
+    m_prime.addVerifyListener( new VerifyListener()
     {
       @Override
       public void verifyText( VerifyEvent event )
       {
         try
         {
-          String oldS = m_editor.getText();
+          String oldS = m_prime.getText();
           String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
           String preS = newS.substring( 0, m_prefix.length() );
           String sufS = newS.substring( newS.length() - m_suffix.length() );
@@ -219,9 +219,9 @@ public class SpinEditor extends Composite
 
           // if value is out of range, highlight text red to indicated invalid
           if ( value < m_min || value > m_max )
-            m_editor.setForeground( JPlanner.gui.COLOR_RED );
+            m_prime.setForeground( JPlanner.gui.COLOR_RED );
           else
-            m_editor.setForeground( JPlanner.gui.COLOR_BLACK );
+            m_prime.setForeground( JPlanner.gui.COLOR_BLACK );
         }
         catch (Exception e)
         {
@@ -242,14 +242,14 @@ public class SpinEditor extends Composite
   public void addFocusListener( FocusListener listener )
   {
     // interested in when Text editor loses focus, not the extended composite
-    m_editor.addFocusListener( listener );
+    m_prime.addFocusListener( listener );
   }
 
   @Override
   public void addTraverseListener( TraverseListener listener )
   {
     // interested in when Text editor hears tab, not the extended composite
-    m_editor.addTraverseListener( listener );
+    m_prime.addTraverseListener( listener );
   }
 
   /****************************************** stepUp *********************************************/
@@ -306,29 +306,29 @@ public class SpinEditor extends Composite
         value = value.substring( 0, value.length() - 1 );
     }
 
-    m_editor.setText( m_prefix + value + m_suffix );
-    m_editor.setSelection( new Point( m_prefix.length(), m_prefix.length() + value.length() ) );
+    m_prime.setText( m_prefix + value + m_suffix );
+    m_prime.setSelection( new Point( m_prefix.length(), m_prefix.length() + value.length() ) );
   }
 
   /************************************ positonCursorValueEnd ************************************/
   public void positonCursorValueEnd()
   {
     // position editor selection cursor to end of number
-    m_editor.setSelection( getText().length() - m_suffix.length() );
+    m_prime.setSelection( getText().length() - m_suffix.length() );
   }
 
-  /****************************************** getEditor ******************************************/
-  public Text getEditor()
+  /*************************************** getPrimeEditor ****************************************/
+  public Text getPrimeEditor()
   {
     // return SWT editor actually used to accept key presses
-    return m_editor;
+    return m_prime;
   }
 
   /******************************************* getText *******************************************/
   public String getText()
   {
     // text displayed by editor (including prefix and suffix)
-    return m_editor.getText();
+    return m_prime.getText();
   }
 
   /****************************************** getValue *******************************************/

@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
-import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
@@ -64,50 +63,6 @@ public class DayCellEditor extends XAbstractCellEditor
     // none of above, therefore must be a work-period start or end time
     // TODO - use Text editor until find/write something better
     return new Text( parent, SWT.SINGLE );
-  }
-
-  /****************************************** setEditor ******************************************/
-  @Override
-  public void setEditor( Control editor, String value, int row, int col )
-  {
-    // set editor value
-    if ( editor instanceof Text )
-    {
-      ( (Text) editor ).setText( value );
-      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
-    }
-
-    // if day work, set spinner catching if not valid float
-    if ( col == Day.SECTION_WORK )
-    {
-      if ( value.equals( "." ) )
-        value = "0.";
-
-      try
-      {
-        ( (Spinner) editor ).setSelection( (int) ( 100 * Float.parseFloat( value ) ) );
-      }
-      catch (NumberFormatException e)
-      {
-        Double work = JPlanner.plan.day( row ).work();
-        ( (Spinner) editor ).setSelection( (int) ( 100 * work ) );
-      }
-    }
-
-    // if day number of work periods, set spinner catching if not valid integer
-    if ( col == Day.SECTION_PERIODS )
-    {
-      try
-      {
-        ( (Spinner) editor ).setSelection( Integer.parseInt( value ) );
-      }
-      catch (NumberFormatException e)
-      {
-        int periods = JPlanner.plan.day( row ).numPeriods();
-        ( (Spinner) editor ).setSelection( periods );
-      }
-    }
-
   }
 
 }

@@ -61,22 +61,4 @@ public class TaskCellEditor extends XAbstractCellEditor
     return new Text( parent, SWT.SINGLE );
   }
 
-  /****************************************** setEditor ******************************************/
-  @Override
-  public void setEditor( Control editor, String value, int row, int col )
-  {
-    // set editor value
-    if ( editor instanceof Text )
-    {
-      ( (Text) editor ).setText( value );
-      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
-    }
-
-    if ( editor instanceof Combo )
-      ( (Combo) editor ).setText( value );
-
-    if ( editor instanceof TimeSpanEditor )
-      ( (TimeSpanEditor) editor ).setText( value );
-  }
-
 }

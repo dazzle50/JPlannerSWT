@@ -37,17 +37,4 @@ public class CalendarCellEditor extends XAbstractCellEditor
     return new Text( parent, SWT.SINGLE );
   }
 
-  /****************************************** setEditor ******************************************/
-  @Override
-  public void setEditor( Control editor, String value, int row, int col )
-  {
-    // set editor value
-    if ( editor instanceof Text )
-    {
-      ( (Text) editor ).setText( value );
-      ( (Text) editor ).setSelection( Integer.MAX_VALUE );
-    }
-
-  }
-
 }

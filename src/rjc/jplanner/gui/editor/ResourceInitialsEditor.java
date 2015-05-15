@@ -18,77 +18,63 @@
 
 package rjc.jplanner.gui.editor;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
-/*************************** Simple custom widget with up & down button **************************/
+/**************************** Table cell editor for Resource initials ****************************/
 /*************************************************************************************************/
 
-public class UpDownButtons extends Composite
+public class ResourceInitialsEditor extends TextEditor
 {
 
   /**************************************** constructor ******************************************/
-  public UpDownButtons( Composite parent )
+  public ResourceInitialsEditor( Composite parent )
   {
-    super( parent, SWT.NO_FOCUS );
+    super( parent );
+    setTextLimit( 20 );
 
-    // add paint listener to paint the up & down buttons
-    addPaintListener( new PaintListener()
+    m_prime.addVerifyListener( new VerifyListener()
     {
       @Override
-      public void paintControl( PaintEvent event )
+      public void verifyText( VerifyEvent event )
       {
-        Composite area = UpDownButtons.this;
-        GC gc = event.gc;
-        int w = area.getSize().x - 3;
-        int h = ( area.getSize().y - 3 ) / 2;
-
-        // draw the button dividing lines
-        gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
-        gc.drawRectangle( 1, 1, w, h );
-        gc.drawRectangle( 1, h + 2, w, h );
-
-        // draw up & down triangles
-        gc.setForeground( JPlanner.gui.COLOR_BLACK );
-        int y1 = 3;
-        int y2 = h;
-        if ( y2 - y1 > w ) // prevent triangles being taller than wide
+        try
         {
-          int delta = y2 - y1 - w;
-          y1 += delta / 2;
-          y2 -= delta / 2;
+          String oldS = m_prime.getText();
+          String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
+
+          // any characters except white-space, comma, open & close sq brackets
+          if ( !newS.matches( "[^\\s,\\[\\]]*" ) )
+            throw new IllegalArgumentException();
+
+          // highlight text red with explanation message if invalid
+          if ( newS.length() == 0 )
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_RED );
+            JPlanner.gui.message( "Blank initials not allowed" );
+          }
+          else if ( newS.equals( "TODO" ) ) // TODO duplicates not allowed !!!!!!!!!!
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_RED );
+            JPlanner.gui.message( "Duplicate initials not allowed" );
+          }
+          else
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_BLACK );
+            JPlanner.gui.message( "" );
+          }
         }
-        for ( int y = y1; y < y2; y++ )
+        catch (Exception e)
         {
-          int size = ( y - y1 ) * ( w - 3 ) / ( y2 - y1 ) / 2;
-          int x1 = w / 2 - size + 1;
-          int x2 = w / 2 + size + 1;
-          gc.drawLine( x1, y, x2, y );
-          gc.drawLine( x1, h * 2 - y + 3, x2, h * 2 - y + 3 );
+          event.doit = false;
         }
       }
     } );
 
-  }
-
-  @Override
-  public Point computeSize( int wHint, int hHint, boolean changed )
-  {
-    // only horizontal size is important, as vertically it stretches
-    return new Point( 17, 1 );
-  }
-
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
   }
 
 }
