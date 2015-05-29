@@ -21,7 +21,6 @@ package rjc.jplanner.gui.editor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Task;
@@ -58,7 +57,7 @@ public class TaskCellEditor extends XAbstractCellEditor
     }
 
     // TODO - use Text editor until find/write something better
-    return new Text( parent, SWT.SINGLE );
+    return new TextEditor( parent );
   }
 
 }

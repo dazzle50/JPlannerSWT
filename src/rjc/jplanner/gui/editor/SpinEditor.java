@@ -22,12 +22,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -44,6 +48,8 @@ import rjc.jplanner.JPlanner;
 public class SpinEditor extends Composite
 {
   private Text    m_prime;        // control which accepts the key presses etc
+  private int     m_height;
+  private int     m_minWidth;
 
   private String  m_prefix;
   private String  m_suffix;
@@ -88,13 +94,13 @@ public class SpinEditor extends Composite
     m_suppressZeros = suppressZeros;
     displayValue();
 
-    // give focus to text editor if composite clicked
-    addListener( SWT.MouseDown, new Listener()
+    // listen to modify to ensure editor width is sufficient to show whole text
+    m_prime.addModifyListener( new ModifyListener()
     {
       @Override
-      public void handleEvent( Event event )
+      public void modifyText( ModifyEvent event )
       {
-        m_prime.setFocus();
+        SpinEditor.this.setSize( widthForText(), m_height );
       }
     } );
 
@@ -250,6 +256,30 @@ public class SpinEditor extends Composite
   {
     // interested in when Text editor hears tab, not the extended composite
     m_prime.addTraverseListener( listener );
+  }
+
+  @Override
+  public void setBounds( Rectangle rect )
+  {
+    // capture cell bounds of editor
+    m_height = rect.height;
+    m_minWidth = rect.width;
+    rect.width = widthForText();
+    super.setBounds( rect );
+  }
+
+  /**************************************** widthForText *****************************************/
+  protected int widthForText()
+  {
+    // returns ideal editor width given current text
+    GC gc = new GC( m_prime );
+    Point size = gc.textExtent( m_prime.getText() );
+    gc.dispose();
+
+    if ( size.x + 22 > m_minWidth )
+      return size.x + 22;
+
+    return m_minWidth;
   }
 
   /****************************************** stepUp *********************************************/

@@ -129,7 +129,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     // set editor value
     String str = "";
     if ( value != null )
-      str = (String) value;
+      str = value.toString();
 
     // set editor value
     if ( m_editor instanceof TextEditor )
