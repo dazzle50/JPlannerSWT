@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectplanner version="2014-08" user="Richard" when="2014-09-13T11:57:33">
+    <days-data>
+        <day id="0" name="Non working" work="0"/>
+        <day id="1" name="Standard work day" work="1">
+            <period id="0" start="09:00" end="13:00"/>
+            <period id="1" start="14:00" end="18:00"/>
+        </day>
+        <day id="2" name="Morning only" work="0.5">
+            <period id="0" start="09:00" end="13:00"/>
+        </day>
+        <day id="3" name="Evening shift" work="0.6">
+            <period id="0" start="18:00" end="22:00"/>
+        </day>
+        <day id="4" name="24H day" work="1.5">
+            <period id="0" start="00:00" end="24:00"/>
+        </day>
+    </days-data>
+    <calendars-data>
+        <calendar id="0" name="Standard" anchor="2000-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="1"/>
+            <normal id="3" day="1"/>
+            <normal id="4" day="1"/>
+            <normal id="5" day="1"/>
+            <normal id="6" day="1"/>
+            <exception date="2013-01-01" day="0"/>
+            <exception date="2013-08-26" day="0"/>
+            <exception date="2013-04-01" day="0"/>
+            <exception date="2013-12-26" day="0"/>
+            <exception date="2013-12-25" day="0"/>
+            <exception date="2012-12-25" day="0"/>
+            <exception date="2013-03-29" day="0"/>
+            <exception date="2013-05-27" day="0"/>
+            <exception date="2012-12-26" day="0"/>
+            <exception date="2013-05-06" day="0"/>
+        </calendar>
+        <calendar id="1" name="Full Time" anchor="2012-01-01">
+            <normal id="0" day="4"/>
+        </calendar>
+        <calendar id="2" name="Fancy" anchor="2012-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="0"/>
+            <normal id="3" day="2"/>
+            <normal id="4" day="2"/>
+            <normal id="5" day="3"/>
+            <normal id="6" day="3"/>
+            <normal id="7" day="4"/>
+            <normal id="8" day="0"/>
+            <normal id="9" day="4"/>
+            <exception date="2012-12-25" day="0"/>
+            <exception date="2012-12-26" day="0"/>
+        </calendar>
+    </calendars-data>
+    <resources-data>
+        <resource id="1"/>
+        <resource id="2" initials="JB" name="Joe Bloggs" org="" group="" role="" alias="" start="NA" end="NA" availability="1" cost="TODO" calendar="0" comment=""/>
+        <resource id="3"/>
+        <resource id="4"/>
+        <resource id="5"/>
+    </resources-data>
+    <tasks-data>
+        <task id="1"/>
+        <task id="2"/>
+        <task id="3" indent="0" summary="-1" expanded="1" title="aaa" duration="10 d" start="2013-11-06T09:00:00" end="2013-11-19T18:00:00" work="1 d" resources="JB" type="0" priority="100" cost="TODO" comment=""/>
+        <task id="4"/>
+        <task id="5" indent="0" summary="-1" expanded="1" title="bbb" duration="3 d" start="2013-11-11T09:00:00" end="2013-11-13T18:00:00" work="1 d" resources="JB" type="0" priority="100" cost="TODO" comment=""/>
+        <task id="6"/>
+        <task id="7"/>
+        <task id="8"/>
+        <task id="9"/>
+        <task id="10"/>
+        <predecessors task="5" preds="3SS+3 d"/>
+    </tasks-data>
+    <plan-data title="res" start="2013-11-06T09:00:00" calendar="0" datetime-format="ddd dd/MM/yyyy hh:mm:ss" notes="Simple plan to progressing variable resourcing across task&#10;&#10;Tasks 'aaa' and 'bbb' have same priority so need to share resource during overlap&#10;&#10;Task 'aaa' should have 8.5 days work&#10;Task 'bbb' should have 1.5 days work&#10;&#10;TODO&#10;1) Calculate correct resoure employment for 'aaa' and 'bbb'&#10;2) Display variable resource allocation (for 'aaa') in gantt bar&#10;3) Display 'SS' dependency link between 'aaa' and 'bbb'&#10;4) Some new display to show resource employment&#10;&#10;&#10;NOTES&#10;* Task m_resources (TaskResorces) has public &quot;alloc&quot; which contains processed assignements for quick access&#10;"/>
+    <display-data>
+        <tasks-gantt start="2013-10-26T14:35:00" end="2013-11-20T20:59:00" minspp="87.7066" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="TODO">
+            <upper-scale interval="?" format="?"/>
+            <lower-scale interval="?" format="?"/>
+        </tasks-gantt>
+        <resources-tab/>
+        <calendars-tab/>
+        <days-tab/>
+    </display-data>
+</projectplanner>

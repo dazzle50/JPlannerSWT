@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -280,7 +280,7 @@ public class MainWindow extends Shell
     Menu fileMenu = new Menu( menuFile );
     menuFile.setMenu( fileMenu );
 
-    // clear any old status-bar message when menu shown 
+    // clear any old status-bar message when menu shown
     fileMenu.addMenuListener( m_menuListener );
 
     // add file menu items

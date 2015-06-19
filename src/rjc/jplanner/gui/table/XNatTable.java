@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -116,7 +116,7 @@ public class XNatTable extends NatTable
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
               DisplayMode.NORMAL, LABEL_WRAP_TEXT );
 
-          // Edit config cell is editable 
+          // Edit config cell is editable
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
               DisplayMode.EDIT, LABEL_CELL_EDITABLE );
 
@@ -139,7 +139,8 @@ public class XNatTable extends NatTable
       };
 
     // depending on table type configure differently
-    switch (type) {
+    switch ( type )
+    {
       case DAY:
         // create table for day-types
         IDataProvider body = new DaysBody();

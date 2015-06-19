@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -30,6 +30,6 @@ public interface IUndoCommand
   // reverts the command
   void undo();
 
-  //short text string describing what this command, e.g. "insert text"
+  // short text string describing what this command, e.g. "insert text"
   String text();
 }

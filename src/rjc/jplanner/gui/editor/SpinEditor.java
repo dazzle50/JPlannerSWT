@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -215,7 +215,7 @@ public class SpinEditor extends Composite
           {
             value = Double.parseDouble( valueS );
           }
-          catch (Exception e)
+          catch ( Exception e )
           {
           }
 
@@ -229,7 +229,7 @@ public class SpinEditor extends Composite
           else
             m_prime.setForeground( JPlanner.gui.COLOR_BLACK );
         }
-        catch (Exception e)
+        catch ( Exception e )
         {
           event.doit = false;
         }

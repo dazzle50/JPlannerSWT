@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -112,7 +112,8 @@ public class Day
     this();
     // read XML day attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch (xsr.getAttributeLocalName( i )) {
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
         case XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
@@ -136,7 +137,8 @@ public class Day
         Time time;
 
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-          switch (xsr.getAttributeLocalName( i )) {
+          switch ( xsr.getAttributeLocalName( i ) )
+          {
             case XML_START:
               time = Time.fromString( xsr.getAttributeValue( i ) );
               start = time.milliseconds() / 3600_000.0;
@@ -232,7 +234,7 @@ public class Day
       else
         return end( section / 2 ).toString().substring( 0, 5 );
     }
-    catch (IndexOutOfBoundsException e)
+    catch ( IndexOutOfBoundsException e )
     {
       // if no work period, return blank
       return "";

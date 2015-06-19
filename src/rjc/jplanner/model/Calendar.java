@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -146,7 +146,8 @@ public class Calendar
     this();
     // read XML calendar attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch (xsr.getAttributeLocalName( i )) {
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
         case XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
@@ -165,7 +166,8 @@ public class Calendar
       // if a normal element, add it to list
       if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_NORMAL ) )
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-          switch (xsr.getAttributeLocalName( i )) {
+          switch ( xsr.getAttributeLocalName( i ) )
+          {
             case XML_DAY:
               int dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
               m_normal.add( JPlanner.plan.day( dayIndex ) );
@@ -179,7 +181,8 @@ public class Calendar
         int dayIndex = -1;
 
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-          switch (xsr.getAttributeLocalName( i )) {
+          switch ( xsr.getAttributeLocalName( i ) )
+          {
             case XML_DATE:
               date = Date.fromString( xsr.getAttributeValue( i ) );
               break;
@@ -259,7 +262,7 @@ public class Calendar
     {
       return normal( section - SECTION_NORMAL1 ).name();
     }
-    catch (IndexOutOfBoundsException e)
+    catch ( IndexOutOfBoundsException e )
     {
       return "";
     }
@@ -269,7 +272,7 @@ public class Calendar
   @SuppressWarnings( "unchecked" )
   public void setData( int section, Object newValue )
   {
-    // set calendar data for given section 
+    // set calendar data for given section
     if ( section == SECTION_NAME )
       m_name = (String) newValue;
 

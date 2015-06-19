@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -58,10 +58,10 @@ public class JPlanner
     // run the event loop as long as the window is open
     while ( !gui.isDisposed() )
     {
-      // read the next OS event queue and transfer it to a SWT event 
+      // read the next OS event queue and transfer it to a SWT event
       if ( !display.readAndDispatch() )
       {
-        // if there are currently no other OS event to process, sleep until the next OS event is available 
+        // if there are currently no other OS event to process, sleep until the next OS event is available
         display.sleep();
       }
     }

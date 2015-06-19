@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectplanner version="2013-09" user="Richard" when="2013-10-21T21:39:31">
+    <days-data>
+        <day id="0" name="Non working" work="0"/>
+        <day id="1" name="Standard work day" work="1">
+            <period id="0" start="09:00" end="13:00"/>
+            <period id="1" start="14:00" end="18:00"/>
+        </day>
+        <day id="2" name="Morning only" work="0.5">
+            <period id="0" start="09:00" end="13:00"/>
+        </day>
+        <day id="3" name="Evening shift" work="0.6">
+            <period id="0" start="18:00" end="22:00"/>
+        </day>
+        <day id="4" name="24H day" work="1.5">
+            <period id="0" start="00:00" end="24:00"/>
+        </day>
+    </days-data>
+    <calendars-data>
+        <calendar id="0" name="Standard" anchor="2000-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="1"/>
+            <normal id="3" day="1"/>
+            <normal id="4" day="1"/>
+            <normal id="5" day="1"/>
+            <normal id="6" day="1"/>
+            <exception date="2013-12-25" day="0"/>
+            <exception date="2013-04-01" day="0"/>
+            <exception date="2013-12-26" day="0"/>
+            <exception date="2013-03-29" day="0"/>
+            <exception date="2013-05-06" day="0"/>
+            <exception date="2013-01-01" day="0"/>
+            <exception date="2013-05-27" day="0"/>
+            <exception date="2013-08-26" day="0"/>
+            <exception date="2012-12-26" day="0"/>
+            <exception date="2012-12-25" day="0"/>
+        </calendar>
+        <calendar id="1" name="Full Time" anchor="2012-01-01">
+            <normal id="0" day="4"/>
+        </calendar>
+        <calendar id="2" name="Fancy" anchor="2012-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="0"/>
+            <normal id="3" day="2"/>
+            <normal id="4" day="2"/>
+            <normal id="5" day="3"/>
+            <normal id="6" day="3"/>
+            <normal id="7" day="4"/>
+            <normal id="8" day="0"/>
+            <normal id="9" day="4"/>
+            <exception date="2012-12-26" day="0"/>
+            <exception date="2012-12-25" day="0"/>
+        </calendar>
+    </calendars-data>
+    <resources-data>
+        <resource id="1"/>
+        <resource id="2"/>
+        <resource id="3"/>
+        <resource id="4"/>
+        <resource id="5"/>
+    </resources-data>
+    <tasks-data>
+        <task id="1"/>
+        <task id="2"/>
+        <task id="3"/>
+        <task id="4"/>
+        <task id="5"/>
+        <task id="6"/>
+        <task id="7"/>
+        <task id="8"/>
+        <task id="9"/>
+        <task id="10"/>
+        <task id="11"/>
+        <task id="12"/>
+        <task id="13"/>
+        <task id="14"/>
+        <task id="15"/>
+        <task id="16"/>
+        <task id="17"/>
+        <task id="18"/>
+        <task id="19"/>
+        <task id="20"/>
+    </tasks-data>
+    <plan-data title="20 blanks" start="2013-10-21T09:00:00" calendar="0" datetime-format="ddd dd/MM/yyyy hh:mm:ss" notes=""/>
+</projectplanner>

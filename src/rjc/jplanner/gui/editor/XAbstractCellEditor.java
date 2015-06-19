@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -87,7 +87,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public Control getEditorControl()
   {
-    // return the control that needs disposing when editor closed etc 
+    // return the control that needs disposing when editor closed etc
     return m_editor;
   }
 

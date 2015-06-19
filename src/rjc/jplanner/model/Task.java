@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -84,7 +84,8 @@ public class Task
     this();
     // read XML resource attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch (xsr.getAttributeLocalName( i )) {
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
         case XML_TITLE:
           m_title = xsr.getAttributeValue( i );
           break;
@@ -190,7 +191,7 @@ public class Task
   /****************************************** setData ********************************************/
   public void setData( int section, Object newValue )
   {
-    // set task data for given section 
+    // set task data for given section
     if ( section == SECTION_TITLE )
     {
       if ( isNull() )

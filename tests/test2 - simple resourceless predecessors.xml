@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectplanner version="2014-08" user="Richard" when="2014-09-22T22:34:37">
+    <days-data>
+        <day id="0" name="Non working" work="0"/>
+        <day id="1" name="Standard work day" work="1">
+            <period id="0" start="09:00" end="13:00"/>
+            <period id="1" start="14:00" end="18:00"/>
+        </day>
+        <day id="2" name="Morning only" work="0.5">
+            <period id="0" start="09:00" end="13:00"/>
+        </day>
+        <day id="3" name="Evening shift" work="0.6">
+            <period id="0" start="18:00" end="22:00"/>
+        </day>
+        <day id="4" name="24H day" work="1.5">
+            <period id="0" start="00:00" end="24:00"/>
+        </day>
+    </days-data>
+    <calendars-data>
+        <calendar id="0" name="Standard" anchor="2000-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="1"/>
+            <normal id="3" day="1"/>
+            <normal id="4" day="1"/>
+            <normal id="5" day="1"/>
+            <normal id="6" day="1"/>
+            <exception date="2012-12-26" day="0"/>
+            <exception date="2013-04-01" day="0"/>
+            <exception date="2013-12-26" day="0"/>
+            <exception date="2013-12-25" day="0"/>
+            <exception date="2013-03-29" day="0"/>
+            <exception date="2013-01-01" day="0"/>
+            <exception date="2013-08-26" day="0"/>
+            <exception date="2013-05-27" day="0"/>
+            <exception date="2012-12-25" day="0"/>
+            <exception date="2013-05-06" day="0"/>
+        </calendar>
+        <calendar id="1" name="Full Time" anchor="2012-01-01">
+            <normal id="0" day="4"/>
+        </calendar>
+        <calendar id="2" name="Fancy" anchor="2012-01-01">
+            <normal id="0" day="0"/>
+            <normal id="1" day="0"/>
+            <normal id="2" day="0"/>
+            <normal id="3" day="2"/>
+            <normal id="4" day="2"/>
+            <normal id="5" day="3"/>
+            <normal id="6" day="3"/>
+            <normal id="7" day="4"/>
+            <normal id="8" day="0"/>
+            <normal id="9" day="4"/>
+            <exception date="2012-12-26" day="0"/>
+            <exception date="2012-12-25" day="0"/>
+        </calendar>
+    </calendars-data>
+    <resources-data>
+        <resource id="1"/>
+        <resource id="2"/>
+        <resource id="3"/>
+        <resource id="4"/>
+        <resource id="5"/>
+    </resources-data>
+    <tasks-data>
+        <task id="1" indent="0" summary="-1" expanded="1" title="aaa" duration="5 d" start="2013-10-21T09:00" end="2013-10-25T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="2" indent="0" summary="-1" expanded="1" title="bbb" duration="3 d" start="2013-10-28T09:00" end="2013-10-30T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="3"/>
+        <task id="4" indent="0" summary="-1" expanded="1" title="aaa1" duration="10 d" start="2013-10-21T09:00" end="2013-11-01T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="5" indent="0" summary="-1" expanded="1" title="bbb1" duration="3 d" start="2013-11-07T09:00" end="2013-11-11T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="6"/>
+        <task id="7" indent="0" summary="-1" expanded="1" title="aaa2" duration="15 d" start="2013-10-21T09:00" end="2013-11-08T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="8" indent="0" summary="-1" expanded="1" title="bbb2" duration="3 d" start="2013-11-06T09:00" end="2013-11-08T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="9"/>
+        <task id="10" indent="0" summary="-1" expanded="1" title="aaa3" duration="9 d" start="2013-10-21T09:00" end="2013-10-31T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="11" indent="0" summary="-1" expanded="1" title="bbb3" duration="1 w" start="2013-10-31T17:30" end="2013-11-07T17:30" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="12"/>
+        <task id="13" indent="0" summary="-1" expanded="1" title="aaa4" duration="9 d" start="2013-10-21T09:00" end="2013-10-31T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="14" indent="0" summary="-1" expanded="1" title="bbb4" duration="3 w" start="2013-10-18T09:00" end="2013-11-08T09:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="15"/>
+        <task id="16" indent="0" summary="-1" expanded="1" title="aaa5" duration="9 d" start="2013-10-21T09:00" end="2013-10-31T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="17" indent="0" summary="-1" expanded="1" title="bbb5" duration="0.5 w" start="2013-10-14T09:00" end="2013-10-17T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="18"/>
+        <task id="19" indent="0" summary="-1" expanded="1" title="aaa6" duration="0 d" start="2013-10-21T09:00" end="2013-10-21T09:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <task id="20" indent="0" summary="-1" expanded="1" title="bbb6" duration="0 d" start="2013-10-21T09:00" end="2013-10-21T09:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="TODO" comment=""/>
+        <predecessors task="2" preds="1"/>
+        <predecessors task="5" preds="4FS+3 d"/>
+        <predecessors task="8" preds="7FS-3 d"/>
+        <predecessors task="11" preds="10FS-30 M"/>
+        <predecessors task="14" preds="13FS-2 w"/>
+        <predecessors task="17" preds="16FS-2.5 w"/>
+        <predecessors task="20" preds="19"/>
+    </tasks-data>
+    <plan-data title="test2" start="2013-10-21T09:00:00" calendar="0" datetime-format="ddd dd/MM/yyyy hh:mm:ss" notes="QPlanner test2 - Resourceless tasks with FS 'Finish-to-Start' dependency&#10;&#10;Tasks 1/2 - straight dependency with no offset&#10;Tasks 4/5 - dependency with +3d offset&#10;Tasks 7/8 - dependency with -3d offset&#10;Tasks 10/11 - dependency with no offset&#10;Tasks 13/14 - dependency with -2w offset&#10;Tasks 16/17 - dependency with -2.5w offset&#10;&#10;08/08/2013 -r42 FAIL - does not schedule task 8 correctly due to Calendar::addTimeSpan doesn't cope with negative durations&#10;10/08/2013 -r43 FAIL&#10;10/08/2013 -r44 FAIL&#10;23/08/2013 -r48 PASS - Calendar::addTimeSpan now copes with negative durations&#10;07/09/2013 -r51 PASS&#10;26/09/2013 -r55 PASS&#10;15/10/2013 -r59 PASS&#10;21/10/2013 -r61 PASS - test enhanced to cover more examples&#10;06/11/2013 -r63 PASS"/>
+    <display-data>
+        <tasks-gantt start="2013-10-12T04:30" end="2013-11-13T19:29" minspp="90.8685" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="TODO">
+            <upper-scale interval="?" format="?"/>
+            <lower-scale interval="?" format="?"/>
+        </tasks-gantt>
+        <resources-tab/>
+        <calendars-tab/>
+        <days-tab/>
+    </display-data>
+</projectplanner>

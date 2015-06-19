@@ -1,6 +1,6 @@
 /**************************************************************************
  *  Copyright (C) 2015 by Richard Crook                                   *
- *  https://github.com/dazzle50/JPlanner                                  *
+ *  https://github.com/dazzle50/JPlannerSWT                               *
  *                                                                        *
  *  This program is free software: you can redistribute it and/or modify  *
  *  it under the terms of the GNU General Public License as published by  *
@@ -412,7 +412,7 @@ public class Plan
       m_savedWhen = saveWhen;
       return true;
     }
-    catch (Exception exception)
+    catch ( Exception exception )
     {
       // some sort of exception thrown
       exception.printStackTrace();
@@ -434,7 +434,8 @@ public class Plan
       while ( xsr.hasNext() )
       {
         if ( xsr.isStartElement() )
-          switch (xsr.getLocalName()) {
+          switch ( xsr.getLocalName() )
+          {
             case XML_JPLANNER:
               loadXmlJPlanner( xsr );
               break;
@@ -462,7 +463,7 @@ public class Plan
       m_fileLocation = file.getParent();
       return true;
     }
-    catch (Exception exception)
+    catch ( Exception exception )
     {
       // some sort of exception thrown
       exception.printStackTrace();
@@ -476,7 +477,8 @@ public class Plan
   {
     // read XML plan attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch (xsr.getAttributeLocalName( i )) {
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
         case XML_TITLE:
           m_title = xsr.getAttributeValue( i );
           break;
@@ -575,7 +577,8 @@ public class Plan
   {
     // read XML JPlanner attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch (xsr.getAttributeLocalName( i )) {
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
         case XML_USER:
           m_savedBy = xsr.getAttributeValue( i );
           break;
