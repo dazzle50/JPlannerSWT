@@ -690,16 +690,16 @@ public class MainWindow extends Shell
     JPlanner.plan = new Plan();
     if ( !JPlanner.plan.loadPlan( file ) )
     {
-      JPlanner.plan = oldPlan;
       message( "Failed to load '" + file.getPath() + "'" );
+      JPlanner.plan = oldPlan;
       return false;
     }
 
     // if new plan not okay, revert back to old plan
-    if ( !JPlanner.plan.isOK() )
+    if ( JPlanner.plan.errors() != null )
     {
+      message( "Plan '" + file.getPath() + "' not valid (" + JPlanner.plan.errors() + ")" );
       JPlanner.plan = oldPlan;
-      message( "Plan '" + file.getPath() + "' not valid." );
       return false;
     }
 

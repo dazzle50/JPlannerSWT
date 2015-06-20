@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JPlanner version="2014-10" user="Richard" when="2014-11-02T18:30:08">
+<JPlanner version="2015-06" user="Richard" when="2014-11-02T18:30:08">
     <days-data>
         <day id="0" name="Non working" work="0"/>
         <day id="1" name="Standard work day" work="1">
@@ -63,25 +63,25 @@
     </resources-data>
     <tasks-data>
         <task id="1"/>
-        <task id="2" indent="0" summary="-1" expanded="1" title="fs" duration="2 d" start="2013-10-07T09:00" end="2013-10-08T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="3" indent="0" summary="-1" expanded="1" title="fs" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="4" indent="0" summary="-1" expanded="1" title="fs" duration="4 d" start="2013-10-07T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
+        <task id="2" indent="0" summary="-1" expanded="1" title="fs" duration="2 d" start="2013-10-07T09:00" end="2013-10-08T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="3" indent="0" summary="-1" expanded="1" title="fs" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="4" indent="0" summary="-1" expanded="1" title="fs" duration="4 d" start="2013-10-07T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
         <task id="5"/>
-        <task id="6" indent="0" summary="-1" expanded="1" title="fs+" duration="2 d" start="2013-10-09T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="7" indent="0" summary="-1" expanded="1" title="fs+" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="8" indent="0" summary="-1" expanded="1" title="fs+" duration="4 d" start="2013-10-09T09:00" end="2013-10-14T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
+        <task id="6" indent="0" summary="-1" expanded="1" title="fs+" duration="2 d" start="2013-10-09T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="7" indent="0" summary="-1" expanded="1" title="fs+" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="8" indent="0" summary="-1" expanded="1" title="fs+" duration="4 d" start="2013-10-09T09:00" end="2013-10-14T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
         <task id="9"/>
-        <task id="10" indent="0" summary="-1" expanded="1" title="ff-" duration="2 d" start="2013-10-08T09:00" end="2013-10-09T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="11" indent="0" summary="-1" expanded="1" title="ff-" duration="7 d" start="2013-10-02T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="12" indent="0" summary="-1" expanded="1" title="ff-" duration="4 d" start="2013-10-04T09:00" end="2013-10-09T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
+        <task id="10" indent="0" summary="-1" expanded="1" title="ff-" duration="2 d" start="2013-10-08T09:00" end="2013-10-09T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="11" indent="0" summary="-1" expanded="1" title="ff-" duration="7 d" start="2013-10-02T09:00" end="2013-10-10T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="12" indent="0" summary="-1" expanded="1" title="ff-" duration="4 d" start="2013-10-04T09:00" end="2013-10-09T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
         <task id="13"/>
-        <task id="14" indent="0" summary="-1" expanded="1" title="sf" duration="2 d" start="2013-09-30T09:00" end="2013-10-01T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="15" indent="0" summary="-1" expanded="1" title="sf" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="16" indent="0" summary="-1" expanded="1" title="sf" duration="4 d" start="2013-09-26T09:00" end="2013-10-01T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
+        <task id="14" indent="0" summary="-1" expanded="1" title="sf" duration="2 d" start="2013-09-30T09:00" end="2013-10-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="15" indent="0" summary="-1" expanded="1" title="sf" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="16" indent="0" summary="-1" expanded="1" title="sf" duration="4 d" start="2013-09-26T09:00" end="2013-10-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
         <task id="17"/>
-        <task id="18" indent="0" summary="-1" expanded="1" title="ss" duration="2 d" start="2013-10-02T09:00" end="2013-10-03T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="19" indent="0" summary="-1" expanded="1" title="ss" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
-        <task id="20" indent="0" summary="-1" expanded="1" title="ss" duration="4 d" start="2013-10-02T09:00" end="2013-10-07T18:00" work="1 d" resources="" type="0" priority="100" deadline="NA" cost="0.0" comment=""/>
+        <task id="18" indent="0" summary="-1" expanded="1" title="ss" duration="2 d" start="2013-10-02T09:00" end="2013-10-03T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="19" indent="0" summary="-1" expanded="1" title="ss" duration="3 d" start="2013-10-02T09:00" end="2013-10-04T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
+        <task id="20" indent="0" summary="-1" expanded="1" title="ss" duration="4 d" start="2013-10-02T09:00" end="2013-10-07T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
         <predecessors task="2" preds="3"/>
         <predecessors task="4" preds="3"/>
         <predecessors task="6" preds="7FS+2 d"/>
@@ -93,7 +93,7 @@
         <predecessors task="18" preds="19SS"/>
         <predecessors task="20" preds="19SS"/>
     </tasks-data>
-    <plan-data title="test5" start="2013-10-02T09:00:00" calendar="0" datetime-format="ddd dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test5 - Different dependency types&#10;&#10;Shows 'fs', 'sf' and 'ss' dependencies&#10;&#10;06/11/2013 -r63 FAIL - only 'fs' finish-start dependencies work ok&#10;"/>
+    <plan-data title="test5" start="2013-10-02T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test5 - Different dependency types&#10;&#10;Shows 'fs', 'sf' and 'ss' dependencies&#10;&#10;06/11/2013 -r63 FAIL - only 'fs' finish-start dependencies work ok&#10;"/>
     <display-data>
         <tasks-gantt start="2013-09-24T18:00" end="2013-10-17T05:59" minspp="51.673" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="562">
             <upper-scale interval="?" format="?"/>

@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.UndoStack;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 import rjc.jplanner.model.Day.DefaultDayTypes;
@@ -66,7 +67,7 @@ public class Plan
   public static final String  XML_DAY_DATA  = "days-data";
   public static final String  XML_CAL_DATA  = "calendars-data";
   public static final String  XML_RES_DATA  = "resources-data";
-  public static final String  XML_TASK_DATA = "task-data";
+  public static final String  XML_TASK_DATA = "tasks-data";
   public static final String  XML_PLAN_DATA = "plan-data";
   public static final String  XML_TITLE     = "title";
   public static final String  XML_START     = "start";
@@ -360,7 +361,7 @@ public class Plan
       // start XML document
       xsw.writeStartDocument( "UTF-8", "1.0" );
       xsw.writeStartElement( XML_JPLANNER );
-      xsw.writeAttribute( XML_VERSION, "2015-04" );
+      xsw.writeAttribute( XML_VERSION, "2015-06" );
       String saveUser = System.getProperty( "user.name" );
       xsw.writeAttribute( XML_USER, saveUser );
       DateTime saveWhen = DateTime.now();
@@ -424,6 +425,7 @@ public class Plan
   public boolean loadPlan( File file )
   {
     // attempt to save plan as XML to specified file
+    JPlanner.trace( "######## Loading '" + file + "' ########" );
     try
     {
       // create XML stream reader
@@ -453,6 +455,9 @@ public class Plan
               break;
             case XML_PLAN_DATA:
               loadXmlPlan( xsr );
+              break;
+            default:
+              JPlanner.trace( "loadPlan - unhandled start element '" + xsr.getLocalName() + "'" );
               break;
           }
 
@@ -497,6 +502,9 @@ public class Plan
         case XML_NOTES:
           m_notes = xsr.getAttributeValue( i );
           break;
+        default:
+          JPlanner.trace( "loadXmlPlan - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
       }
   }
 
@@ -511,8 +519,16 @@ public class Plan
         return;
 
       // if a task element, construct a task from it
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( Task.XML_TASK ) )
-        m_tasks.add( new Task( xsr ) );
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case Task.XML_TASK:
+            m_tasks.add( new Task( xsr ) );
+            break;
+          default:
+            JPlanner.trace( "loadXmlTasks - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
 
       xsr.next();
     }
@@ -529,8 +545,16 @@ public class Plan
         return;
 
       // if a resource element, construct a resource from it
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( Resource.XML_RESOURCE ) )
-        m_resources.add( new Resource( xsr ) );
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case Resource.XML_RESOURCE:
+            m_resources.add( new Resource( xsr ) );
+            break;
+          default:
+            JPlanner.trace( "loadXmlResources - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
 
       xsr.next();
     }
@@ -547,8 +571,16 @@ public class Plan
         return;
 
       // if a calendar element, construct a calendar from it
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( Calendar.XML_CALENDAR ) )
-        m_calendars.add( new Calendar( xsr ) );
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case Calendar.XML_CALENDAR:
+            m_calendars.add( new Calendar( xsr ) );
+            break;
+          default:
+            JPlanner.trace( "loadXmlCalendars - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
 
       xsr.next();
     }
@@ -565,8 +597,16 @@ public class Plan
         return;
 
       // if a day element, construct a day-type from it
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( Day.XML_DAY ) )
-        m_daytypes.add( new Day( xsr ) );
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case Day.XML_DAY:
+            m_daytypes.add( new Day( xsr ) );
+            break;
+          default:
+            JPlanner.trace( "loadXmlDays - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
 
       xsr.next();
     }
@@ -585,17 +625,28 @@ public class Plan
         case XML_WHEN:
           m_savedWhen = new DateTime( xsr.getAttributeValue( i ) );
           break;
+        case XML_VERSION:
+          break;
+        default:
+          JPlanner.trace( "loadXmlJPlanner - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
       }
   }
 
-  /******************************************** isOK *********************************************/
-  public boolean isOK()
+  /******************************************* errors ********************************************/
+  public String errors()
   {
-    // return if plan appears ok
-    if ( daysCount() > 0 && calendarsCount() > 0 && index( calendar() ) >= 0 )
-      return true;
+    // check what errors plan may have
+    if ( daysCount() == 0 )
+      return "No day-types";
 
-    return false;
+    if ( calendarsCount() == 0 )
+      return "No calendars";
+
+    if ( index( calendar() ) == -1 )
+      return "Invalid default calendar";
+
+    return null;
   }
 
 }

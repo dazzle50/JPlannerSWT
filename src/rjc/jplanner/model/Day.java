@@ -114,11 +114,16 @@ public class Day
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
+        case XML_ID:
+          break;
         case XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
         case XML_WORK:
           m_work = Double.parseDouble( xsr.getAttributeValue( i ) );
+          break;
+        default:
+          JPlanner.trace( "Day - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -139,6 +144,8 @@ public class Day
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
           switch ( xsr.getAttributeLocalName( i ) )
           {
+            case XML_ID:
+              break;
             case XML_START:
               time = Time.fromString( xsr.getAttributeValue( i ) );
               start = time.milliseconds() / 3600_000.0;
@@ -146,6 +153,9 @@ public class Day
             case XML_END:
               time = Time.fromString( xsr.getAttributeValue( i ) );
               end = time.milliseconds() / 3600_000.0;
+              break;
+            default:
+              JPlanner.trace( "Day period - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
               break;
           }
 

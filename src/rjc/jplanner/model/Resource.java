@@ -87,6 +87,8 @@ public class Resource
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
+        case XML_ID:
+          break;
         case XML_INITIALS:
           m_initials = xsr.getAttributeValue( i );
           break;
@@ -122,6 +124,9 @@ public class Resource
           break;
         case XML_COMMENT:
           m_comment = xsr.getAttributeValue( i );
+          break;
+        default:
+          JPlanner.trace( "Resource - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
   }

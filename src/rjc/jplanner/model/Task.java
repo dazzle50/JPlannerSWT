@@ -119,6 +119,9 @@ public class Task
         case XML_COMMENT:
           m_comment = xsr.getAttributeValue( i );
           break;
+        default:
+          JPlanner.trace( "Task - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
       }
   }
 

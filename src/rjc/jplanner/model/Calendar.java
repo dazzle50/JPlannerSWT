@@ -148,11 +148,16 @@ public class Calendar
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
+        case XML_ID:
+          break;
         case XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
         case XML_ANCHOR:
           m_cycleAnchor = Date.fromString( xsr.getAttributeValue( i ) );
+          break;
+        default:
+          JPlanner.trace( "Calendar - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -168,9 +173,14 @@ public class Calendar
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
           switch ( xsr.getAttributeLocalName( i ) )
           {
+            case XML_ID:
+              break;
             case XML_DAY:
               int dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
               m_normal.add( JPlanner.plan.day( dayIndex ) );
+              break;
+            default:
+              JPlanner.trace( "Calendar normal - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
               break;
           }
 
@@ -188,6 +198,9 @@ public class Calendar
               break;
             case XML_DAY:
               dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
+              break;
+            default:
+              JPlanner.trace( "Calendar exception - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
               break;
           }
 
