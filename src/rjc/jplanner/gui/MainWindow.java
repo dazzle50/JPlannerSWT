@@ -690,6 +690,7 @@ public class MainWindow extends Shell
     JPlanner.plan = new Plan();
     if ( !JPlanner.plan.loadPlan( file ) )
     {
+      JPlanner.plan = oldPlan;
       message( "Failed to load '" + file.getPath() + "'" );
       return false;
     }
@@ -745,8 +746,8 @@ public class MainWindow extends Shell
   /****************************************** savePlan *******************************************/
   public boolean savePlan( File file )
   {
-    // check file can be written
-    if ( !file.canWrite() )
+    // if file exists already, check file can be written
+    if ( file.exists() && !file.canWrite() )
     {
       message( "Cannot write to '" + file.getPath() + "'" );
       return false;

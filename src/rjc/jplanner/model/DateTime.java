@@ -48,7 +48,7 @@ public class DateTime
   public DateTime( String str )
   {
     // constructor, date must be split from time by a space
-    int split = str.indexOf( ' ' );
+    int split = str.indexOf( 'T' );
     Date date = Date.fromString( str.substring( 0, split ) );
     Time time = Time.fromString( str.substring( split + 1, str.length() ) );
     m_milliseconds = date.epochday() * MILLISECONDS_IN_DAY + time.milliseconds();
@@ -74,8 +74,8 @@ public class DateTime
   @Override
   public String toString()
   {
-    // convert to string to "YYYY-MM-DD hh:mm:ss.mmm" format
-    return date().toString() + " " + time().toString();
+    // convert to string to "YYYY-MM-DDThh:mm:ss.mmm" format
+    return date().toString() + "T" + time().toString();
   }
 
   /****************************************** toString *******************************************/

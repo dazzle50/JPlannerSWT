@@ -18,6 +18,8 @@
 
 package rjc.jplanner;
 
+import java.io.File;
+
 import org.eclipse.swt.widgets.Display;
 
 import rjc.jplanner.gui.MainWindow;
@@ -53,6 +55,7 @@ public class JPlanner
     Display display = new Display();
     gui = new MainWindow( display );
     gui.initialise();
+    gui.loadPlan( new File( "C:\\Users\\Richard\\EclipseWS\\JPlannerSWT\\tests\\!defaultload.xml" ) );
     gui.open();
 
     // run the event loop as long as the window is open
