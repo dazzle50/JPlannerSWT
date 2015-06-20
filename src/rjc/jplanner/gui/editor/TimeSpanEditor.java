@@ -35,8 +35,7 @@ public class TimeSpanEditor extends SpinEditor
   public TimeSpanEditor( Composite parent, TimeSpan sp )
   {
     // create editor
-    super( parent, true );
-    setValue( sp.number() );
+    super( parent, sp.number(), true );
     setSuffix( " " + sp.units() );
 
     // add key listener to allow user to change time-span units
@@ -55,6 +54,7 @@ public class TimeSpanEditor extends SpinEditor
   }
 
   /****************************************** setText ********************************************/
+  @Override
   public void setText( String value )
   {
     // if point, set value to zero and position cursor after

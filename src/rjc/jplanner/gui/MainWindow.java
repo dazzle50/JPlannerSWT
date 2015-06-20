@@ -72,9 +72,14 @@ public class MainWindow extends Shell
   public Color             COLOR_RED;
   public Color             COLOR_GRAY_DARK;
   public Color             COLOR_GRAY_LIGHT;
+
   public Color             COLOR_GANTT_BACKGROUND;
   public Color             COLOR_GANTT_NONWORKING;
   public Color             COLOR_GANTT_DIVIDER;
+
+  public Color             COLOR_ERROR;
+  public Color             COLOR_NO_ERROR;
+
   public Transform         TRANSFORM;
   public int               GANTTSCALE_HEIGHT = 15;
 
@@ -95,6 +100,8 @@ public class MainWindow extends Shell
     COLOR_GANTT_BACKGROUND = COLOR_WHITE;
     COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
     COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
+    COLOR_ERROR = COLOR_RED;
+    COLOR_NO_ERROR = COLOR_BLACK;
     TRANSFORM = new Transform( display );
 
     // prepare the table registers for the different types of tables

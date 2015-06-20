@@ -19,10 +19,12 @@
 package rjc.jplanner.gui.editor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
@@ -38,25 +40,51 @@ public class DayCellEditor extends XAbstractCellEditor
     // create editor based on column
     if ( col == Day.SECTION_NAME )
     {
-      return new Text( parent, SWT.SINGLE );
+      TextEditor editor = new TextEditor( parent );
+
+      // add listener to prevent blank & duplicate day names
+      editor.getPrimeEditor().addModifyListener( new ModifyListener()
+      {
+        @Override
+        public void modifyText( ModifyEvent event )
+        {
+          Text prime = editor.getPrimeEditor();
+          String txt = prime.getText();
+
+          if ( txt.length() == 0 )
+          {
+            prime.setForeground( JPlanner.gui.COLOR_ERROR );
+            JPlanner.gui.message( "Blank name not allowed" );
+          }
+          else if ( JPlanner.plan.isDuplicateDayName( txt, row ) )
+          {
+            prime.setForeground( JPlanner.gui.COLOR_ERROR );
+            JPlanner.gui.message( "Duplicate name not allowed" );
+          }
+          else
+          {
+            prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+            JPlanner.gui.message( "" );
+          }
+        }
+      } );
+
+      return editor;
     }
 
     if ( col == Day.SECTION_WORK )
     {
-      Spinner spin = new Spinner( parent, SWT.NONE );
-      spin.setDigits( 2 ); // 2 decimal places
-      spin.setMinimum( 0 ); // min 0.00
-      spin.setMaximum( 1000 ); // max 10.00
-      spin.setIncrement( 10 ); // step 0.10
-      spin.setPageIncrement( 100 ); // page 1.00
+      double value = JPlanner.plan.day( row ).work();
+      SpinEditor spin = new SpinEditor( parent, value, false );
+      spin.setMinMaxStepPageDPs( 0.0, 10.0, 0.1, 1.0, 2 );
       return spin;
     }
 
     if ( col == Day.SECTION_PERIODS )
     {
-      Spinner spin = new Spinner( parent, SWT.NONE );
-      spin.setMinimum( 0 ); // min 0
-      spin.setMaximum( 9 ); // max 9
+      double value = JPlanner.plan.day( row ).numPeriods();
+      SpinEditor spin = new SpinEditor( parent, value, false );
+      spin.setMinMaxStepPageDPs( 0.0, 9.0, 1.0, 1.0, 0 );
       return spin;
     }
 
@@ -64,5 +92,4 @@ public class DayCellEditor extends XAbstractCellEditor
     // TODO - use Text editor until find/write something better
     return new Text( parent, SWT.SINGLE );
   }
-
 }

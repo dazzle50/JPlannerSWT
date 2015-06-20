@@ -82,4 +82,11 @@ public class JPlanner
     System.out.println( DateTime.now() + " " + txt );
   }
 
+  /******************************************* clean *********************************************/
+  public static String clean( String txt )
+  {
+    // returns a clean string
+    return txt.trim().replaceAll( "\\s", " " ).replaceAll( "(\\s{2,})", " " );
+  }
+
 }

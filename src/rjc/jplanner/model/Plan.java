@@ -21,7 +21,6 @@ package rjc.jplanner.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -31,8 +30,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.UndoStack;
-import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
-import rjc.jplanner.model.Day.DefaultDayTypes;
 
 import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
@@ -42,48 +39,48 @@ import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 public class Plan
 {
-  private String              m_title;                          // plan title as set in properties
-  private DateTime            m_start;                          // plan start date-time as set in properties
-  private Calendar            m_calendar;                       // plan's default calendar
-  private String              m_datetimeFormat;                 // format to display date-times
-  private String              m_dateFormat;                     // format to display dates
-  private String              m_filename;                       // filename when saved or loaded
-  private String              m_fileLocation;                   // file location
-  private String              m_savedBy;                        // who saved last
-  private DateTime            m_savedWhen;                      // when was last saved
-  private String              m_notes;                          // plan notes as on plan tab
+  private String             m_title;                          // plan title as set in properties
+  private DateTime           m_start;                          // plan start date-time as set in properties
+  private Calendar           m_calendar;                       // plan's default calendar
+  private String             m_datetimeFormat;                 // format to display date-times
+  private String             m_dateFormat;                     // format to display dates
+  private String             m_filename;                       // filename when saved or loaded
+  private String             m_fileLocation;                   // file location
+  private String             m_savedBy;                        // who saved last
+  private DateTime           m_savedWhen;                      // when was last saved
+  private String             m_notes;                          // plan notes as on plan tab
 
-  private UndoStack           m_undostack;                      // undo stack for plan editing
+  private UndoStack          m_undostack;                      // undo stack for plan editing
 
-  private ArrayList<Task>     m_tasks;                          // list of plan tasks
-  private ArrayList<Resource> m_resources;                      // list of plan resources
-  private ArrayList<Calendar> m_calendars;                      // list of plan calendars
-  private ArrayList<Day>      m_daytypes;                       // list of plan day types
+  private Tasks              m_tasks;                          // list of plan tasks
+  private Resources          m_resources;                      // list of plan resources
+  private Calendars          m_calendars;                      // list of plan calendars
+  private Days               m_daytypes;                       // list of plan day types
 
-  public static final String  XML_JPLANNER  = "JPlanner";
-  public static final String  XML_VERSION   = "version";
-  public static final String  XML_USER      = "user";
-  public static final String  XML_WHEN      = "when";
-  public static final String  XML_DAY_DATA  = "days-data";
-  public static final String  XML_CAL_DATA  = "calendars-data";
-  public static final String  XML_RES_DATA  = "resources-data";
-  public static final String  XML_TASK_DATA = "tasks-data";
-  public static final String  XML_PLAN_DATA = "plan-data";
-  public static final String  XML_TITLE     = "title";
-  public static final String  XML_START     = "start";
-  public static final String  XML_CALENDAR  = "calendar";
-  public static final String  XML_DT_FORMAT = "datetime-format";
-  public static final String  XML_D_FORMAT  = "date-format";
-  public static final String  XML_NOTES     = "notes";
+  public static final String XML_JPLANNER  = "JPlanner";
+  public static final String XML_VERSION   = "version";
+  public static final String XML_USER      = "user";
+  public static final String XML_WHEN      = "when";
+  public static final String XML_DAY_DATA  = "days-data";
+  public static final String XML_CAL_DATA  = "calendars-data";
+  public static final String XML_RES_DATA  = "resources-data";
+  public static final String XML_TASK_DATA = "tasks-data";
+  public static final String XML_PLAN_DATA = "plan-data";
+  public static final String XML_TITLE     = "title";
+  public static final String XML_START     = "start";
+  public static final String XML_CALENDAR  = "calendar";
+  public static final String XML_DT_FORMAT = "datetime-format";
+  public static final String XML_D_FORMAT  = "date-format";
+  public static final String XML_NOTES     = "notes";
 
   /**************************************** constructor ******************************************/
   public Plan()
   {
     // construct empty but usable Plan
-    m_tasks = new ArrayList<Task>();
-    m_resources = new ArrayList<Resource>();
-    m_calendars = new ArrayList<Calendar>();
-    m_daytypes = new ArrayList<Day>();
+    m_tasks = new Tasks();
+    m_resources = new Resources();
+    m_calendars = new Calendars();
+    m_daytypes = new Days();
 
     m_undostack = new UndoStack();
   }
@@ -103,21 +100,10 @@ public class Plan
   public void initialise()
   {
     // initialise plan with default settings and contents
-    m_daytypes.clear();
-    for ( DefaultDayTypes type : DefaultDayTypes.values() )
-      m_daytypes.add( new Day( type ) );
-
-    m_calendars.clear();
-    for ( DefaultCalendarTypes type : DefaultCalendarTypes.values() )
-      m_calendars.add( new Calendar( type ) );
-
-    m_resources.clear();
-    for ( int count = 0; count < 5; count++ )
-      m_resources.add( new Resource() );
-
-    m_tasks.clear();
-    for ( int count = 0; count < 10; count++ )
-      m_tasks.add( new Task() );
+    m_daytypes.initialise();
+    m_calendars.initialise();
+    m_resources.initialise();
+    m_tasks.initialise();
 
     m_title = "";
     m_calendar = calendar( 0 );
@@ -189,11 +175,21 @@ public class Plan
     return m_tasks.get( index );
   }
 
+  public int index( Task task )
+  {
+    return m_tasks.indexOf( task );
+  }
+
   /****************************************** resource *******************************************/
   public Resource resource( int index )
   {
     // return resource corresponding to index
     return m_resources.get( index );
+  }
+
+  public int index( Resource res )
+  {
+    return m_resources.indexOf( res );
   }
 
   /****************************************** calendar *******************************************/
@@ -203,6 +199,11 @@ public class Plan
     return m_calendars.get( index );
   }
 
+  public int index( Calendar cal )
+  {
+    return m_calendars.indexOf( cal );
+  }
+
   /********************************************* day *********************************************/
   public Day day( int index )
   {
@@ -210,25 +211,9 @@ public class Plan
     return m_daytypes.get( index );
   }
 
-  /******************************************** index ********************************************/
   public int index( Day day )
   {
     return m_daytypes.indexOf( day );
-  }
-
-  public int index( Calendar cal )
-  {
-    return m_calendars.indexOf( cal );
-  }
-
-  public int index( Resource res )
-  {
-    return m_resources.indexOf( res );
-  }
-
-  public int index( Task task )
-  {
-    return m_tasks.indexOf( task );
   }
 
   /******************************************** title ********************************************/
@@ -367,29 +352,11 @@ public class Plan
       DateTime saveWhen = DateTime.now();
       xsw.writeAttribute( XML_WHEN, saveWhen.toString() );
 
-      // write day-types data to XML stream
-      xsw.writeStartElement( XML_DAY_DATA );
-      for ( Day day : m_daytypes )
-        day.saveToXML( xsw );
-      xsw.writeEndElement(); // XML_DAY_DATA
-
-      // write calendars data to XML stream
-      xsw.writeStartElement( XML_CAL_DATA );
-      for ( Calendar cal : m_calendars )
-        cal.saveToXML( xsw );
-      xsw.writeEndElement(); // XML_CAL_DATA
-
-      // write resources data to XML stream
-      xsw.writeStartElement( XML_RES_DATA );
-      for ( Resource res : m_resources )
-        res.saveToXML( xsw );
-      xsw.writeEndElement(); // XML_RES_DATA
-
-      // write tasks data to XML stream
-      xsw.writeStartElement( XML_TASK_DATA );
-      for ( Task task : m_tasks )
-        task.saveToXML( xsw );
-      xsw.writeEndElement(); // XML_TASK_DATA
+      // write day, calendar, resource, and task data to XML stream
+      m_daytypes.writeXML( xsw );
+      m_calendars.writeXML( xsw );
+      m_resources.writeXML( xsw );
+      m_tasks.writeXML( xsw );
 
       // write plan data to XML stream
       xsw.writeEmptyElement( XML_PLAN_DATA );
@@ -442,16 +409,16 @@ public class Plan
               loadXmlJPlanner( xsr );
               break;
             case XML_DAY_DATA:
-              loadXmlDays( xsr );
+              m_daytypes.loadXML( xsr );
               break;
             case XML_CAL_DATA:
-              loadXmlCalendars( xsr );
+              m_calendars.loadXML( xsr );
               break;
             case XML_RES_DATA:
-              loadXmlResources( xsr );
+              m_resources.loadXML( xsr );
               break;
             case XML_TASK_DATA:
-              loadXmlTasks( xsr );
+              m_tasks.loadXML( xsr );
               break;
             case XML_PLAN_DATA:
               loadXmlPlan( xsr );
@@ -508,110 +475,6 @@ public class Plan
       }
   }
 
-  /***************************************** loadXmlTasks ****************************************/
-  private void loadXmlTasks( XMLStreamReader xsr ) throws XMLStreamException
-  {
-    // read XML task data
-    while ( xsr.hasNext() )
-    {
-      // if reached end of task data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_TASK_DATA ) )
-        return;
-
-      // if a task element, construct a task from it
-      if ( xsr.isStartElement() )
-        switch ( xsr.getLocalName() )
-        {
-          case Task.XML_TASK:
-            m_tasks.add( new Task( xsr ) );
-            break;
-          default:
-            JPlanner.trace( "loadXmlTasks - unhandled start element '" + xsr.getLocalName() + "'" );
-            break;
-        }
-
-      xsr.next();
-    }
-  }
-
-  /*************************************** loadXmlResources **************************************/
-  private void loadXmlResources( XMLStreamReader xsr ) throws XMLStreamException
-  {
-    // read XML resource data
-    while ( xsr.hasNext() )
-    {
-      // if reached end of resource data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_RES_DATA ) )
-        return;
-
-      // if a resource element, construct a resource from it
-      if ( xsr.isStartElement() )
-        switch ( xsr.getLocalName() )
-        {
-          case Resource.XML_RESOURCE:
-            m_resources.add( new Resource( xsr ) );
-            break;
-          default:
-            JPlanner.trace( "loadXmlResources - unhandled start element '" + xsr.getLocalName() + "'" );
-            break;
-        }
-
-      xsr.next();
-    }
-  }
-
-  /*************************************** loadXmlCalendars **************************************/
-  private void loadXmlCalendars( XMLStreamReader xsr ) throws XMLStreamException
-  {
-    // read XML calendar data
-    while ( xsr.hasNext() )
-    {
-      // if reached end of calendar data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_CAL_DATA ) )
-        return;
-
-      // if a calendar element, construct a calendar from it
-      if ( xsr.isStartElement() )
-        switch ( xsr.getLocalName() )
-        {
-          case Calendar.XML_CALENDAR:
-            m_calendars.add( new Calendar( xsr ) );
-            break;
-          default:
-            JPlanner.trace( "loadXmlCalendars - unhandled start element '" + xsr.getLocalName() + "'" );
-            break;
-        }
-
-      xsr.next();
-    }
-  }
-
-  /***************************************** loadXmlDays *****************************************/
-  private void loadXmlDays( XMLStreamReader xsr ) throws XMLStreamException
-  {
-    // read XML day data
-    while ( xsr.hasNext() )
-    {
-      // if reached end of day data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_DAY_DATA ) )
-        return;
-
-      // if a day element, construct a day-type from it
-      if ( xsr.isStartElement() )
-        switch ( xsr.getLocalName() )
-        {
-          case Day.XML_DAY:
-            m_daytypes.add( new Day( xsr ) );
-            break;
-          default:
-            JPlanner.trace( "loadXmlDays - unhandled start element '" + xsr.getLocalName() + "'" );
-            break;
-        }
-
-      xsr.next();
-    }
-  }
-
   /*************************************** loadXmlJPlanner ***************************************/
   private void loadXmlJPlanner( XMLStreamReader xsr ) throws XMLStreamException
   {
@@ -647,6 +510,22 @@ public class Plan
       return "Invalid default calendar";
 
     return null;
+  }
+
+  /************************************* isDuplicateDayName **************************************/
+  public boolean isDuplicateDayName( String txt, int index )
+  {
+    // return true if txt is a duplicate another day-type name
+    txt = JPlanner.clean( txt );
+    for ( int i = 0; i < daysCount(); i++ )
+    {
+      if ( i == index )
+        continue;
+      if ( txt.equals( day( i ).name() ) )
+        return true;
+    }
+
+    return false;
   }
 
 }

@@ -62,7 +62,7 @@ public class SpinEditor extends Composite
   private boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
 
   /**************************************** constructor ******************************************/
-  public SpinEditor( Composite parent, boolean suppressZeros )
+  public SpinEditor( Composite parent, double value, boolean suppressZeros )
   {
     // build composite with grid-layout
     super( parent, SWT.NONE );
@@ -82,10 +82,10 @@ public class SpinEditor extends Composite
     SpinUpDownButtons buttons = new SpinUpDownButtons( this );
     buttons.setLayoutData( new GridData( SWT.LEFT, SWT.FILL, false, true, 1, 1 ) );
 
-    // initialise private values
+    // initialise private variables with default values
     m_prefix = "";
     m_suffix = "";
-    m_value = 0.0;
+    m_value = value;
     m_step = 1.0;
     m_page = 10.0;
     m_min = 0.0;
@@ -224,10 +224,21 @@ public class SpinEditor extends Composite
             m_value = value;
 
           // if value is out of range, highlight text red to indicated invalid
-          if ( value < m_min || value > m_max )
-            m_prime.setForeground( JPlanner.gui.COLOR_RED );
+          if ( value < m_min )
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+            JPlanner.gui.message( "Value below minimum (" + m_min + ") allowed" );
+          }
+          else if ( value > m_max )
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+            JPlanner.gui.message( "Value above maximum (" + m_max + ") allowed" );
+          }
           else
-            m_prime.setForeground( JPlanner.gui.COLOR_BLACK );
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+            JPlanner.gui.message( "" );
+          }
         }
         catch ( Exception e )
         {
@@ -381,6 +392,25 @@ public class SpinEditor extends Composite
     displayValue();
   }
 
+  /******************************************* setText *******************************************/
+  public void setText( String str )
+  {
+    // if point, set value to zero and position cursor after
+    if ( ".".equals( str ) )
+      str = "0.";
+
+    try
+    {
+      m_value = Double.parseDouble( str );
+      m_prime.setText( str );
+      positonCursorValueEnd();
+    }
+    catch ( NumberFormatException e )
+    {
+      // if NumberFormatException then don't use string
+    }
+  }
+
   /****************************************** setSuffix ******************************************/
   public void setSuffix( String suffix )
   {
@@ -392,6 +422,17 @@ public class SpinEditor extends Composite
   public void setPrefix( String prefix )
   {
     m_prefix = prefix;
+    displayValue();
+  }
+
+  /************************************* setMinMaxStepPageDPs ************************************/
+  public void setMinMaxStepPageDPs( double min, double max, double step, double page, int dps )
+  {
+    m_min = min;
+    m_max = max;
+    m_step = step;
+    m_page = page;
+    m_decimalPlaces = dps;
     displayValue();
   }
 

@@ -116,7 +116,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
       return ( (SpinEditor) m_editor ).getText();
 
     if ( m_editor instanceof TextEditor )
-      return ( (TextEditor) m_editor ).getText();
+      return JPlanner.clean( ( (TextEditor) m_editor ).getText() );
 
     // none of above, therefore must be a Text editor
     return ( (Text) m_editor ).getText();
@@ -137,6 +137,9 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
 
     if ( m_editor instanceof TimeSpanEditor )
       ( (TimeSpanEditor) m_editor ).setText( str );
+
+    if ( m_editor instanceof SpinEditor )
+      ( (SpinEditor) m_editor ).setText( str );
 
     if ( m_editor instanceof Combo )
       ( (Combo) m_editor ).setText( str );
@@ -164,8 +167,8 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public boolean validateCanonicalValue( Object canonicalValue )
   {
-    // simple rule, if editor foreground colour is red, don't allow commit
-    if ( getEditorPrime().getForeground().equals( JPlanner.gui.COLOR_RED ) )
+    // simple rule, if editor foreground colour indicates error, don't allow commit
+    if ( getEditorPrime().getForeground().equals( JPlanner.gui.COLOR_ERROR ) )
       return false;
 
     // not red, so allow commit

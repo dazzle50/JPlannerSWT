@@ -54,17 +54,17 @@ public class ResourceInitialsEditor extends TextEditor
           // highlight text red with explanation message if invalid
           if ( newS.length() == 0 )
           {
-            m_prime.setForeground( JPlanner.gui.COLOR_RED );
+            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
             JPlanner.gui.message( "Blank initials not allowed" );
           }
           else if ( newS.equals( "TODO" ) ) // TODO duplicates not allowed !!!!!!!!!!
           {
-            m_prime.setForeground( JPlanner.gui.COLOR_RED );
+            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
             JPlanner.gui.message( "Duplicate initials not allowed" );
           }
           else
           {
-            m_prime.setForeground( JPlanner.gui.COLOR_BLACK );
+            m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
             JPlanner.gui.message( "" );
           }
         }
