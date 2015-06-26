@@ -47,24 +47,25 @@ import rjc.jplanner.JPlanner;
 
 public class SpinEditor extends Composite
 {
-  private Text    m_prime;        // control which accepts the key presses etc
-  private int     m_height;
-  private int     m_minWidth;
+  private Text      m_prime;        // control which accepts the key presses etc
+  private int       m_height;       // height of editor
+  private int       m_minWidth;     // minimum width of editor, can be larger
 
-  private String  m_prefix;
-  private String  m_suffix;
-  private double  m_value;
-  private double  m_step;
-  private double  m_page;
-  private double  m_min;
-  private double  m_max;
-  private int     m_decimalPlaces; // number of decimal places
-  private boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
+  protected String  m_prefix;       // prefix shown before value
+  protected String  m_suffix;       // suffix shown after value
+  protected double  m_value;        // numerical value being shown
+  protected double  m_step;         // small step for example on arrow-up or arrow-down
+  protected double  m_page;         // large step for example on page-up or page-down
+  protected double  m_min;          // min valid value
+  protected double  m_max;          // max valid value
+  protected int     m_minDigits;    // minimum number of digits, padded with zeros on left
+  protected int     m_decimalPlaces; // number of decimal places, padded with zeros on right
+  protected boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
 
   /**************************************** constructor ******************************************/
   public SpinEditor( Composite parent, double value, boolean suppressZeros )
   {
-    // build composite with grid-layout
+    // build spin-editor using grid-layout
     super( parent, SWT.NONE );
     GridLayout gridLayout = new GridLayout( 2, false );
     gridLayout.verticalSpacing = 0;
@@ -74,7 +75,7 @@ public class SpinEditor extends Composite
     setLayout( gridLayout );
     setBackground( JPlanner.gui.COLOR_WHITE );
 
-    // text editor
+    // SWT text editor to display value and accept user edit actions 
     m_prime = new Text( this, SWT.NONE );
     m_prime.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
@@ -90,17 +91,40 @@ public class SpinEditor extends Composite
     m_page = 10.0;
     m_min = 0.0;
     m_max = 9999.0;
+    m_minDigits = 1;
     m_decimalPlaces = 2;
     m_suppressZeros = suppressZeros;
-    displayValue();
 
-    // listen to modify to ensure editor width is sufficient to show whole text
+    // listen to modify to ensure editor width is sufficient to show whole text, and in valid value range
     m_prime.addModifyListener( new ModifyListener()
     {
       @Override
       public void modifyText( ModifyEvent event )
       {
         SpinEditor.this.setSize( widthForText(), m_height );
+
+        // if value is out of range, highlight text red to indicated invalid
+        determineValue();
+        if ( getText().length() == 0 )
+        {
+          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+          JPlanner.gui.message( "Blank not allowed" );
+        }
+        else if ( m_value < m_min )
+        {
+          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+          JPlanner.gui.message( "Value below minimum allowed (" + m_min + ")" );
+        }
+        else if ( m_value > m_max )
+        {
+          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+          JPlanner.gui.message( "Value above maximum allowed (" + m_max + ")" );
+        }
+        else
+        {
+          m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+          JPlanner.gui.message( "" );
+        }
       }
     } );
 
@@ -176,7 +200,7 @@ public class SpinEditor extends Composite
       }
     } );
 
-    // verify any changes to editor text are valid
+    // verify any changes to editor text are valid, i.e. don't edit suffix & prefix, and valid number
     m_prime.addVerifyListener( new VerifyListener()
     {
       @Override
@@ -186,59 +210,28 @@ public class SpinEditor extends Composite
         {
           String oldS = m_prime.getText();
           String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
-          String preS = newS.substring( 0, m_prefix.length() );
-          String sufS = newS.substring( newS.length() - m_suffix.length() );
+          String prefix = newS.substring( 0, m_prefix.length() );
+          String suffix = newS.substring( newS.length() - m_suffix.length() );
 
           // check prefix & suffix not altered
-          if ( !preS.equals( m_prefix ) || !sufS.equals( m_suffix ) )
+          if ( !prefix.equals( m_prefix ) || !suffix.equals( m_suffix ) )
             event.doit = false;
 
           // check new value is valid double
-          String valueS = newS.substring( preS.length(), newS.length() - sufS.length() );
+          String valueS = newS.substring( prefix.length(), newS.length() - suffix.length() );
           String regex = "";
           if ( m_min < 0.0 )
           {
             if ( m_max < 0.0 )
               regex += "-"; // both min & max <0 so must start with -
             else
-              regex += "-?"; // only min <0 so mught start with -
+              regex += "-?"; // only min <0 so might start with -
           }
           regex += "\\d*"; // zero or more digits
           if ( m_decimalPlaces > 0 )
             regex += "\\.?\\d{0," + m_decimalPlaces + "}"; // optional . with at most decimal digits
           if ( !valueS.matches( regex ) )
             event.doit = false;
-
-          // convert text to number
-          Double value = 0.0;
-          try
-          {
-            value = Double.parseDouble( valueS );
-          }
-          catch ( Exception e )
-          {
-          }
-
-          // if value is okay, update internal value
-          if ( event.doit )
-            m_value = value;
-
-          // if value is out of range, highlight text red to indicated invalid
-          if ( value < m_min )
-          {
-            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-            JPlanner.gui.message( "Value below minimum (" + m_min + ") allowed" );
-          }
-          else if ( value > m_max )
-          {
-            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-            JPlanner.gui.message( "Value above maximum (" + m_max + ") allowed" );
-          }
-          else
-          {
-            m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
-            JPlanner.gui.message( "" );
-          }
         }
         catch ( Exception e )
         {
@@ -325,8 +318,23 @@ public class SpinEditor extends Composite
     displayValue();
   }
 
+  /************************************** determineValue *****************************************/
+  private void determineValue()
+  {
+    // determine numeric value from current editor text
+    try
+    {
+      m_value = Double.parseDouble( getText() );
+    }
+    catch ( NumberFormatException e )
+    {
+      // if NumberFormatException then default m_value to zero
+      m_value = 0.0;
+    }
+  }
+
   /*************************************** displayValue ******************************************/
-  private void displayValue()
+  protected void displayValue()
   {
     // check value is within specified min & max
     if ( m_value > m_max )
@@ -334,8 +342,8 @@ public class SpinEditor extends Composite
     if ( m_value < m_min )
       m_value = m_min;
 
-    // display the value
-    String format = "%." + m_decimalPlaces + "f";
+    // display the value in correct format
+    String format = "%0" + m_minDigits + "." + m_decimalPlaces + "f";
     String value = String.format( format, m_value );
 
     // suppress unneeded zeros & dp at end of displayed value
@@ -354,8 +362,8 @@ public class SpinEditor extends Composite
   /************************************ positonCursorValueEnd ************************************/
   public void positonCursorValueEnd()
   {
-    // position editor selection cursor to end of number
-    m_prime.setSelection( getText().length() - m_suffix.length() );
+    // position editor selection cursor to end of value
+    m_prime.setSelection( m_prime.getText().length() - m_suffix.length() );
   }
 
   /*************************************** getPrimeEditor ****************************************/
@@ -368,8 +376,9 @@ public class SpinEditor extends Composite
   /******************************************* getText *******************************************/
   public String getText()
   {
-    // text displayed by editor (including prefix and suffix)
-    return m_prime.getText();
+    // text displayed by editor (without prefix and suffix)
+    String txt = m_prime.getText();
+    return txt.substring( m_prefix.length(), txt.length() - m_suffix.length() );
   }
 
   /****************************************** getValue *******************************************/
@@ -382,12 +391,14 @@ public class SpinEditor extends Composite
   /****************************************** getSuffix ******************************************/
   public String getSuffix()
   {
+    // suffix displayed by the editor
     return m_suffix;
   }
 
   /****************************************** setValue *******************************************/
   public void setValue( double value )
   {
+    // set editor value
     m_value = value;
     displayValue();
   }
@@ -399,10 +410,11 @@ public class SpinEditor extends Composite
     if ( ".".equals( str ) )
       str = "0.";
 
+    // display the string with prefix and suffix added
     try
     {
       m_value = Double.parseDouble( str );
-      m_prime.setText( str );
+      m_prime.setText( m_prefix + str + m_suffix );
       positonCursorValueEnd();
     }
     catch ( NumberFormatException e )
@@ -414,6 +426,7 @@ public class SpinEditor extends Composite
   /****************************************** setSuffix ******************************************/
   public void setSuffix( String suffix )
   {
+    // set suffix and display
     m_suffix = suffix;
     displayValue();
   }
@@ -421,6 +434,7 @@ public class SpinEditor extends Composite
   /****************************************** setPrefix ******************************************/
   public void setPrefix( String prefix )
   {
+    // set prefix and display
     m_prefix = prefix;
     displayValue();
   }
@@ -428,12 +442,12 @@ public class SpinEditor extends Composite
   /************************************* setMinMaxStepPageDPs ************************************/
   public void setMinMaxStepPageDPs( double min, double max, double step, double page, int dps )
   {
+    // set the common spin-editor features
     m_min = min;
     m_max = max;
     m_step = step;
     m_page = page;
     m_decimalPlaces = dps;
-    displayValue();
   }
 
 }

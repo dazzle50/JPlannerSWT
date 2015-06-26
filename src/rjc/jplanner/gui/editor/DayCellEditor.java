@@ -18,7 +18,6 @@
 
 package rjc.jplanner.gui.editor;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Control;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day;
+import rjc.jplanner.model.Time;
 
 /*************************************************************************************************/
 /******************************** Editor for day-type table cells ********************************/
@@ -89,7 +89,10 @@ public class DayCellEditor extends XAbstractCellEditor
     }
 
     // none of above, therefore must be a work-period start or end time
-    // TODO - use Text editor until find/write something better
-    return new Text( parent, SWT.SINGLE );
+    // TODO..................
+    String time = JPlanner.plan.day( row ).toString( col );
+    TimeEditor editor = new TimeEditor( parent, time, Time.fromHours( 0.0 ), Time.fromHours( 24.0 ) );
+
+    return editor;
   }
 }

@@ -26,7 +26,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 
@@ -112,14 +111,20 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     if ( m_editor instanceof Combo )
       return ( (Combo) m_editor ).getText();
 
+    if ( m_editor instanceof TimeEditor )
+      return ( (TimeEditor) m_editor ).getPrimeEditor().getText();
+
+    if ( m_editor instanceof TimeSpanEditor )
+      return ( (TimeSpanEditor) m_editor ).getPrimeEditor().getText();
+
     if ( m_editor instanceof SpinEditor )
       return ( (SpinEditor) m_editor ).getText();
 
     if ( m_editor instanceof TextEditor )
       return JPlanner.clean( ( (TextEditor) m_editor ).getText() );
 
-    // none of above, therefore must be a Text editor
-    return ( (Text) m_editor ).getText();
+    // editor class type not handled
+    throw new ClassCastException( m_editor.toString() );
   }
 
   /************************************** setEditorValue *****************************************/
@@ -143,13 +148,6 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
 
     if ( m_editor instanceof Combo )
       ( (Combo) m_editor ).setText( str );
-
-    if ( m_editor instanceof Text )
-    {
-      ( (Text) m_editor ).setText( str );
-      ( (Text) m_editor ).setSelection( Integer.MAX_VALUE );
-    }
-
   }
 
   /*************************************** activateCell ******************************************/
