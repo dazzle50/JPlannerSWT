@@ -28,7 +28,7 @@ import rjc.jplanner.JPlanner;
 /******************************** Single task within overall plan ********************************/
 /*************************************************************************************************/
 
-public class Task
+public class Task implements Comparable<Task>
 {
   private String              m_title;                       // free text title
   private TimeSpan            m_duration;                    // duration of task
@@ -38,10 +38,13 @@ public class Task
   private Predecessors        m_predecessors;                // task predecessors
   private TaskResources       m_resources;                   // resources allocated to task
   private TaskType            m_type;                        // task type
-  private int                 m_priority;                    // overall task priority (0 to 999 times one million)
+  private int                 m_priority;                    // overall task priority (0 to 999)
   private DateTime            m_deadline;                    // task warning deadline
   private String              m_cost;                        // calculated cost based on resource use
   private String              m_comment;                     // free text comment
+
+  private int                 m_indent;                      // task indent level, zero for no indent
+  private int                 m_summaryEnd;                  // last sub-task id, or -1 for non-summaries
 
   public static final int     SECTION_TITLE    = 0;
   public static final int     SECTION_DURATION = 1;
@@ -108,7 +111,7 @@ public class Task
           m_type = new TaskType( xsr.getAttributeValue( i ) );
           break;
         case XML_PRIORITY:
-          m_priority = 1_000_000 * Integer.parseInt( xsr.getAttributeValue( i ) );
+          m_priority = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
         case XML_DEADLINE:
           m_deadline = new DateTime( xsr.getAttributeValue( i ) );
@@ -136,7 +139,7 @@ public class Task
     m_predecessors = new Predecessors( "" );
     m_resources = new TaskResources();
     m_type = new TaskType( TaskType.ASAP_FDUR );
-    m_priority = 100 * 1_000_000;
+    m_priority = 100;
   }
 
   /****************************************** toString *******************************************/
@@ -172,7 +175,7 @@ public class Task
       return m_type.toString();
 
     if ( section == SECTION_PRIORITY )
-      return String.format( "%d", m_priority / 1_000_000 );
+      return String.format( "%d", m_priority );
 
     if ( section == SECTION_DEADLINE )
     {
@@ -222,7 +225,7 @@ public class Task
       m_type = new TaskType( (String) newValue );
 
     else if ( section == SECTION_PRIORITY )
-      m_priority = 1_000_000 * (int) newValue;
+      m_priority = Integer.parseInt( (String) newValue );
 
     else if ( section == SECTION_DEADLINE )
       m_deadline = (DateTime) newValue;
@@ -308,7 +311,7 @@ public class Task
       xsw.writeAttribute( XML_WORK, m_work.toString() );
       xsw.writeAttribute( XML_RESOURCES, m_resources.toString() );
       xsw.writeAttribute( XML_TYPE, m_type.toString() );
-      xsw.writeAttribute( XML_PRIORITY, Integer.toString( m_priority / 1_000_000 ) );
+      xsw.writeAttribute( XML_PRIORITY, Integer.toString( m_priority ) );
       if ( m_deadline != null )
         xsw.writeAttribute( XML_DEADLINE, m_deadline.toString() );
       if ( m_cost != null )
@@ -318,6 +321,62 @@ public class Task
     }
 
     xsw.writeEndElement(); // XML_TASK
+  }
+
+  /****************************************** compareTo ******************************************/
+  @Override
+  public int compareTo( Task other )
+  {
+    // sort comparison first check for predecessors
+    if ( this.hasPredecessor( other ) )
+      return 1;
+    if ( other.hasPredecessor( this ) )
+      return -1;
+
+    // then by priority
+    if ( m_priority < other.m_priority )
+      return 1;
+    if ( m_priority > other.m_priority )
+      return -1;
+
+    // finally by index
+    return JPlanner.plan.index( this ) - JPlanner.plan.index( other );
+  }
+
+  /***************************************** toString ********************************************/
+  @Override
+  public String toString()
+  {
+    // convert to string
+    String hash = super.toString();
+    String id = hash.substring( hash.lastIndexOf( '.' ) + 1 );
+    return id + "['" + m_title + "' " + m_type + " " + m_priority + "]";
+  }
+
+  /**************************************** hasPredecessor ***************************************/
+  private boolean hasPredecessor( Task other )
+  {
+    // return true if task is predecessor
+    if ( m_predecessors.hasPredecessor( other ) )
+      return true;
+
+    // if task is summary, then sub-tasks are implicit predecessors
+    if ( m_summaryEnd > 0 )
+    {
+      int thisNum = JPlanner.plan.index( this );
+      int otherNum = JPlanner.plan.index( other );
+      if ( otherNum > thisNum && otherNum <= m_summaryEnd )
+        return true;
+    }
+
+    return false;
+  }
+
+  /****************************************** schedule *******************************************/
+  public void schedule()
+  {
+    // TODO Auto-generated method stub
+    JPlanner.trace( "Scheduling " + this );
   }
 
 }

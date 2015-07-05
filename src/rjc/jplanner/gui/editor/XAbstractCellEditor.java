@@ -26,6 +26,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import rjc.jplanner.JPlanner;
 
@@ -42,6 +44,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   public Control createEditorControl( Composite parent )
   {
     // create editor based on column
+    JPlanner.gui.m_cellEditorInProgress = this;
     m_editor = createEditor( getRowIndex(), getColumnIndex() );
 
     // add key listener for escape & carriage-return
@@ -76,6 +79,20 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
             commit( MoveDirectionEnum.DOWN );
         }
       } );
+
+    // add listener for losing focus, close editor if in error state
+    getEditorPrime().addListener( SWT.FocusOut, new Listener()
+    {
+      @Override
+      public void handleEvent( Event event )
+      {
+        if ( getEditorPrime().getForeground().equals( JPlanner.gui.COLOR_ERROR ) )
+        {
+          JPlanner.gui.message( "" );
+          close();
+        }
+      }
+    } );
 
     return m_editor;
   }
@@ -171,6 +188,34 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
 
     // not red, so allow commit
     return true;
+  }
+
+  /******************************************** close ********************************************/
+  @Override
+  public void close()
+  {
+    // editor being closed, so clear cell editor in progress
+    JPlanner.gui.m_cellEditorInProgress = null;
+    super.close();
+  }
+
+  /******************************************* commit ********************************************/
+  @Override
+  public boolean commit( MoveDirectionEnum direction, boolean closeAfterCommit, boolean skipValidation )
+  {
+    // editor being committed, so clear cell editor in progress
+    JPlanner.gui.m_cellEditorInProgress = null;
+    return super.commit( direction, closeAfterCommit, skipValidation );
+  }
+
+  /***************************************** endEditing ******************************************/
+  public void endEditing()
+  {
+    // close or commit editor depending if in error state
+    if ( getEditorPrime().getForeground().equals( JPlanner.gui.COLOR_ERROR ) )
+      close();
+    else
+      commit( MoveDirectionEnum.NONE );
   }
 
 }

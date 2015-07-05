@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -77,6 +78,21 @@ public class Tasks extends ArrayList<Task>
     for ( Task task : this )
       task.saveToXML( xsw );
     xsw.writeEndElement(); // XML_TASK_DATA 
+  }
+
+  /****************************************** schedule *******************************************/
+  public void schedule()
+  {
+    // first construct list of tasks in correct order
+    ArrayList<Task> scheduleList = new ArrayList<Task>();
+    for ( int i = 0; i < size(); i++ )
+      if ( !get( i ).isNull() )
+        scheduleList.add( get( i ) );
+    Collections.sort( scheduleList );
+
+    // schedule tasks in this order
+    for ( int i = 0; i < scheduleList.size(); i++ )
+      scheduleList.get( i ).schedule();
   }
 
 }

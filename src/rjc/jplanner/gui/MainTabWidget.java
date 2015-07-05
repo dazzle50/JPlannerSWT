@@ -22,6 +22,8 @@ import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
@@ -102,6 +104,17 @@ public class MainTabWidget extends TabFolder
     tabDays.setText( "Days" );
     NatTable tableDays = new XNatTable( this, XNatTable.TableType.DAY );
     tabDays.setControl( tableDays );
+
+    // listener to detect when selected tab changed
+    addListener( SWT.Selection, new Listener()
+    {
+      @Override
+      public void handleEvent( Event event )
+      {
+        // ensure selected tab contents has keyboard focus
+        getSelection()[0].getControl().forceFocus();
+      }
+    } );
   }
 
   @Override

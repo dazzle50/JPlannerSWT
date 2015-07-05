@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.gui.table.TableRegister;
 import rjc.jplanner.model.Plan;
 
@@ -52,36 +53,38 @@ import rjc.jplanner.model.Plan;
 
 public class MainWindow extends Shell
 {
-  private MainTabWidget    m_mainTabWidget;       // MainTabWidget associated with MainWindow
-  private ArrayList<Shell> m_windows;             // list of windows including this one
-  private Text             m_statusBar;
-  private MenuListener     m_menuListener;
-  private MenuItem         m_menuTask;
-  private TableRegister    m_taskTables;          // register of tables showing tasks
-  private TableRegister    m_resourceTables;      // register of tables showing resources
-  private TableRegister    m_calendarTables;      // register of tables showing calendars
-  private TableRegister    m_dayTables;           // register of tables showing day-types
+  private MainTabWidget      m_mainTabWidget;       // MainTabWidget associated with MainWindow
+  private ArrayList<Shell>   m_windows;             // list of windows including this one
+  private Text               m_statusBar;
+  private MenuListener       m_menuListener;
+  private MenuItem           m_menuTask;
+  private TableRegister      m_taskTables;          // register of tables showing tasks
+  private TableRegister      m_resourceTables;      // register of tables showing resources
+  private TableRegister      m_calendarTables;      // register of tables showing calendars
+  private TableRegister      m_dayTables;           // register of tables showing day-types
 
-  public UndoStackWindow   undoWindow;            // window to show plan undo-stack
-  public MenuItem          actionUndoStackView;   // action to show plan undo-stack window
-  public MenuItem          actionUndo;
-  public MenuItem          actionRedo;
+  public UndoStackWindow     undoWindow;            // window to show plan undo-stack
+  public MenuItem            actionUndoStackView;   // action to show plan undo-stack window
+  public MenuItem            actionUndo;
+  public MenuItem            actionRedo;
 
-  public Color             COLOR_BLACK;
-  public Color             COLOR_WHITE;
-  public Color             COLOR_RED;
-  public Color             COLOR_GRAY_DARK;
-  public Color             COLOR_GRAY_LIGHT;
+  public Color               COLOR_BLACK;
+  public Color               COLOR_WHITE;
+  public Color               COLOR_RED;
+  public Color               COLOR_GRAY_DARK;
+  public Color               COLOR_GRAY_LIGHT;
 
-  public Color             COLOR_GANTT_BACKGROUND;
-  public Color             COLOR_GANTT_NONWORKING;
-  public Color             COLOR_GANTT_DIVIDER;
+  public Color               COLOR_GANTT_BACKGROUND;
+  public Color               COLOR_GANTT_NONWORKING;
+  public Color               COLOR_GANTT_DIVIDER;
 
-  public Color             COLOR_ERROR;
-  public Color             COLOR_NO_ERROR;
+  public Color               COLOR_ERROR;
+  public Color               COLOR_NO_ERROR;
 
-  public Transform         TRANSFORM;
-  public int               GANTTSCALE_HEIGHT = 15;
+  public Transform           TRANSFORM;
+  public int                 GANTTSCALE_HEIGHT = 15;
+
+  public XAbstractCellEditor m_cellEditorInProgress;
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -110,15 +113,22 @@ public class MainWindow extends Shell
     m_calendarTables = new TableRegister();
     m_dayTables = new TableRegister();
 
-    // prepare listener to clear any old status-bar message when menu shown & check for properties/notes changes
+    // prepare listener to for when menus shown
     m_menuListener = new MenuListener()
     {
       @Override
       public void menuShown( MenuEvent e )
       {
+        // clear any old status-bar message
         message( "" );
+
+        // check for properties/notes changes
         properties().updatePlan();
         notes().updatePlan();
+
+        // if any table cell editing in progress, end it
+        if ( m_cellEditorInProgress != null )
+          m_cellEditorInProgress.endEditing();
       }
 
       @Override
@@ -445,7 +455,17 @@ public class MainWindow extends Shell
 
     MenuItem actionSchedule = new MenuItem( editMenu, SWT.NONE );
     actionSchedule.setText( "Schedule" );
-    actionSchedule.setEnabled( false );
+    actionSchedule.setEnabled( true );
+    actionSchedule.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        JPlanner.plan.schedule();
+        JPlanner.gui.properties().updateFromPlan();
+        JPlanner.gui.taskTables().refresh();
+      }
+    } );
   }
 
   /**************************************** addTaskMenu ******************************************/

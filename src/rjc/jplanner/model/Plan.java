@@ -528,4 +528,13 @@ public class Plan
     return false;
   }
 
+  /****************************************** schedule *******************************************/
+  public void schedule()
+  {
+    // schedule the plan!
+    JPlanner.trace( "============================== SCHEDULE started ==============================" );
+    m_tasks.schedule();
+    JPlanner.trace( "============================== SCHEDULE finished ==============================" );
+  }
+
 }
