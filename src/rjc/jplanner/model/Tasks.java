@@ -54,12 +54,15 @@ public class Tasks extends ArrayList<Task>
       if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_TASK_DATA ) )
         return;
 
-      // if a task element, construct a task from it
+      // if element start, load the contents
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
           case Task.XML_TASK:
             add( new Task( xsr ) );
+            break;
+          case Task.XML_PREDECESSORS:
+            loadPredecessors( xsr );
             break;
           default:
             JPlanner.trace( "tasks.loadXml - unhandled start element '" + xsr.getLocalName() + "'" );
@@ -68,6 +71,32 @@ public class Tasks extends ArrayList<Task>
 
       xsr.next();
     }
+  }
+
+  /*************************************** loadPredecessors **************************************/
+  private void loadPredecessors( XMLStreamReader xsr )
+  {
+    // initialise variables
+    int task = -1;
+    String preds = "";
+
+    // read XML predecessors attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
+        case Task.XML_TASK:
+          task = Integer.parseInt( xsr.getAttributeValue( i ) );
+          break;
+        case Task.XML_PREDS:
+          preds = xsr.getAttributeValue( i );
+          break;
+        default:
+          JPlanner.trace( "Predecessors - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
+      }
+
+    // set the task predecessors, remembering array starts from zero but id from one
+    get( task - 1 ).setData( Task.SECTION_PRED, preds );
   }
 
   /******************************************* writeXML ******************************************/

@@ -34,6 +34,7 @@ public class TimeSpan
   public static final char   UNIT_WEEKS   = 'w';
   public static final char   UNIT_MONTHS  = 'm';
   public static final char   UNIT_YEARS   = 'y';
+  public static final char   UNIT_DEFAULT = UNIT_DAYS;
 
   public static final String NUMPOINT     = "01234567890.";
   public static final String UNITS        = "SMHdwmy";
@@ -46,7 +47,7 @@ public class TimeSpan
     char lastchr = str.charAt( str.length() - 1 );
 
     if ( NUMPOINT.indexOf( lastchr ) >= 0 )
-      m_units = UNIT_DAYS; // no units specified so assume 'days'
+      m_units = UNIT_DEFAULT; // no units specified use default
     else
     {
       if ( UNITS.indexOf( lastchr ) >= 0 ) // check if valid units
@@ -61,6 +62,14 @@ public class TimeSpan
     }
 
     m_num = Double.parseDouble( str );
+  }
+
+  /**************************************** constructor ******************************************/
+  public TimeSpan()
+  {
+    // construct default time-span
+    m_num = 0.0;
+    m_units = UNIT_DEFAULT;
   }
 
   /***************************************** toString ********************************************/

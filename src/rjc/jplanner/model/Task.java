@@ -30,21 +30,21 @@ import rjc.jplanner.JPlanner;
 
 public class Task implements Comparable<Task>
 {
-  private String              m_title;                       // free text title
-  private TimeSpan            m_duration;                    // duration of task
-  private DateTime            m_start;                       // start date-time of task
-  private DateTime            m_end;                         // end date-time of task
-  private TimeSpan            m_work;                        // work effort for task
-  private Predecessors        m_predecessors;                // task predecessors
-  private TaskResources       m_resources;                   // resources allocated to task
-  private TaskType            m_type;                        // task type
-  private int                 m_priority;                    // overall task priority (0 to 999)
-  private DateTime            m_deadline;                    // task warning deadline
-  private String              m_cost;                        // calculated cost based on resource use
-  private String              m_comment;                     // free text comment
+  private String              m_title;                          // free text title
+  private TimeSpan            m_duration;                       // duration of task
+  private DateTime            m_start;                          // start date-time of task
+  private DateTime            m_end;                            // end date-time of task
+  private TimeSpan            m_work;                           // work effort for task
+  private Predecessors        m_predecessors;                   // task predecessors
+  private TaskResources       m_resources;                      // resources allocated to task
+  private TaskType            m_type;                           // task type
+  private int                 m_priority;                       // overall task priority (0 to 999)
+  private DateTime            m_deadline;                       // task warning deadline
+  private String              m_cost;                           // calculated cost based on resource use
+  private String              m_comment;                        // free text comment
 
-  private int                 m_indent;                      // task indent level, zero for no indent
-  private int                 m_summaryEnd;                  // last sub-task id, or -1 for non-summaries
+  private int                 m_indent;                         // task indent level, zero for no indent
+  private int                 m_summaryEnd;                     // last sub-task id, or -1 for non-summaries
 
   public static final int     SECTION_TITLE    = 0;
   public static final int     SECTION_DURATION = 1;
@@ -61,6 +61,8 @@ public class Task implements Comparable<Task>
   public static final int     SECTION_MAX      = 11;
 
   public static final String  XML_TASK         = "task";
+  public static final String  XML_PREDECESSORS = "predecessors";
+  public static final String  XML_PREDS        = "preds";
   private static final String XML_ID           = "id";
   private static final String XML_TITLE        = "title";
   private static final String XML_DURATION     = "duration";
@@ -78,14 +80,14 @@ public class Task implements Comparable<Task>
   public Task()
   {
     // initialise private variables
-    m_predecessors = new Predecessors( "" );
+    m_predecessors = new Predecessors();
   }
 
   /**************************************** constructor ******************************************/
   public Task( XMLStreamReader xsr ) throws XMLStreamException
   {
     this();
-    // read XML resource attributes
+    // read XML task attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
@@ -354,7 +356,7 @@ public class Task implements Comparable<Task>
   }
 
   /**************************************** hasPredecessor ***************************************/
-  private boolean hasPredecessor( Task other )
+  public boolean hasPredecessor( Task other )
   {
     // return true if task is predecessor
     if ( m_predecessors.hasPredecessor( other ) )
@@ -377,6 +379,20 @@ public class Task implements Comparable<Task>
   {
     // TODO Auto-generated method stub
     JPlanner.trace( "Scheduling " + this );
+  }
+
+  /***************************************** isSummary *******************************************/
+  public boolean isSummary()
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /***************************************** summaryEnd ******************************************/
+  public int summaryEnd()
+  {
+    // TODO Auto-generated method stub
+    return 0;
   }
 
 }
