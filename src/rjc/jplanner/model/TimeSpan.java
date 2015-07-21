@@ -43,12 +43,18 @@ public class TimeSpan
   public TimeSpan( String str )
   {
     // construct time-span from string
+    this();
+
+    // is string is of zero length, don't do anything more
+    if ( str.length() == 0 )
+      return;
+
+    // remove any spaces and determine last character
     str = str.replaceAll( "\\s+", "" );
     char lastchr = str.charAt( str.length() - 1 );
 
-    if ( NUMPOINT.indexOf( lastchr ) >= 0 )
-      m_units = UNIT_DEFAULT; // no units specified use default
-    else
+    // if last char is not a number digit, check if it is a valid units 
+    if ( NUMPOINT.indexOf( lastchr ) < 0 )
     {
       if ( UNITS.indexOf( lastchr ) >= 0 ) // check if valid units
       {

@@ -52,9 +52,11 @@ public class TaskCellEditor extends XAbstractCellEditor
     if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
     {
       TimeSpan sp = new TimeSpan( JPlanner.plan.task( row ).toString( col ) );
-      TimeSpanEditor editor = new TimeSpanEditor( parent, sp );
-      return editor;
+      return new TimeSpanEditor( parent, sp );
     }
+
+    if ( col == Task.SECTION_PRED )
+      return new TaskPredecessorsEditor( parent, row );
 
     // TODO - use Text editor until find/write something better
     return new TextEditor( parent );

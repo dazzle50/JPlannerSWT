@@ -87,7 +87,7 @@ public class Predecessors
       }
 
       Predecessor pred = new Predecessor();
-      pred.task = JPlanner.plan.task( taskNum );
+      pred.task = JPlanner.plan.task( taskNum - 1 );
       pred.type = type;
       pred.lag = lag;
       m_preds.add( pred );
@@ -104,7 +104,7 @@ public class Predecessors
     // build up string equivalent
     for ( Predecessor pred : m_preds )
     {
-      str += JPlanner.plan.index( pred.task );
+      str += ( JPlanner.plan.index( pred.task ) + 1 );
 
       if ( pred.type != TYPE_DEFAULT || pred.lag.number() != 0.0 )
       {
@@ -141,12 +141,16 @@ public class Predecessors
   }
 
   /******************************************** errors *******************************************/
-  public String errors( String text, int thisTaskNum )
+  public static String errors( String text, int thisTaskNum )
   {
     // split text into individual predecessors
     String error = "";
     for ( String part : text.split( "," ) )
     {
+      // if blank part, skip
+      if ( part.length() == 0 )
+        continue;
+
       // split part into task, predecessor type and lag
       part = part.trim();
       int digit = 0;
@@ -161,10 +165,10 @@ public class Predecessors
       }
 
       // check number is non-null task
-      int taskNum = Integer.parseInt( part.substring( 0, digit ) );
+      int taskNum = Integer.parseInt( part.substring( 0, digit ) ) - 1;
       if ( taskNum >= JPlanner.plan.tasksCount() || JPlanner.plan.task( taskNum ).isNull() )
       {
-        error += "'" + taskNum + "' is a null task.\n";
+        error += "'" + ( taskNum + 1 ) + "' is a null task.\n";
         continue;
       }
 
@@ -172,7 +176,7 @@ public class Predecessors
       if ( JPlanner.plan.task( thisTaskNum ).isSummary() && taskNum > thisTaskNum
           && taskNum <= JPlanner.plan.task( thisTaskNum ).summaryEnd() )
       {
-        error += "'" + taskNum + "' is a sub-task of this summary.\n";
+        error += "'" + ( taskNum + 1 ) + "' is a sub-task of this summary.\n";
         continue;
       }
 
@@ -180,21 +184,21 @@ public class Predecessors
       if ( JPlanner.plan.task( taskNum ).isSummary() && thisTaskNum > taskNum
           && thisTaskNum <= JPlanner.plan.task( taskNum ).summaryEnd() )
       {
-        error += "'" + taskNum + "' is a summary containing this sub-task.\n";
+        error += "'" + ( taskNum + 1 ) + "' is a summary containing this sub-task.\n";
         continue;
       }
 
       // check number is not this task
       if ( taskNum == thisTaskNum )
       {
-        error += "'" + taskNum + "' is a reference to this task.\n";
+        error += "'" + ( taskNum + 1 ) + "' is a reference to this task.\n";
         continue;
       }
 
       // check number is does not cause circular reference
       if ( JPlanner.plan.task( taskNum ).hasPredecessor( JPlanner.plan.task( thisTaskNum ) ) )
       {
-        error += "'" + taskNum + "' gives a circular reference to this task.\n";
+        error += "'" + ( taskNum + 1 ) + "' gives a circular reference to this task.\n";
         continue;
       }
 
@@ -202,7 +206,13 @@ public class Predecessors
       part = part.substring( digit ).trim();
       if ( part.isEmpty() )
         continue;
-      String start = part.substring( 0, 2 );
+
+      String start;
+      if ( part.length() < 2 )
+        start = part;
+      else
+        start = part.substring( 0, 2 );
+
       if ( !start.equalsIgnoreCase( TYPE_FINISH_START ) && !start.equalsIgnoreCase( TYPE_START_START )
           && !start.equalsIgnoreCase( TYPE_START_FINISH ) && !start.equalsIgnoreCase( TYPE_FINISH_FINISH ) )
       {
@@ -216,7 +226,7 @@ public class Predecessors
         continue;
       try
       {
-        TimeSpan ts = new TimeSpan( part );
+        new TimeSpan( part );
       }
       catch ( Exception e )
       {

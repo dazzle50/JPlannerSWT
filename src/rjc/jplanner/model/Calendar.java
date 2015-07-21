@@ -39,7 +39,7 @@ public class Calendar
   private ArrayList<Day>     m_normal;     // normal basic cycle days
   private HashMap<Date, Day> m_exceptions; // exceptions override normal days
 
-  enum DefaultCalendarTypes
+  public enum DefaultCalendarTypes
   {
     STANDARD, FULLTIME, FANCY
   };
