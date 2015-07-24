@@ -18,6 +18,8 @@
 
 package rjc.jplanner.gui.table;
 
+import java.util.ArrayList;
+
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
@@ -31,6 +33,7 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.GridLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
+import org.eclipse.nebula.widgets.nattable.hideshow.RowHideShowLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
@@ -75,6 +78,7 @@ public class XNatTable extends NatTable
   public static final String LABEL_TASK_EDITOR     = "Task";
 
   public SelectionLayer      selectionLayer;
+  public RowHideShowLayer    rowHideShowLayer;
 
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
@@ -198,7 +202,9 @@ public class XNatTable extends NatTable
     // create body layer stack
     DataLayer bodyDataLayer = new DataLayer( body, widths[0], 20 );
     bodyDataLayer.setConfigLabelAccumulator( label );
-    selectionLayer = new SelectionLayer( bodyDataLayer );
+    //selectionLayer = new SelectionLayer( bodyDataLayer );
+    rowHideShowLayer = new RowHideShowLayer( bodyDataLayer );
+    selectionLayer = new SelectionLayer( rowHideShowLayer );
     ViewportLayer viewport = new ViewportLayer( selectionLayer );
 
     // widths - first is default, then row header, then columns
@@ -228,6 +234,15 @@ public class XNatTable extends NatTable
     addConfiguration( m_theme );
     addConfiguration( m_labels );
     configure();
+  }
+
+  /**************************************** configTable ******************************************/
+  public void hideRow( int row )
+  {
+    // hide table row index
+    ArrayList<Integer> rowList = new ArrayList<Integer>();
+    rowList.add( row );
+    rowHideShowLayer.hideRowIndexes( rowList );
   }
 
 }

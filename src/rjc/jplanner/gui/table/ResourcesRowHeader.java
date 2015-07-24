@@ -47,8 +47,8 @@ public class ResourcesRowHeader implements IDataProvider
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return row index plus one
-    return row + 1;
+    // return row index
+    return row;
   }
 
   /**************************************** getRowCount ******************************************/

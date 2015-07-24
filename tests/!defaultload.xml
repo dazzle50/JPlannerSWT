@@ -55,6 +55,7 @@
         </calendar>
     </calendars-data>
     <resources-data>
+        <resource id="0"/>
         <resource id="1"/>
         <resource id="2" initials="JS" name="John Smith" org="XYZ" group="Example" role="PM" alias="Joe" availability="1" cost="0.0" calendar="0" comment=""/>
         <resource id="3" initials="SH" name="Simon Hammond" org="XYZ" group="Example" role="Support" alias="Si" availability="1" cost="0.0" calendar="0" comment=""/>
@@ -62,6 +63,7 @@
         <resource id="5"/>
     </resources-data>
     <tasks-data>
+        <task id="0"/>
         <task id="1" indent="0" summary="-1" expanded="1" title="xxxx" duration="1 d" start="2014-08-25T09:00" end="2014-08-25T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" deadline="2014-08-26T18:00" cost="0.0" comment=""/>
         <task id="2"/>
         <task id="3" indent="0" summary="-1" expanded="1" title="aaa" duration="6 d" start="2014-09-01T09:00" end="2014-09-08T18:00" work="1 d" resources="XYZ" type="ASAP - duration" priority="100" cost="0.0" comment=""/>

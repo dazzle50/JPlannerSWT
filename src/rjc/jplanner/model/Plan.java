@@ -21,12 +21,15 @@ package rjc.jplanner.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.Charset;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.UndoStack;
@@ -365,7 +368,12 @@ public class Plan
       xsw.writeAttribute( XML_CALENDAR, Integer.toString( index( m_calendar ) ) );
       xsw.writeAttribute( XML_DT_FORMAT, m_datetimeFormat );
       xsw.writeAttribute( XML_D_FORMAT, m_dateFormat );
-      xsw.writeAttribute( XML_NOTES, m_notes );
+
+      // as java doesn't encode new-lines correctly, write notes attribute manually
+      // instead of xsw.writeAttribute( XML_NOTES, m_notes );
+      String notes = StringEscapeUtils.escapeXml( m_notes ).replaceAll( "\\n", "&#10;" );
+      notes = " " + XML_NOTES + "=\"" + notes + "\"";
+      fos.write( notes.getBytes( Charset.forName( "UTF-8" ) ) );
 
       // close XML document
       xsw.writeEndElement(); // XML_JPLANNER

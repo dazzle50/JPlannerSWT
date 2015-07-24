@@ -18,7 +18,6 @@
 
 package rjc.jplanner.gui;
 
-import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
@@ -76,7 +75,8 @@ public class MainTabWidget extends TabFolder
     XSashForm splitterTasksGantt = new XSashForm( this, SWT.SMOOTH );
     m_tabTasks.setControl( splitterTasksGantt );
 
-    NatTable tableTasks = new XNatTable( splitterTasksGantt, XNatTable.TableType.TASK );
+    XNatTable tableTasks = new XNatTable( splitterTasksGantt, XNatTable.TableType.TASK );
+    tableTasks.hideRow( 0 );
 
     ScrolledComposite ganttView = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL );
     ganttView.setExpandHorizontal( true );
@@ -90,19 +90,20 @@ public class MainTabWidget extends TabFolder
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
     tabResources.setText( "Resources" );
-    NatTable tableResources = new XNatTable( this, XNatTable.TableType.RESOURCE );
+    XNatTable tableResources = new XNatTable( this, XNatTable.TableType.RESOURCE );
+    tableResources.hideRow( 0 );
     tabResources.setControl( tableResources );
 
     // Calendars tab
     TabItem tabCalendars = new TabItem( this, SWT.NONE );
     tabCalendars.setText( "Calendars" );
-    NatTable tableCalendars = new XNatTable( this, XNatTable.TableType.CALENDAR );
+    XNatTable tableCalendars = new XNatTable( this, XNatTable.TableType.CALENDAR );
     tabCalendars.setControl( tableCalendars );
 
     // Days-type tab
     TabItem tabDays = new TabItem( this, SWT.NONE );
     tabDays.setText( "Days" );
-    NatTable tableDays = new XNatTable( this, XNatTable.TableType.DAY );
+    XNatTable tableDays = new XNatTable( this, XNatTable.TableType.DAY );
     tabDays.setControl( tableDays );
 
     // listener to detect when selected tab changed

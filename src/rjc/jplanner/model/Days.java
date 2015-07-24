@@ -50,6 +50,8 @@ public class Days extends ArrayList<Day>
     // read XML day data
     while ( xsr.hasNext() )
     {
+      xsr.next();
+
       // if reached end of day data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_DAY_DATA ) )
         return;
@@ -66,7 +68,6 @@ public class Days extends ArrayList<Day>
             break;
         }
 
-      xsr.next();
     }
   }
 

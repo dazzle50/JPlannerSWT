@@ -40,7 +40,7 @@ public class Tasks extends ArrayList<Task>
   {
     // initialise list with default tasks
     clear();
-    for ( int count = 0; count < 10; count++ )
+    for ( int count = 0; count <= 20; count++ )
       add( new Task() );
   }
 
@@ -50,6 +50,8 @@ public class Tasks extends ArrayList<Task>
     // read XML task data
     while ( xsr.hasNext() )
     {
+      xsr.next();
+
       // if reached end of task data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_TASK_DATA ) )
         return;
@@ -69,7 +71,6 @@ public class Tasks extends ArrayList<Task>
             break;
         }
 
-      xsr.next();
     }
   }
 
@@ -96,7 +97,7 @@ public class Tasks extends ArrayList<Task>
       }
 
     // set the task predecessors, remembering array starts from zero but id from one
-    get( task - 1 ).setData( Task.SECTION_PRED, preds );
+    get( task ).setData( Task.SECTION_PRED, preds );
   }
 
   /******************************************* writeXML ******************************************/

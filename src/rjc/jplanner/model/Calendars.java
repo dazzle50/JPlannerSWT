@@ -50,6 +50,8 @@ public class Calendars extends ArrayList<Calendar>
     // read XML calendar data
     while ( xsr.hasNext() )
     {
+      xsr.next();
+
       // if reached end of calendar data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_CAL_DATA ) )
         return;
@@ -66,7 +68,6 @@ public class Calendars extends ArrayList<Calendar>
             break;
         }
 
-      xsr.next();
     }
   }
 

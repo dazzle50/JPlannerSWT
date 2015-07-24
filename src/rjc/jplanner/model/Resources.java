@@ -39,7 +39,7 @@ public class Resources extends ArrayList<Resource>
   {
     // initialise list with default resources
     clear();
-    for ( int count = 0; count < 5; count++ )
+    for ( int count = 0; count <= 10; count++ )
       add( new Resource() );
   }
 
@@ -49,6 +49,8 @@ public class Resources extends ArrayList<Resource>
     // read XML resource data
     while ( xsr.hasNext() )
     {
+      xsr.next();
+
       // if reached end of resource data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_RES_DATA ) )
         return;
@@ -65,7 +67,6 @@ public class Resources extends ArrayList<Resource>
             break;
         }
 
-      xsr.next();
     }
   }
 

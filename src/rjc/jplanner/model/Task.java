@@ -75,6 +75,7 @@ public class Task implements Comparable<Task>
   private static final String XML_DEADLINE     = "deadline";
   private static final String XML_COST         = "cost";
   private static final String XML_COMMENT      = "comment";
+  private static final String XML_INDENT       = "indent";
 
   /**************************************** constructor ******************************************/
   public Task()
@@ -91,6 +92,8 @@ public class Task implements Comparable<Task>
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
+        case XML_ID:
+          break;
         case XML_TITLE:
           m_title = xsr.getAttributeValue( i );
           break;
@@ -123,6 +126,9 @@ public class Task implements Comparable<Task>
           break;
         case XML_COMMENT:
           m_comment = xsr.getAttributeValue( i );
+          break;
+        case XML_INDENT:
+          m_indent = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
         default:
           JPlanner.trace( "Task - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
