@@ -45,6 +45,7 @@ public class Task implements Comparable<Task>
 
   private int                 m_indent;                         // task indent level, zero for no indent
   private int                 m_summaryEnd;                     // last sub-task id, or -1 for non-summaries
+  private GanttData           m_gantt;                          // data for gantt bar display
 
   public static final int     SECTION_TITLE    = 0;
   public static final int     SECTION_DURATION = 1;
@@ -82,6 +83,7 @@ public class Task implements Comparable<Task>
   {
     // initialise private variables
     m_predecessors = new Predecessors();
+    m_gantt = new GanttData();
   }
 
   /**************************************** constructor ******************************************/
@@ -165,10 +167,10 @@ public class Task implements Comparable<Task>
       return m_duration.toString();
 
     if ( section == SECTION_START )
-      return m_start.toString( JPlanner.plan.datetimeFormat() );
+      return start().toString( JPlanner.plan.datetimeFormat() );
 
     if ( section == SECTION_END )
-      return m_end.toString( JPlanner.plan.datetimeFormat() );
+      return end().toString( JPlanner.plan.datetimeFormat() );
 
     if ( section == SECTION_WORK )
       return m_work.toString();
@@ -380,13 +382,6 @@ public class Task implements Comparable<Task>
     return false;
   }
 
-  /****************************************** schedule *******************************************/
-  public void schedule()
-  {
-    // TODO Auto-generated method stub
-    JPlanner.trace( "Scheduling " + this );
-  }
-
   /***************************************** isSummary *******************************************/
   public boolean isSummary()
   {
@@ -401,4 +396,143 @@ public class Task implements Comparable<Task>
     return 0;
   }
 
+  /****************************************** schedule *******************************************/
+  public void schedule()
+  {
+    // TODO Auto-generated method stub
+    JPlanner.trace( "Scheduling " + this );
+
+    if ( m_type.toString() == TaskType.ASAP_FDUR )
+    {
+      schedule_ASAP_FDUR();
+      return;
+    }
+
+    throw new UnsupportedOperationException( "Task type = " + m_type );
+  }
+
+  /************************************* schedule_ASAP_FDUR **************************************/
+  private void schedule_ASAP_FDUR()
+  {
+    // depending on predecessors determine task start & end
+    boolean hasToStart = m_predecessors.hasToStart();
+    boolean hasToFinish = m_predecessors.hasToFinish();
+
+    // if this task doesn't have predecessors, does a summary?
+    if ( !hasToStart && !hasToFinish )
+    {
+      int index = JPlanner.plan.index( this );
+      for ( int indent = m_indent; indent > 0; indent-- )
+      {
+        // find task summary
+        while ( JPlanner.plan.task( index ).isNull() || JPlanner.plan.task( index ).m_indent >= indent )
+          index--;
+
+        hasToStart = JPlanner.plan.task( index ).m_predecessors.hasToStart();
+        if ( hasToStart )
+          break;
+        hasToFinish = JPlanner.plan.task( index ).m_predecessors.hasToFinish();
+        if ( hasToFinish )
+          break;
+      }
+    }
+
+    Calendar planCal = JPlanner.plan.calendar();
+    if ( hasToStart )
+    {
+      m_start = planCal.workUp( startDueToPredecessors() );
+      m_end = planCal.workDown( planCal.addTimeSpan( m_start, m_duration ) );
+    }
+    else if ( hasToFinish )
+    {
+      m_end = planCal.workDown( startDueToPredecessors() );
+      m_start = planCal.workUp( planCal.addTimeSpan( m_end, m_duration.minus() ) );
+    }
+    else
+    {
+      m_start = planCal.workUp( JPlanner.plan.start() );
+      m_end = planCal.workDown( planCal.addTimeSpan( m_start, m_duration ) );
+    }
+
+    // ensure end is always greater or equal to start
+    if ( m_end.isLessThan( m_start ) )
+      m_end = m_start;
+
+    // set gantt task bar data
+    if ( isSummary() )
+      m_gantt.setSummary( start(), end() );
+    else
+      m_gantt.setTask( m_start, m_end );
+  }
+
+  /********************************************* end *********************************************/
+  private DateTime end()
+  {
+    // return task or summary end date-time
+    if ( isSummary() )
+    {
+      int here = JPlanner.plan.index( this );
+      DateTime e = new DateTime( Long.MIN_VALUE );
+
+      // loop through each subtask
+      for ( int t = here + 1; t <= m_summaryEnd; t++ )
+      {
+        // if task isn't summary & isn't null, check if its end is after current latest
+        Task task = JPlanner.plan.task( t );
+        if ( !task.isSummary() && !task.isNull() && e.isLessThan( task.m_end ) )
+          e = task.m_end;
+      }
+
+      return e;
+    }
+
+    return m_end;
+  }
+
+  /******************************************** start ********************************************/
+  private DateTime start()
+  {
+    // return task or summary start date-time
+    if ( isSummary() )
+    {
+      int here = JPlanner.plan.index( this );
+      DateTime s = new DateTime( Long.MAX_VALUE );
+
+      // loop through each subtask
+      for ( int t = here + 1; t <= m_summaryEnd; t++ )
+      {
+        // if task isn't summary & isn't null, check if its start is before current earliest
+        Task task = JPlanner.plan.task( t );
+        if ( !task.isSummary() && !task.isNull() && task.m_start.isLessThan( s ) )
+          s = task.m_start;
+      }
+
+      return s;
+    }
+
+    return m_start;
+  }
+
+  /************************************ startDueToPredecessors ***********************************/
+  private DateTime startDueToPredecessors()
+  {
+    // get start based on this task's predecessors
+    DateTime start = m_predecessors.start();
+
+    // if indented also check start against summary(s) predecessors
+    int index = JPlanner.plan.index( this );
+    for ( int indent = m_indent; indent > 0; indent-- )
+    {
+      // find task summary
+      while ( JPlanner.plan.task( index ).isNull() || JPlanner.plan.task( index ).m_indent >= indent )
+        index--;
+
+      // if start from summary predecessors is later, use it instead
+      DateTime summaryStart = JPlanner.plan.task( index ).m_predecessors.start();
+      if ( start.isLessThan( summaryStart ) )
+        start = summaryStart;
+    }
+
+    return start;
+  }
 }

@@ -363,4 +363,25 @@ public class Day
     xsw.writeEndElement(); // XML_DAY
   }
 
+  /*************************************** millisecondsDone **************************************/
+  public int millisecondsDone( Time time )
+  {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  /*************************************** millisecondsToGo **************************************/
+  public int millisecondsToGo( Time time )
+  {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  /**************************************** doMilliseconds ***************************************/
+  public Time doMilliseconds( Time time, int ms )
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

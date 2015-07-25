@@ -260,4 +260,10 @@ public class DateTime
     throw new IllegalArgumentException( "interval=" + interval );
   }
 
+  /****************************************** isLessThan *****************************************/
+  public boolean isLessThan( DateTime other )
+  {
+    return m_milliseconds < other.m_milliseconds;
+  }
+
 }

@@ -412,4 +412,128 @@ public class Calendar
 
     xsw.writeEndElement(); // XML_CALENDAR
   }
+
+  /***************************************** addTimeSpan *****************************************/
+  public DateTime addTimeSpan( DateTime start, TimeSpan ts )
+  {
+    // if time-span is zero length return original start
+    if ( ts.number() == 0.0 )
+      return start;
+
+    // return date-time moved by TimeSpan
+    if ( ts.units() == TimeSpan.UNIT_SECONDS )
+      return addSeconds( start, ts.number() );
+
+    if ( ts.units() == TimeSpan.UNIT_MINUTES )
+      return addSeconds( start, ts.number() * 60.0 );
+
+    if ( ts.units() == TimeSpan.UNIT_HOURS )
+      return addSeconds( start, ts.number() * 3600.0 );
+
+    if ( ts.units() == TimeSpan.UNIT_DAYS )
+      return addDays( start, ts.number() );
+
+    if ( ts.units() == TimeSpan.UNIT_WEEKS )
+      return addWeeks( start, ts.number() );
+
+    if ( ts.units() == TimeSpan.UNIT_MONTHS )
+      return addMonths( start, ts.number() );
+
+    if ( ts.units() == TimeSpan.UNIT_YEARS )
+      return addYears( start, ts.number() );
+
+    // unknown time-span units - should never happen!
+    throw new IllegalArgumentException( ts.toString() );
+  }
+
+  /***************************************** addSeconds ******************************************/
+  private DateTime addSeconds( DateTime start, double secs )
+  {
+    // if secs is positive go forward in time, else go backwards
+    if ( secs > 0 )
+    {
+      // use up any remaining working minutes on start date
+      Date date = start.date();
+      Day today = day( date );
+      int toGo = today.millisecondsToGo( start.time() );
+      if ( toGo == secs )
+        return new DateTime( date, today.end() );
+      if ( toGo > secs )
+        return new DateTime( date, today.doMilliseconds( start.time(), (int) ( secs * 1000 ) ) );
+
+      // to go was insufficient so move to next day
+      //date++;
+      secs -= toGo;
+
+      // repeat forever until no need to move to next day
+      while ( true )
+      {
+        // check if found finish date
+        today = day( date );
+        //if ( today->minutes() == mins ) return date*1440u + today->end();
+        //if ( today->minutes() >  mins ) return date*1440u + today->doMins( 0, mins );
+
+        // not finished so move to next day
+        //date++;
+        //mins -= today->minutes();
+      }
+    }
+    else
+    {
+      // work backwards on any minutes done on start date
+      //mins = -mins;
+      //Date  date  = start / 1440u;
+      //Day*  today = day( date );
+      //int done  = today->minsDone( start % 1440u );
+      //if ( done == mins ) return date*1440u + today->start();
+      //if ( done >  mins ) return date*1440u + today->doMins( today->start(), done - mins );
+
+      // done was insufficient so move to previous day
+      //date--;
+      //mins -= done;
+
+      // repeat forever until no need to move to previous day
+      while ( true )
+      {
+        // check if found finish date
+        //today = day( date );
+        //if ( today->minutes() == mins ) return date*1440u + today->start();
+        //if ( today->minutes() >  mins ) return date*1440u + today->doMins( today->start(), today->minutes() - mins );
+
+        // not finished so move to previous day
+        //date--;
+        //mins -= today->minutes();
+      }
+    }
+
+  }
+
+  /******************************************* addDays *******************************************/
+  private DateTime addDays( DateTime start, double number )
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /******************************************* addWeeks ******************************************/
+  private DateTime addWeeks( DateTime start, double number )
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /****************************************** addMonths ******************************************/
+  private DateTime addMonths( DateTime start, double number )
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /******************************************* addYears ******************************************/
+  private DateTime addYears( DateTime start, double number )
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

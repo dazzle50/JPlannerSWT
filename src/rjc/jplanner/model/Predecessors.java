@@ -239,4 +239,26 @@ public class Predecessors
       error = error.substring( 0, error.length() - 1 );
     return error;
   }
+
+  /****************************************** hasToStart *****************************************/
+  public boolean hasToStart()
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /****************************************** hasToFinish ****************************************/
+  public boolean hasToFinish()
+  {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /******************************************** start ********************************************/
+  public DateTime start()
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
 }

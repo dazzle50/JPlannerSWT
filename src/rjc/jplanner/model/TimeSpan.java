@@ -40,6 +40,14 @@ public class TimeSpan
   public static final String UNITS        = "SMHdwmy";
 
   /**************************************** constructor ******************************************/
+  public TimeSpan()
+  {
+    // construct default time-span
+    m_num = 0.0;
+    m_units = UNIT_DEFAULT;
+  }
+
+  /**************************************** constructor ******************************************/
   public TimeSpan( String str )
   {
     // construct time-span from string
@@ -71,11 +79,11 @@ public class TimeSpan
   }
 
   /**************************************** constructor ******************************************/
-  public TimeSpan()
+  public TimeSpan( double num, char units )
   {
-    // construct default time-span
-    m_num = 0.0;
-    m_units = UNIT_DEFAULT;
+    // construct time-span from parameters
+    m_num = num;
+    m_units = units;
   }
 
   /***************************************** toString ********************************************/
@@ -100,6 +108,12 @@ public class TimeSpan
   public double number()
   {
     return m_num;
+  }
+
+  /******************************************** minus ********************************************/
+  public TimeSpan minus()
+  {
+    return new TimeSpan( -m_num, m_units );
   }
 
 }
