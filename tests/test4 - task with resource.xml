@@ -75,7 +75,7 @@
         <task id="9"/>
         <task id="10"/>
     </tasks-data>
-    <plan-data title="test4" start="2013-10-21T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test4 - task with resource&#10;&#10;Resource 2 - JS 'John Smith' XYZ Example PM Joe starting=1/1/2000&#10;Task 3 - 5d task with resourcing JS&#10;&#10;28/09/2013 -r56 FAIL work shows 1d but should show 5d&#10;15/10/2013 -r59 PASS work correctly shows 5d&#10;06/11/2013 -r63 PASS"/>
+    <plan-data title="test4" start="2013-10-21T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test4 - task with resource&#10;&#10;Resource 2 - JS 'John Smith' XYZ Example PM Joe starting=1/1/2000&#10;Task 3 - 5d task with resourcing JS&#10;&#10;28/09/2013 -r56 FAIL work shows 1d but should show 5d&#10;15/10/2013 -r59 PASS work correctly shows 5d&#10;06/11/2013 -r63 PASS"/>
     <display-data>
         <tasks-gantt start="2013-10-12T05:20:00" end="2013-11-13T05:19:00" minspp="68.1642" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="TODO">
             <upper-scale interval="?" format="?"/>

@@ -92,7 +92,7 @@
         <predecessors task="17" preds="16FF-2.5 w"/>
         <predecessors task="20" preds="19FF"/>
     </tasks-data>
-    <plan-data title="test2" start="2013-10-22T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes=""/>
+    <plan-data title="test2" start="2013-10-22T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes=""/>
     <display-data>
         <tasks-gantt start="2013-09-27T07:30" end="2013-11-14T16:29" minspp="134.737" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="TODO">
             <upper-scale interval="?" format="?"/>

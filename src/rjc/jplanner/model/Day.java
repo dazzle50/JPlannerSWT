@@ -36,6 +36,8 @@ public class Day
   private double                   m_work;   // equivalent days worked (typically 1.0 or 0.0)
   private ArrayList<DayWorkPeriod> m_periods; // list of work periods
 
+  private int                      m_workMS; // pre-calculated number of worked milliseconds in day-type
+
   public enum DefaultDayTypes
   {
     NONWORK, STANDARDWORK, SHORT, EVENING, TWENTYFOURHOURS
@@ -62,6 +64,7 @@ public class Day
     m_name = "Null";
     m_work = 0.0;
     m_periods = new ArrayList<DayWorkPeriod>();
+    m_workMS = 0;
   }
 
   /**************************************** constructor ******************************************/
@@ -104,6 +107,8 @@ public class Day
     {
       throw new IllegalArgumentException( "Unhandled DefaultDayType=" + type );
     }
+
+    calcWorkMS();
   }
 
   /**************************************** constructor ******************************************/
@@ -132,7 +137,10 @@ public class Day
     {
       // if reached end of day, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_DAY ) )
+      {
+        calcWorkMS();
         return;
+      }
 
       // if a work-period element, construct a period from it
       if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_PERIOD ) )
@@ -363,25 +371,209 @@ public class Day
     xsw.writeEndElement(); // XML_DAY
   }
 
+  /***************************************** calcWorkMS ******************************************/
+  private void calcWorkMS()
+  {
+    // calculate pre-calculated worked milliseconds in day-type
+    m_workMS = 0;
+
+    for ( DayWorkPeriod period : m_periods )
+      m_workMS += period.m_end.milliseconds() - period.m_start.milliseconds();
+  }
+
   /*************************************** millisecondsDone **************************************/
   public int millisecondsDone( Time time )
   {
-    // TODO Auto-generated method stub
-    return 0;
+    // return number of ms done from 00:00 to specified time
+    int ms = time.milliseconds();
+    int done = 0;
+
+    for ( DayWorkPeriod period : m_periods )
+    {
+      if ( ms <= period.m_start.milliseconds() )
+        return done;
+
+      if ( ms < period.m_end.milliseconds() )
+        return done + period.m_start.milliseconds() - ms;
+
+      done += period.m_end.milliseconds() - period.m_start.milliseconds();
+    }
+
+    return done;
   }
 
   /*************************************** millisecondsToGo **************************************/
   public int millisecondsToGo( Time time )
   {
-    // TODO Auto-generated method stub
-    return 0;
+    // return number of ms work remaining from specified time to 24:00
+    return m_workMS - millisecondsDone( time );
   }
 
-  /**************************************** doMilliseconds ***************************************/
-  public Time doMilliseconds( Time time, int ms )
+  /********************************************* work ********************************************/
+  public Time work( Time from, double work )
   {
-    // TODO Auto-generated method stub
+    // work number of ms from specified time
+    if ( work > 0 )
+      return workForward( from, work );
+
+    if ( work < 0 )
+      return workBackward( from, -work );
+
+    return from;
+  }
+
+  /******************************************* workToGo ******************************************/
+  public double workToGo( Time from )
+  {
+    // return number of work equivalent days remaining from specified time to 24:00
+    return m_work - workDone( from );
+  }
+
+  /******************************************* workDone ******************************************/
+  public double workDone( Time from )
+  {
+    // return number of work equivalent days done from 00:00 to specified time
+    return m_work * millisecondsDone( from ) / m_workMS;
+  }
+
+  /************************************* workForward *************************************/
+  public Time workForward( Time from, double work )
+  {
+    return workForward( from.milliseconds(), work );
+  }
+
+  public Time workForward( double work )
+  {
+    return workForward( 0, work );
+  }
+
+  public Time workForward( int from, double work )
+  {
+    // work forwards specified number of equivalent work days
+    int ms = (int) ( work * m_workMS / m_work );
+
+    for ( DayWorkPeriod period : m_periods )
+    {
+      if ( from < period.m_start.milliseconds() )
+        from = period.m_start.milliseconds();
+
+      if ( from + ms <= period.m_end.milliseconds() )
+        return Time.fromMilliseconds( from + ms );
+
+      ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
+    }
+
     return null;
+  }
+
+  /************************************* workBackward ************************************/
+  public Time workBackward( Time from, double work )
+  {
+    return workBackward( from.milliseconds(), work );
+  }
+
+  public Time workBackward( double work )
+  {
+    return workBackward( 0, work );
+  }
+
+  public Time workBackward( int from, double work )
+  {
+    // work backwards specified number of equivalent work days
+    int ms = (int) ( work * m_workMS / m_work );
+
+    for ( int p = m_periods.size() - 1; p >= 0; p-- )
+    {
+      DayWorkPeriod period = m_periods.get( p );
+
+      if ( from > period.m_end.milliseconds() )
+        from = period.m_end.milliseconds();
+
+      if ( from - ms >= period.m_start.milliseconds() )
+        return Time.fromMilliseconds( from - ms );
+
+      ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
+    }
+
+    return null;
+  }
+
+  /*************************************** workMilliseconds **************************************/
+  public Time workMilliseconds( Time from, int ms )
+  {
+    // work number of ms from specified time
+    if ( ms > 0 )
+      return millisecondsForward( from, ms );
+
+    if ( ms < 0 )
+      return millisecondsBackward( from, -ms );
+
+    return from;
+  }
+
+  /************************************* millisecondsForward *************************************/
+  public Time millisecondsForward( Time from, int ms )
+  {
+    return millisecondsForward( from.milliseconds(), ms );
+  }
+
+  public Time millisecondsForward( int ms )
+  {
+    return millisecondsForward( 0, ms );
+  }
+
+  public Time millisecondsForward( int from, int ms )
+  {
+    // work forwards specified number of ms
+    for ( DayWorkPeriod period : m_periods )
+    {
+      if ( from < period.m_start.milliseconds() )
+        from = period.m_start.milliseconds();
+
+      if ( from + ms <= period.m_end.milliseconds() )
+        return Time.fromMilliseconds( from + ms );
+
+      ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
+    }
+
+    return null;
+  }
+
+  /************************************* millisecondsBackward ************************************/
+  public Time millisecondsBackward( Time from, int ms )
+  {
+    return millisecondsBackward( from.milliseconds(), ms );
+  }
+
+  public Time millisecondsBackward( int ms )
+  {
+    return millisecondsBackward( 0, ms );
+  }
+
+  public Time millisecondsBackward( int from, int ms )
+  {
+    // work backwards specified number of ms
+    for ( int p = m_periods.size() - 1; p >= 0; p-- )
+    {
+      DayWorkPeriod period = m_periods.get( p );
+
+      if ( from > period.m_end.milliseconds() )
+        from = period.m_end.milliseconds();
+
+      if ( from - ms >= period.m_start.milliseconds() )
+        return Time.fromMilliseconds( from - ms );
+
+      ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
+    }
+
+    return null;
+  }
+
+  /***************************************** milliseconds ****************************************/
+  public int milliseconds()
+  {
+    // return number for milliseconds worked in day-type
+    return m_workMS;
   }
 
 }

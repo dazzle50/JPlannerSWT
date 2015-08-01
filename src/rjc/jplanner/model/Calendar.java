@@ -356,7 +356,7 @@ public class Calendar
     Time newTime = day.workDown( time );
     while ( newTime == null )
     {
-      date = date.addDays( -1 );
+      date = date.plusDays( -1 );
       day = day( date );
 
       if ( day.isWorking() )
@@ -377,7 +377,7 @@ public class Calendar
     Time newTime = day.workUp( time );
     while ( newTime == null )
     {
-      date = date.addDays( 1 );
+      date = date.plusDays( 1 );
       day = day( date );
 
       if ( day.isWorking() )
@@ -413,8 +413,8 @@ public class Calendar
     xsw.writeEndElement(); // XML_CALENDAR
   }
 
-  /***************************************** addTimeSpan *****************************************/
-  public DateTime addTimeSpan( DateTime start, TimeSpan ts )
+  /**************************************** workTimeSpan *****************************************/
+  public DateTime workTimeSpan( DateTime start, TimeSpan ts )
   {
     // if time-span is zero length return original start
     if ( ts.number() == 0.0 )
@@ -422,118 +422,189 @@ public class Calendar
 
     // return date-time moved by TimeSpan
     if ( ts.units() == TimeSpan.UNIT_SECONDS )
-      return addSeconds( start, ts.number() );
+      return workSeconds( start, ts.number() );
 
     if ( ts.units() == TimeSpan.UNIT_MINUTES )
-      return addSeconds( start, ts.number() * 60.0 );
+      return workSeconds( start, ts.number() * 60.0 );
 
     if ( ts.units() == TimeSpan.UNIT_HOURS )
-      return addSeconds( start, ts.number() * 3600.0 );
+      return workSeconds( start, ts.number() * 3600.0 );
 
     if ( ts.units() == TimeSpan.UNIT_DAYS )
-      return addDays( start, ts.number() );
+      return workDays( start, ts.number() );
 
     if ( ts.units() == TimeSpan.UNIT_WEEKS )
-      return addWeeks( start, ts.number() );
+      return workWeeks( start, ts.number() );
 
     if ( ts.units() == TimeSpan.UNIT_MONTHS )
-      return addMonths( start, ts.number() );
+      return workMonths( start, ts.number() );
 
     if ( ts.units() == TimeSpan.UNIT_YEARS )
-      return addYears( start, ts.number() );
+      return workYears( start, ts.number() );
 
     // unknown time-span units - should never happen!
     throw new IllegalArgumentException( ts.toString() );
   }
 
-  /***************************************** addSeconds ******************************************/
-  private DateTime addSeconds( DateTime start, double secs )
+  /**************************************** workSeconds ******************************************/
+  private DateTime workSeconds( DateTime start, double secs )
   {
-    // if secs is positive go forward in time, else go backwards
-    if ( secs > 0 )
+    // return date-time from start by specified number for worked seconds
+    Date date = start.date();
+    Time fromTime = start.time();
+    Day day = day( date );
+    int ms = (int) Math.round( secs * 1000.0 );
+
+    if ( ms > 0 )
     {
-      // use up any remaining working minutes on start date
-      Date date = start.date();
-      Day today = day( date );
-      int toGo = today.millisecondsToGo( start.time() );
-      if ( toGo == secs )
-        return new DateTime( date, today.end() );
-      if ( toGo > secs )
-        return new DateTime( date, today.doMilliseconds( start.time(), (int) ( secs * 1000 ) ) );
+      // milliseconds is positive, so go forwards in time
+      Time time = day.millisecondsForward( fromTime, ms );
 
-      // to go was insufficient so move to next day
-      //date++;
-      secs -= toGo;
+      // if valid time then finished in day
+      if ( time != null )
+        return new DateTime( date, time );
 
-      // repeat forever until no need to move to next day
-      while ( true )
+      // if not valid time, move to next date
+      ms -= day.millisecondsToGo( fromTime );
+      date = date.plusDays( 1 );
+      day = day( date );
+      while ( ms >= day.milliseconds() )
       {
-        // check if found finish date
-        today = day( date );
-        //if ( today->minutes() == mins ) return date*1440u + today->end();
-        //if ( today->minutes() >  mins ) return date*1440u + today->doMins( 0, mins );
-
-        // not finished so move to next day
-        //date++;
-        //mins -= today->minutes();
+        ms -= day.milliseconds();
+        date = date.plusDays( 1 );
+        day = day( date );
       }
+
+      if ( ms == 0 )
+        return new DateTime( date, day.start() );
+      else
+        return new DateTime( date, day.millisecondsForward( ms ) );
     }
     else
     {
-      // work backwards on any minutes done on start date
-      //mins = -mins;
-      //Date  date  = start / 1440u;
-      //Day*  today = day( date );
-      //int done  = today->minsDone( start % 1440u );
-      //if ( done == mins ) return date*1440u + today->start();
-      //if ( done >  mins ) return date*1440u + today->doMins( today->start(), done - mins );
+      // milliseconds is negative, so go backwards in time
+      Time time = day.millisecondsBackward( fromTime, ms );
 
-      // done was insufficient so move to previous day
-      //date--;
-      //mins -= done;
+      // if valid time then finished in day
+      if ( time != null )
+        return new DateTime( date, time );
 
-      // repeat forever until no need to move to previous day
-      while ( true )
+      // if not valid time, move to previous date
+      ms -= day.millisecondsDone( fromTime );
+      date = date.plusDays( -1 );
+      day = day( date );
+      while ( ms >= day.milliseconds() )
       {
-        // check if found finish date
-        //today = day( date );
-        //if ( today->minutes() == mins ) return date*1440u + today->start();
-        //if ( today->minutes() >  mins ) return date*1440u + today->doMins( today->start(), today->minutes() - mins );
-
-        // not finished so move to previous day
-        //date--;
-        //mins -= today->minutes();
+        ms -= day.milliseconds();
+        date = date.plusDays( -1 );
+        day = day( date );
       }
+
+      if ( ms == 0 )
+        return new DateTime( date, day.end() );
+      else
+        return new DateTime( date, day.millisecondsBackward( ms ) );
     }
-
   }
 
-  /******************************************* addDays *******************************************/
-  private DateTime addDays( DateTime start, double number )
+  /****************************************** workDays *******************************************/
+  private DateTime workDays( DateTime start, double work )
   {
-    // TODO Auto-generated method stub
-    return null;
+    // return date-time from start by specified number for work equivalent days
+    Date date = start.date();
+    Time fromTime = start.time();
+    Day day = day( date );
+
+    if ( work > 0 )
+    {
+      // work is positive, so go forwards in time
+      Time time = day.workForward( fromTime, work );
+
+      // if valid time then finished in day
+      if ( time != null )
+        return new DateTime( date, time );
+
+      // if not valid time, move to next date
+      work -= day.workToGo( fromTime );
+      date = date.plusDays( 1 );
+      day = day( date );
+      while ( work >= day.work() )
+      {
+        work -= day.work();
+        date = date.plusDays( 1 );
+        day = day( date );
+      }
+
+      if ( work == 0 )
+        return new DateTime( date, day.start() );
+      else
+        return new DateTime( date, day.workForward( work ) );
+    }
+    else
+    {
+      // work is negative, so go backwards in time
+      Time time = day.workBackward( fromTime, work );
+
+      // if valid time then finished in day
+      if ( time != null )
+        return new DateTime( date, time );
+
+      // if not valid time, move to previous date
+      work -= day.workDone( fromTime );
+      date = date.plusDays( -1 );
+      day = day( date );
+      while ( work >= day.work() )
+      {
+        work -= day.work();
+        date = date.plusDays( -1 );
+        day = day( date );
+      }
+
+      if ( work == 0 )
+        return new DateTime( date, day.end() );
+      else
+        return new DateTime( date, day.workBackward( work ) );
+    }
   }
 
-  /******************************************* addWeeks ******************************************/
-  private DateTime addWeeks( DateTime start, double number )
+  /****************************************** workWeeks ******************************************/
+  private DateTime workWeeks( DateTime start, double weeks )
   {
-    // TODO Auto-generated method stub
-    return null;
+    // return date-time moved by weeks (ignoring non-working days)
+    return start.plusDays( (int) ( 7.0 * weeks ) );
   }
 
-  /****************************************** addMonths ******************************************/
-  private DateTime addMonths( DateTime start, double number )
+  /***************************************** workMonths ******************************************/
+  private DateTime workMonths( DateTime start, double months )
   {
-    // TODO Auto-generated method stub
-    return null;
+    // return date-time moved by months
+    double whole = Math.floor( months );
+    double fraction = months - whole;
+
+    // if no fraction, just add months
+    if ( fraction == 0.0 )
+      return start.plusMonths( (int) whole );
+
+    // if fraction, add months and days
+    start = start.plusMonths( (int) months );
+    int days1 = start.date().epochday();
+    int days2 = start.plusMonths( 1 ).date().epochday();
+    int daysInMonth = days2 - days1;
+    return start.plusDays( (int) ( daysInMonth * fraction ) );
   }
 
-  /******************************************* addYears ******************************************/
-  private DateTime addYears( DateTime start, double number )
+  /****************************************** workYears ******************************************/
+  private DateTime workYears( DateTime start, double years )
   {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    // return date-time moved by years
+    double whole = Math.floor( years );
+    double fraction = years - whole;
 
+    // if no fraction, just add years
+    if ( fraction == 0.0 )
+      return start.plusYears( (int) whole );
+
+    // if fraction, add years and months
+    return workMonths( start.plusYears( (int) whole ), 12.0 * fraction );
+  }
 }

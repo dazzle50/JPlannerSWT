@@ -78,5 +78,5 @@
         <predecessors task="5" preds="4FS+3 d"/>
         <predecessors task="8" preds="7FS-3 d"/>
     </tasks-data>
-    <plan-data title="test0" start="2013-08-08T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test0 - invalid qplanner due to missing qplanner element"/>
+    <plan-data title="test0" start="2013-08-08T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test0 - invalid qplanner due to missing qplanner element"/>
 </not-JPlanner>

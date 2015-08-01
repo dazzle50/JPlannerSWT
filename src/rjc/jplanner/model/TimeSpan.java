@@ -34,7 +34,7 @@ public class TimeSpan
   public static final char   UNIT_WEEKS   = 'w';
   public static final char   UNIT_MONTHS  = 'm';
   public static final char   UNIT_YEARS   = 'y';
-  public static final char   UNIT_DEFAULT = UNIT_DAYS;
+  private static final char  UNIT_DEFAULT = UNIT_DAYS;
 
   public static final String NUMPOINT     = "01234567890.";
   public static final String UNITS        = "SMHdwmy";

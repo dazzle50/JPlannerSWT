@@ -48,6 +48,7 @@ public class CommandSetTaskValue implements IUndoCommand
   {
     // action command
     JPlanner.plan.task( m_taskID ).setData( m_section, m_newValue );
+    JPlanner.plan.schedule();
 
     // update tasks tables
     JPlanner.gui.taskTables().refresh();

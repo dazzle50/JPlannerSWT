@@ -76,7 +76,7 @@ public class GanttPlot extends Composite
   /****************************************** datetime *******************************************/
   private DateTime datetime( int x )
   {
-    return m_start.addMilliseconds( x * m_millisecondsPP );
+    return m_start.plusMilliseconds( x * m_millisecondsPP );
   }
 
   /************************************* shadeNonWorkingDays *************************************/
@@ -122,7 +122,7 @@ public class GanttPlot extends Composite
         xs = -1;
       }
 
-      date = date.addDays( 1 );
+      date = date.plusDays( 1 );
     }
     while ( date.epochday() <= dateEnd.epochday() );
 

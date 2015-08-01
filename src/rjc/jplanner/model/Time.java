@@ -35,8 +35,15 @@ public class Time
   /* ======================================= constructor ======================================= */
   private Time( int milliseconds )
   {
-    // constructor (from pre-validated milliseconds)
+    // constructor (from pre-validated milliseconds) hence *PRIVATE*
     m_milliseconds = milliseconds;
+  }
+
+  /**************************************** constructor ******************************************/
+  public Time( LocalTime localTime )
+  {
+    // return a new Time from a java.time.LocalTime
+    m_milliseconds = (int) ( localTime.toNanoOfDay() / 1_000_000L );
   }
 
   /**************************************** constructor ******************************************/
@@ -119,13 +126,6 @@ public class Time
       throw new IllegalArgumentException( "milliseconds=" + milliseconds );
 
     return new Time( milliseconds );
-  }
-
-  /**************************************** fromLocalTime ****************************************/
-  public static Time fromLocalTime( LocalTime localTime )
-  {
-    // return a new Time from a java.time.LocalTime
-    return new Time( (int) ( localTime.toNanoOfDay() / 1_000_000L ) );
   }
 
   /****************************************** toString *******************************************/

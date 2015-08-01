@@ -45,6 +45,13 @@ public class Date
     m_epochday = (int) LocalDate.of( year, month, day ).toEpochDay();
   }
 
+  /**************************************** constructor ******************************************/
+  public Date( LocalDate localDate )
+  {
+    // return a new Date from LocalDate
+    m_epochday = (int) localDate.toEpochDay();
+  }
+
   /****************************************** epochday *******************************************/
   public int epochday()
   {
@@ -66,13 +73,6 @@ public class Date
   {
     // return a new Date from current system clock
     return new Date( (int) LocalDate.now().toEpochDay() );
-  }
-
-  /**************************************** fromLocalDate ****************************************/
-  public static Date fromLocalDate( LocalDate localDate )
-  {
-    // return a new Date from LocalDate
-    return new Date( (int) localDate.toEpochDay() );
   }
 
   /***************************************** fromString ******************************************/
@@ -105,16 +105,35 @@ public class Date
     return ld.getMonthValue();
   }
 
-  /********************************************* day *********************************************/
-  public int day()
+  /***************************************** dayOfMonth ******************************************/
+  public int dayOfMonth()
   {
     LocalDate ld = LocalDate.ofEpochDay( m_epochday );
     return ld.getDayOfMonth();
   }
 
-  /******************************************* addDays *******************************************/
-  public Date addDays( int days )
+  /****************************************** plusDays *******************************************/
+  public Date plusDays( int days )
   {
     return new Date( m_epochday + days );
   }
+
+  /***************************************** plusWeeks *******************************************/
+  public Date plusWeeks( int weeks )
+  {
+    return new Date( m_epochday + 7 * weeks );
+  }
+
+  /***************************************** plusMonths ******************************************/
+  public Date plusMonths( int months )
+  {
+    return new Date( LocalDate.ofEpochDay( m_epochday ).plusMonths( months ) );
+  }
+
+  /***************************************** plusYears *******************************************/
+  public Date plusYears( int years )
+  {
+    return new Date( LocalDate.ofEpochDay( m_epochday ).plusYears( years ) );
+  }
+
 }

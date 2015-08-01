@@ -85,5 +85,5 @@
         <task id="19"/>
         <task id="20"/>
     </tasks-data>
-    <plan-data title="20 blanks" start="2013-10-21T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes=""/>
+    <plan-data title="20 blanks" start="2013-10-21T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes=""/>
 </JPlanner>

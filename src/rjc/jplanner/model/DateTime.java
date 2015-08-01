@@ -65,8 +65,8 @@ public class DateTime
   public DateTime( LocalDateTime dt )
   {
     // constructor
-    Date date = Date.fromLocalDate( dt.toLocalDate() );
-    Time time = Time.fromLocalTime( dt.toLocalTime() );
+    Date date = new Date( dt.toLocalDate() );
+    Time time = new Time( dt.toLocalTime() );
     m_milliseconds = date.epochday() * MILLISECONDS_IN_DAY + time.milliseconds();
   }
 
@@ -126,10 +126,10 @@ public class DateTime
     return date().month();
   }
 
-  /********************************************* day *********************************************/
-  public int day()
+  /***************************************** dayOfMonth ******************************************/
+  public int dayOfMonth()
   {
-    return date().day();
+    return date().dayOfMonth();
   }
 
   /******************************************** hours ********************************************/
@@ -151,7 +151,7 @@ public class DateTime
   }
 
   /*************************************** addMilliseconds ***************************************/
-  public DateTime addMilliseconds( long ms )
+  public DateTime plusMilliseconds( long ms )
   {
     return new DateTime( m_milliseconds + ms );
   }
@@ -213,49 +213,48 @@ public class DateTime
     throw new IllegalArgumentException( "interval=" + interval );
   }
 
-  /******************************************* addDays *******************************************/
-  public DateTime addDays( int days )
+  /****************************************** plusDays *******************************************/
+  public DateTime plusDays( int days )
   {
     // return new date-time specified days added or subtracted
     return new DateTime( m_milliseconds + days * MILLISECONDS_IN_DAY );
   }
 
-  /****************************************** addMonths ******************************************/
-  public DateTime addMonths( int months )
+  /***************************************** plusMonths ******************************************/
+  public DateTime plusMonths( int months )
   {
     // return new date-time specified months added or subtracted
-    LocalDateTime ldt = LocalDateTime.ofEpochSecond( m_milliseconds / 1000L, (int) ( m_milliseconds % 1000 * 1000000 ),
-        ZoneOffset.UTC );
-    ldt = ldt.plusMonths( months );
-    return new DateTime( ldt );
+    return new DateTime( date().plusMonths( months ), time() );
   }
 
-  /***************************************** addInterval *****************************************/
-  public DateTime addInterval( Interval interval )
+  /***************************************** plusYears *******************************************/
+  public DateTime plusYears( int years )
+  {
+    // return new date-time specified months added or subtracted
+    return new DateTime( date().plusYears( years ), time() );
+  }
+
+  /**************************************** plusInterval *****************************************/
+  public DateTime plusInterval( Interval interval )
   {
     // add one specified interval to date-time
     if ( interval == Interval.YEAR )
-    {
-      Time time = time();
-      Date date = date();
-      Date year = new Date( date.year() + 1, date.month(), date.day() );
-      return new DateTime( year, time );
-    }
+      return plusYears( 1 );
 
     if ( interval == Interval.HALFYEAR )
-      return addMonths( 6 );
+      return plusMonths( 6 );
 
     if ( interval == Interval.QUARTERYEAR )
-      return addMonths( 3 );
+      return plusMonths( 3 );
 
     if ( interval == Interval.MONTH )
-      return addMonths( 1 );
+      return plusMonths( 1 );
 
     if ( interval == Interval.WEEK )
-      return addDays( 7 );
+      return plusDays( 7 );
 
     if ( interval == Interval.DAY )
-      return addDays( 1 );
+      return plusDays( 1 );
 
     throw new IllegalArgumentException( "interval=" + interval );
   }

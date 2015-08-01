@@ -441,17 +441,17 @@ public class Task implements Comparable<Task>
     if ( hasToStart )
     {
       m_start = planCal.workUp( startDueToPredecessors() );
-      m_end = planCal.workDown( planCal.addTimeSpan( m_start, m_duration ) );
+      m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
     }
     else if ( hasToFinish )
     {
       m_end = planCal.workDown( startDueToPredecessors() );
-      m_start = planCal.workUp( planCal.addTimeSpan( m_end, m_duration.minus() ) );
+      m_start = planCal.workUp( planCal.workTimeSpan( m_end, m_duration.minus() ) );
     }
     else
     {
       m_start = planCal.workUp( JPlanner.plan.start() );
-      m_end = planCal.workDown( planCal.addTimeSpan( m_start, m_duration ) );
+      m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
     }
 
     // ensure end is always greater or equal to start

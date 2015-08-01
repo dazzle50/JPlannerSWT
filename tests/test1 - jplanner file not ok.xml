@@ -40,5 +40,5 @@
         <predecessors task="5" preds="4FS+3 d"/>
         <predecessors task="8" preds="7FS-3 d"/>
     </tasks-data>
-    <plan-data title="test1" start="2013-08-08T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test1 - missing calendars hence not ok"/>
+    <plan-data title="test1" start="2013-08-08T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test1 - missing calendars hence not ok"/>
 </JPlanner>

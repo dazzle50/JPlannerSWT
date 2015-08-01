@@ -87,7 +87,7 @@ public class GanttScale extends Composite
   /****************************************** datetime *******************************************/
   private DateTime datetime( int x )
   {
-    return m_start.addMilliseconds( x * m_millisecondsPP );
+    return m_start.plusMilliseconds( x * m_millisecondsPP );
   }
 
   /****************************************** drawScale ******************************************/
@@ -109,7 +109,7 @@ public class GanttScale extends Composite
     // calculate the start & end of first internal
     DateTime dts = datetime( x ).trunc( m_interval );
     int xs = x( dts );
-    DateTime dte = dts.addInterval( m_interval );
+    DateTime dte = dts.plusInterval( m_interval );
     int xe = x( dte );
 
     // draw internal line and label
@@ -122,7 +122,7 @@ public class GanttScale extends Composite
     {
       dts = dte;
       xs = xe;
-      dte = dts.addInterval( m_interval );
+      dte = dts.plusInterval( m_interval );
       xe = x( dte );
 
       gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );

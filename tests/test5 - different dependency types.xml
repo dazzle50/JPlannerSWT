@@ -95,7 +95,7 @@
         <predecessors task="18" preds="19SS"/>
         <predecessors task="20" preds="19SS"/>
     </tasks-data>
-    <plan-data title="test5" start="2013-10-02T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy hh:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test5 - Different dependency types&#10;&#10;Shows 'fs', 'sf' and 'ss' dependencies&#10;&#10;06/11/2013 -r63 FAIL - only 'fs' finish-start dependencies work ok&#10;"/>
+    <plan-data title="test5" start="2013-10-02T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes="QPlanner test5 - Different dependency types&#10;&#10;Shows 'fs', 'sf' and 'ss' dependencies&#10;&#10;06/11/2013 -r63 FAIL - only 'fs' finish-start dependencies work ok&#10;"/>
     <display-data>
         <tasks-gantt start="2013-09-24T18:00" end="2013-10-17T05:59" minspp="51.673" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="562">
             <upper-scale interval="?" format="?"/>

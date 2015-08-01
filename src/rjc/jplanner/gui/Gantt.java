@@ -49,7 +49,7 @@ public class Gantt extends Composite
     setBackground( getBackground() ); // needed for some strange reason for no_redraw_resize to work!
 
     m_start = new DateTime( JPlanner.plan.start().milliseconds() - 300000000L );
-    m_end = m_start.addDays( 100 );
+    m_end = m_start.plusDays( 100 );
     m_millisecondsPP = 3600 * 6000;
 
     GridLayout gridLayout = new GridLayout( 1, false );

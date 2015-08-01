@@ -80,7 +80,7 @@ public class DateTimeEditor extends Composite
   public void setDateTime( rjc.jplanner.model.DateTime dt )
   {
     // set editor widgets to desired date & time (note widget uses months 0-11, but Date uses months 1-12)
-    m_dateWidget.setDate( dt.year(), dt.month() - 1, dt.day() );
+    m_dateWidget.setDate( dt.year(), dt.month() - 1, dt.dayOfMonth() );
     m_timeWidget.setTime( dt.hours(), dt.minutes(), dt.seconds() );
   }
 
