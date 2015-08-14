@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
 
@@ -40,10 +41,10 @@ public class Gantt extends Composite
 
   private GanttScale m_upperScale;
   private GanttScale m_lowerScale;
-  private GanttPlot  m_chart;
+  private GanttPlot  m_plot;
 
   /**************************************** constructor ******************************************/
-  public Gantt( Composite parent )
+  public Gantt( Composite parent, XNatTable table )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
     setBackground( getBackground() ); // needed for some strange reason for no_redraw_resize to work!
@@ -67,9 +68,9 @@ public class Gantt extends Composite
     m_lowerScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
     m_lowerScale.setConfig( m_start, m_millisecondsPP, Interval.WEEK, "dd" );
 
-    m_chart = new GanttPlot( this );
-    m_chart.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
-    m_chart.setConfig( m_start, m_millisecondsPP );
+    m_plot = new GanttPlot( this );
+    m_plot.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    m_plot.setConfig( m_start, m_millisecondsPP, table );
   }
 
   @Override

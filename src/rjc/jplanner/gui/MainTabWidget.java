@@ -81,7 +81,7 @@ public class MainTabWidget extends TabFolder
     ScrolledComposite ganttView = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL );
     ganttView.setExpandHorizontal( true );
     ganttView.setExpandVertical( true );
-    Gantt gantt = new Gantt( ganttView );
+    Gantt gantt = new Gantt( ganttView, tableTasks );
     ganttView.setContent( gantt );
     ganttView.setMinSize( gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
     splitterTasksGantt.preferredLeftChildWidth = 650;

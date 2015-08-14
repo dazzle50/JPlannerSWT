@@ -79,6 +79,7 @@ public class XNatTable extends NatTable
 
   public SelectionLayer      selectionLayer;
   public RowHideShowLayer    rowHideShowLayer;
+  public ViewportLayer       viewport;
 
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
@@ -205,7 +206,7 @@ public class XNatTable extends NatTable
     //selectionLayer = new SelectionLayer( bodyDataLayer );
     rowHideShowLayer = new RowHideShowLayer( bodyDataLayer );
     selectionLayer = new SelectionLayer( rowHideShowLayer );
-    ViewportLayer viewport = new ViewportLayer( selectionLayer );
+    viewport = new ViewportLayer( selectionLayer );
 
     // widths - first is default, then row header, then columns
     for ( int i = 2; i < widths.length; i++ )
@@ -236,13 +237,41 @@ public class XNatTable extends NatTable
     configure();
   }
 
-  /**************************************** configTable ******************************************/
+  /****************************************** hideRow ********************************************/
   public void hideRow( int row )
   {
     // hide table row index
     ArrayList<Integer> rowList = new ArrayList<Integer>();
     rowList.add( row );
     rowHideShowLayer.hideRowIndexes( rowList );
+  }
+
+  /******************************************* rowAt *********************************************/
+  public int rowAt( int y )
+  {
+    // returns the row in which the specified y-coordinate
+    return viewport.getRowIndexByPosition( viewport.getRowPositionByY( y ) );
+  }
+
+  /**************************************** isRowHidden ******************************************/
+  public boolean isRowHidden( int row )
+  {
+    // return true if specified row hidden
+    return rowHideShowLayer.isRowIndexHidden( row );
+  }
+
+  /******************************************** rowY *********************************************/
+  public int rowY( int row )
+  {
+    // return start-y of specified row
+    return viewport.getStartYOfRowPosition( viewport.getRowPositionByIndex( row ) );
+  }
+
+  /****************************************** rowHeight ******************************************/
+  public int rowHeight( int row )
+  {
+    // return height of specified row
+    return viewport.getRowHeightByPosition( viewport.getRowPositionByIndex( row ) );
   }
 
 }

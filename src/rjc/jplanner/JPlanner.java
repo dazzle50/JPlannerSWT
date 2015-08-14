@@ -56,6 +56,7 @@ public class JPlanner
     gui = new MainWindow( display );
     gui.initialise();
     gui.loadPlan( new File( "C:\\Users\\Richard\\EclipseWS\\JPlannerSWT\\tests\\!defaultload.xml" ) );
+    JPlanner.plan.schedule();
     gui.open();
 
     // run the event loop as long as the window is open

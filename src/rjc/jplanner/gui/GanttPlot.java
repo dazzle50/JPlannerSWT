@@ -18,6 +18,10 @@
 
 package rjc.jplanner.gui;
 
+import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
+import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
+import org.eclipse.nebula.widgets.nattable.resize.event.RowResizeEvent;
+import org.eclipse.nebula.widgets.nattable.viewport.event.ScrollEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -25,9 +29,11 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
 /***************** GanttPlot provides a view of the plan tasks and dependencies ******************/
@@ -35,8 +41,9 @@ import rjc.jplanner.model.DateTime;
 
 public class GanttPlot extends Composite
 {
-  private DateTime m_start;
-  private long     m_millisecondsPP;
+  private DateTime  m_start;
+  private long      m_millisecondsPP;
+  private XNatTable m_table;
 
   /**************************************** constructor ******************************************/
   public GanttPlot( Composite parent )
@@ -46,10 +53,12 @@ public class GanttPlot extends Composite
     addPaintListener( new PaintListener()
     {
       @Override
-      public void paintControl( PaintEvent e )
+      public void paintControl( PaintEvent event )
       {
         // update the gantt plot for the specified paint-event
-        shadeNonWorkingDays( e );
+        shadeNonWorkingDays( event );
+        drawTasks( event );
+        drawDependencies( event );
       }
     } );
 
@@ -59,6 +68,31 @@ public class GanttPlot extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /****************************************** setConfig ******************************************/
+  public void setConfig( DateTime start, long msPP, XNatTable table )
+  {
+    // set gantt-plot configuration
+    m_start = start;
+    m_millisecondsPP = msPP;
+    m_table = table;
+
+    // add listener for table scrolling and row height changes
+    m_table.viewport.addLayerListener( new ILayerListener()
+    {
+      @Override
+      public void handleLayerEvent( ILayerEvent event )
+      {
+        // on row resize redraw the plot 
+        if ( event instanceof RowResizeEvent )
+          redraw();
+
+        // on table scroll redraw the plot
+        if ( event instanceof ScrollEvent )
+          redraw();
+      }
+    } );
   }
 
   /********************************************** x **********************************************/
@@ -131,11 +165,57 @@ public class GanttPlot extends Composite
       gc.fillRectangle( xs, y, this.getSize().x, h );
   }
 
-  /****************************************** setConfig ******************************************/
-  public void setConfig( DateTime start, long msPP )
+  /****************************************** drawTasks ******************************************/
+  private void drawTasks( PaintEvent event )
   {
-    // set gantt-plot configuration
-    m_start = start;
-    m_millisecondsPP = msPP;
+    // draw tasks on gantt
+    int x = event.x;
+    int y = event.y;
+    int h = event.height;
+    int w = event.width;
+    GC gc = event.gc;
+
+    // negative first means area to be drawn is below bottom of table, so just return  
+    int first = m_table.rowAt( y );
+    if ( first < 0 )
+      return;
+
+    // loop from first row and draw gantt-data
+    int numTasks = JPlanner.plan.tasksCount();
+    for ( int row = first; row < numTasks; row++ )
+    {
+      // get row start-y and height
+      int ry = m_table.rowY( row );
+      int rh = m_table.rowHeight( row );
+
+      // if task not null, draw task gantt-data
+      Task task = JPlanner.plan.task( row );
+      if ( task.isNull() )
+        continue;
+      task.ganttData().drawTask( gc, ry + rh / 2, m_start, m_millisecondsPP, "TBD" );
+
+      // if beyond area to be drawn, exit loop
+      if ( ry + rh > y + h )
+        break;
+
+      // TODO also draw deadline
+      /***
+      if ( task->deadline() == XDateTime::NULL_DATETIME ) continue;
+      int x = task->ganttData()->x( task->deadline(), m_start, m_minsPP );
+      p->setPen( pen );
+      p->drawLine( x, y-4, x, y+4 );
+      p->drawLine( x-4, y, x, y+4 );
+      p->drawLine( x+4, y, x, y+4 );
+      ***/
+    }
+
   }
+
+  /*************************************** drawDependencies **************************************/
+  private void drawDependencies( PaintEvent event )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
 }

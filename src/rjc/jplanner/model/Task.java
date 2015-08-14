@@ -535,4 +535,11 @@ public class Task implements Comparable<Task>
 
     return start;
   }
+
+  /****************************************** ganttData ******************************************/
+  public GanttData ganttData()
+  {
+    // return gantt-data associated with the task
+    return m_gantt;
+  }
 }
