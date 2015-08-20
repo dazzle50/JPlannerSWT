@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.model.Day.DefaultDayTypes;
 
 /*************************************************************************************************/
@@ -53,14 +54,14 @@ public class Days extends ArrayList<Day>
       xsr.next();
 
       // if reached end of day data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_DAY_DATA ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_DAY_DATA ) )
         return;
 
       // if a day element, construct a day-type from it
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
-          case Day.XML_DAY:
+          case XmlLabels.XML_DAY:
             add( new Day( xsr ) );
             break;
           default:
@@ -75,7 +76,7 @@ public class Days extends ArrayList<Day>
   public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write day-types data to XML stream
-    xsw.writeStartElement( Plan.XML_DAY_DATA );
+    xsw.writeStartElement( XmlLabels.XML_DAY_DATA );
     for ( Day day : this )
       day.saveToXML( xsw );
     xsw.writeEndElement(); // XML_DAY_DATA

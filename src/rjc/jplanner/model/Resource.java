@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 
 /*************************************************************************************************/
 /************************************* Single plan resource **************************************/
@@ -57,21 +58,6 @@ public class Resource
   public static final int     SECTION_COMMENT  = 11;
   public static final int     SECTION_MAX      = 11;
 
-  public static final String  XML_RESOURCE     = "resource";
-  private static final String XML_ID           = "id";
-  private static final String XML_INITIALS     = "initials";
-  private static final String XML_NAME         = "name";
-  private static final String XML_ORG          = "org";
-  private static final String XML_GROUP        = "group";
-  private static final String XML_ROLE         = "role";
-  private static final String XML_ALIAS        = "alias";
-  private static final String XML_START        = "start";
-  private static final String XML_END          = "end";
-  private static final String XML_AVAIL        = "availability";
-  private static final String XML_COST         = "cost";
-  private static final String XML_CALENDAR     = "calendar";
-  private static final String XML_COMMENT      = "comment";
-
   /**************************************** constructor ******************************************/
   public Resource()
   {
@@ -87,42 +73,42 @@ public class Resource
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_ID:
+        case XmlLabels.XML_ID:
           break;
-        case XML_INITIALS:
+        case XmlLabels.XML_INITIALS:
           m_initials = xsr.getAttributeValue( i );
           break;
-        case XML_NAME:
+        case XmlLabels.XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
-        case XML_ORG:
+        case XmlLabels.XML_ORG:
           m_org = xsr.getAttributeValue( i );
           break;
-        case XML_GROUP:
+        case XmlLabels.XML_GROUP:
           m_group = xsr.getAttributeValue( i );
           break;
-        case XML_ROLE:
+        case XmlLabels.XML_ROLE:
           m_role = xsr.getAttributeValue( i );
           break;
-        case XML_ALIAS:
+        case XmlLabels.XML_ALIAS:
           m_alias = xsr.getAttributeValue( i );
           break;
-        case XML_START:
+        case XmlLabels.XML_START:
           m_start = Date.fromString( xsr.getAttributeValue( i ) );
           break;
-        case XML_END:
+        case XmlLabels.XML_END:
           m_end = Date.fromString( xsr.getAttributeValue( i ) );
           break;
-        case XML_AVAIL:
+        case XmlLabels.XML_AVAIL:
           m_availability = Double.parseDouble( xsr.getAttributeValue( i ) );
           break;
-        case XML_COST:
+        case XmlLabels.XML_COST:
           m_cost = Double.parseDouble( xsr.getAttributeValue( i ) );
           break;
-        case XML_CALENDAR:
+        case XmlLabels.XML_CALENDAR:
           m_calendar = JPlanner.plan.calendar( Integer.parseInt( xsr.getAttributeValue( i ) ) );
           break;
-        case XML_COMMENT:
+        case XmlLabels.XML_COMMENT:
           m_comment = xsr.getAttributeValue( i );
           break;
         default:
@@ -278,31 +264,31 @@ public class Resource
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write resource data to xml stream
-    xsw.writeStartElement( XML_RESOURCE );
-    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeStartElement( XmlLabels.XML_RESOURCE );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
 
     if ( !isNull() )
     {
-      xsw.writeAttribute( XML_INITIALS, m_initials );
+      xsw.writeAttribute( XmlLabels.XML_INITIALS, m_initials );
       if ( m_name != null )
-        xsw.writeAttribute( XML_NAME, m_name );
+        xsw.writeAttribute( XmlLabels.XML_NAME, m_name );
       if ( m_org != null )
-        xsw.writeAttribute( XML_ORG, m_org );
+        xsw.writeAttribute( XmlLabels.XML_ORG, m_org );
       if ( m_group != null )
-        xsw.writeAttribute( XML_GROUP, m_group );
+        xsw.writeAttribute( XmlLabels.XML_GROUP, m_group );
       if ( m_role != null )
-        xsw.writeAttribute( XML_ROLE, m_role );
+        xsw.writeAttribute( XmlLabels.XML_ROLE, m_role );
       if ( m_alias != null )
-        xsw.writeAttribute( XML_ALIAS, m_alias );
+        xsw.writeAttribute( XmlLabels.XML_ALIAS, m_alias );
       if ( m_start != null )
-        xsw.writeAttribute( XML_START, m_start.toString() );
+        xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
       if ( m_end != null )
-        xsw.writeAttribute( XML_END, m_end.toString() );
-      xsw.writeAttribute( XML_AVAIL, Double.toString( m_availability ) );
-      xsw.writeAttribute( XML_COST, Double.toString( m_cost ) );
-      xsw.writeAttribute( XML_CALENDAR, Integer.toString( JPlanner.plan.index( m_calendar ) ) );
+        xsw.writeAttribute( XmlLabels.XML_END, m_end.toString() );
+      xsw.writeAttribute( XmlLabels.XML_AVAIL, Double.toString( m_availability ) );
+      xsw.writeAttribute( XmlLabels.XML_COST, Double.toString( m_cost ) );
+      xsw.writeAttribute( XmlLabels.XML_CALENDAR, Integer.toString( JPlanner.plan.index( m_calendar ) ) );
       if ( m_comment != null )
-        xsw.writeAttribute( XML_COMMENT, m_comment );
+        xsw.writeAttribute( XmlLabels.XML_COMMENT, m_comment );
     }
 
     xsw.writeEndElement(); // XML_RESOURCE

@@ -22,6 +22,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
@@ -43,6 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.gui.table.TableRegister;
 import rjc.jplanner.model.Plan;
@@ -71,12 +75,17 @@ public class MainWindow extends Shell
   public Color               COLOR_BLACK;
   public Color               COLOR_WHITE;
   public Color               COLOR_RED;
+  public Color               COLOR_YELLOW;
   public Color               COLOR_GRAY_DARK;
   public Color               COLOR_GRAY_LIGHT;
 
   public Color               COLOR_GANTT_BACKGROUND;
   public Color               COLOR_GANTT_NONWORKING;
   public Color               COLOR_GANTT_DIVIDER;
+  public Color               COLOR_GANTT_TASK_EDGE;
+  public Color               COLOR_GANTT_TASK_FILL;
+  public Color               COLOR_GANTT_SUMMARY;
+  public Color               COLOR_GANTT_MILESTONE;
 
   public Color               COLOR_ERROR;
   public Color               COLOR_NO_ERROR;
@@ -98,11 +107,16 @@ public class MainWindow extends Shell
     COLOR_BLACK = display.getSystemColor( SWT.COLOR_BLACK );
     COLOR_WHITE = display.getSystemColor( SWT.COLOR_WHITE );
     COLOR_RED = display.getSystemColor( SWT.COLOR_RED );
+    COLOR_YELLOW = display.getSystemColor( SWT.COLOR_YELLOW );
     COLOR_GRAY_DARK = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_GRAY_LIGHT = new Color( display, 240, 240, 240 );
     COLOR_GANTT_BACKGROUND = COLOR_WHITE;
     COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
     COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
+    COLOR_GANTT_TASK_EDGE = COLOR_BLACK;
+    COLOR_GANTT_TASK_FILL = COLOR_YELLOW;
+    COLOR_GANTT_SUMMARY = COLOR_BLACK;
+    COLOR_GANTT_MILESTONE = COLOR_BLACK;
     COLOR_ERROR = COLOR_RED;
     COLOR_NO_ERROR = COLOR_BLACK;
     TRANSFORM = new Transform( display );
@@ -793,5 +807,30 @@ public class MainWindow extends Shell
     updateTitles();
     message( "Saved plan to '" + file.getPath() + "'" );
     return true;
+  }
+
+  /************************************* loadXmlDisplayData **************************************/
+  public void loadXmlDisplayData( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML display data
+    while ( xsr.hasNext() )
+    {
+      xsr.next();
+
+      // if reached end of display data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_DISPLAY_DATA ) )
+        return;
+
+      // check for new elements
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+
+          default:
+            JPlanner.trace( "MainWindow.loadXmlDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
+    }
+
   }
 }

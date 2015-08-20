@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.UndoStack;
 
 import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
@@ -42,39 +43,23 @@ import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 public class Plan
 {
-  private String             m_title;                          // plan title as set in properties
-  private DateTime           m_start;                          // plan start date-time as set in properties
-  private Calendar           m_calendar;                       // plan's default calendar
-  private String             m_datetimeFormat;                 // format to display date-times
-  private String             m_dateFormat;                     // format to display dates
-  private String             m_filename;                       // filename when saved or loaded
-  private String             m_fileLocation;                   // file location
-  private String             m_savedBy;                        // who saved last
-  private DateTime           m_savedWhen;                      // when was last saved
-  private String             m_notes;                          // plan notes as on plan tab
+  private String    m_title;         // plan title as set in properties
+  private DateTime  m_start;         // plan start date-time as set in properties
+  private Calendar  m_calendar;      // plan's default calendar
+  private String    m_datetimeFormat; // format to display date-times
+  private String    m_dateFormat;    // format to display dates
+  private String    m_filename;      // filename when saved or loaded
+  private String    m_fileLocation;  // file location
+  private String    m_savedBy;       // who saved last
+  private DateTime  m_savedWhen;     // when was last saved
+  private String    m_notes;         // plan notes as on plan tab
 
-  private UndoStack          m_undostack;                      // undo stack for plan editing
+  private UndoStack m_undostack;     // undo stack for plan editing
 
-  private Tasks              m_tasks;                          // list of plan tasks
-  private Resources          m_resources;                      // list of plan resources
-  private Calendars          m_calendars;                      // list of plan calendars
-  private Days               m_daytypes;                       // list of plan day types
-
-  public static final String XML_JPLANNER  = "JPlanner";
-  public static final String XML_VERSION   = "version";
-  public static final String XML_USER      = "user";
-  public static final String XML_WHEN      = "when";
-  public static final String XML_DAY_DATA  = "days-data";
-  public static final String XML_CAL_DATA  = "calendars-data";
-  public static final String XML_RES_DATA  = "resources-data";
-  public static final String XML_TASK_DATA = "tasks-data";
-  public static final String XML_PLAN_DATA = "plan-data";
-  public static final String XML_TITLE     = "title";
-  public static final String XML_START     = "start";
-  public static final String XML_CALENDAR  = "calendar";
-  public static final String XML_DT_FORMAT = "datetime-format";
-  public static final String XML_D_FORMAT  = "date-format";
-  public static final String XML_NOTES     = "notes";
+  private Tasks     m_tasks;         // list of plan tasks
+  private Resources m_resources;     // list of plan resources
+  private Calendars m_calendars;     // list of plan calendars
+  private Days      m_daytypes;      // list of plan day types
 
   /**************************************** constructor ******************************************/
   public Plan()
@@ -348,12 +333,12 @@ public class Plan
 
       // start XML document
       xsw.writeStartDocument( "UTF-8", "1.0" );
-      xsw.writeStartElement( XML_JPLANNER );
-      xsw.writeAttribute( XML_VERSION, "2015-06" );
+      xsw.writeStartElement( XmlLabels.XML_JPLANNER );
+      xsw.writeAttribute( XmlLabels.XML_VERSION, XmlLabels.VERSION );
       String saveUser = System.getProperty( "user.name" );
-      xsw.writeAttribute( XML_USER, saveUser );
+      xsw.writeAttribute( XmlLabels.XML_USER, saveUser );
       DateTime saveWhen = DateTime.now();
-      xsw.writeAttribute( XML_WHEN, saveWhen.toString() );
+      xsw.writeAttribute( XmlLabels.XML_WHEN, saveWhen.toString() );
 
       // write day, calendar, resource, and task data to XML stream
       m_daytypes.writeXML( xsw );
@@ -362,17 +347,17 @@ public class Plan
       m_tasks.writeXML( xsw );
 
       // write plan data to XML stream
-      xsw.writeEmptyElement( XML_PLAN_DATA );
-      xsw.writeAttribute( XML_TITLE, m_title );
-      xsw.writeAttribute( XML_START, m_start.toString() );
-      xsw.writeAttribute( XML_CALENDAR, Integer.toString( index( m_calendar ) ) );
-      xsw.writeAttribute( XML_DT_FORMAT, m_datetimeFormat );
-      xsw.writeAttribute( XML_D_FORMAT, m_dateFormat );
+      xsw.writeEmptyElement( XmlLabels.XML_PLAN_DATA );
+      xsw.writeAttribute( XmlLabels.XML_TITLE, m_title );
+      xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
+      xsw.writeAttribute( XmlLabels.XML_CALENDAR, Integer.toString( index( m_calendar ) ) );
+      xsw.writeAttribute( XmlLabels.XML_DT_FORMAT, m_datetimeFormat );
+      xsw.writeAttribute( XmlLabels.XML_D_FORMAT, m_dateFormat );
 
       // as java doesn't encode new-lines correctly, write notes attribute manually
       // instead of xsw.writeAttribute( XML_NOTES, m_notes );
       String notes = StringEscapeUtils.escapeXml( m_notes ).replaceAll( "\\n", "&#10;" );
-      notes = " " + XML_NOTES + "=\"" + notes + "\"";
+      notes = " " + XmlLabels.XML_NOTES + "=\"" + notes + "\"";
       fos.write( notes.getBytes( Charset.forName( "UTF-8" ) ) );
 
       // close XML document
@@ -413,23 +398,26 @@ public class Plan
         if ( xsr.isStartElement() )
           switch ( xsr.getLocalName() )
           {
-            case XML_JPLANNER:
+            case XmlLabels.XML_JPLANNER:
               loadXmlJPlanner( xsr );
               break;
-            case XML_DAY_DATA:
+            case XmlLabels.XML_DAY_DATA:
               m_daytypes.loadXML( xsr );
               break;
-            case XML_CAL_DATA:
+            case XmlLabels.XML_CAL_DATA:
               m_calendars.loadXML( xsr );
               break;
-            case XML_RES_DATA:
+            case XmlLabels.XML_RES_DATA:
               m_resources.loadXML( xsr );
               break;
-            case XML_TASK_DATA:
+            case XmlLabels.XML_TASK_DATA:
               m_tasks.loadXML( xsr );
               break;
-            case XML_PLAN_DATA:
+            case XmlLabels.XML_PLAN_DATA:
               loadXmlPlan( xsr );
+              break;
+            case XmlLabels.XML_DISPLAY_DATA:
+              JPlanner.gui.loadXmlDisplayData( xsr );
               break;
             default:
               JPlanner.trace( "loadPlan - unhandled start element '" + xsr.getLocalName() + "'" );
@@ -441,6 +429,8 @@ public class Plan
 
       m_filename = file.getName();
       m_fileLocation = file.getParent();
+      xsr.close();
+      fis.close();
       return true;
     }
     catch ( Exception exception )
@@ -459,22 +449,22 @@ public class Plan
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_TITLE:
+        case XmlLabels.XML_TITLE:
           m_title = xsr.getAttributeValue( i );
           break;
-        case XML_START:
+        case XmlLabels.XML_START:
           m_start = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XML_DT_FORMAT:
+        case XmlLabels.XML_DT_FORMAT:
           m_datetimeFormat = xsr.getAttributeValue( i );
           break;
-        case XML_D_FORMAT:
+        case XmlLabels.XML_D_FORMAT:
           m_dateFormat = xsr.getAttributeValue( i );
           break;
-        case XML_CALENDAR:
+        case XmlLabels.XML_CALENDAR:
           m_calendar = calendar( Integer.parseInt( xsr.getAttributeValue( i ) ) );
           break;
-        case XML_NOTES:
+        case XmlLabels.XML_NOTES:
           m_notes = xsr.getAttributeValue( i );
           break;
         default:
@@ -490,13 +480,13 @@ public class Plan
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_USER:
+        case XmlLabels.XML_USER:
           m_savedBy = xsr.getAttributeValue( i );
           break;
-        case XML_WHEN:
+        case XmlLabels.XML_WHEN:
           m_savedWhen = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XML_VERSION:
+        case XmlLabels.XML_VERSION:
           break;
         default:
           JPlanner.trace( "loadXmlJPlanner - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );

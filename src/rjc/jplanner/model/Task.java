@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 
 /*************************************************************************************************/
 /******************************** Single task within overall plan ********************************/
@@ -30,53 +31,36 @@ import rjc.jplanner.JPlanner;
 
 public class Task implements Comparable<Task>
 {
-  private String              m_title;                          // free text title
-  private TimeSpan            m_duration;                       // duration of task
-  private DateTime            m_start;                          // start date-time of task
-  private DateTime            m_end;                            // end date-time of task
-  private TimeSpan            m_work;                           // work effort for task
-  private Predecessors        m_predecessors;                   // task predecessors
-  private TaskResources       m_resources;                      // resources allocated to task
-  private TaskType            m_type;                           // task type
-  private int                 m_priority;                       // overall task priority (0 to 999)
-  private DateTime            m_deadline;                       // task warning deadline
-  private String              m_cost;                           // calculated cost based on resource use
-  private String              m_comment;                        // free text comment
+  private String          m_title;              // free text title
+  private TimeSpan        m_duration;           // duration of task
+  private DateTime        m_start;              // start date-time of task
+  private DateTime        m_end;                // end date-time of task
+  private TimeSpan        m_work;               // work effort for task
+  private Predecessors    m_predecessors;       // task predecessors
+  private TaskResources   m_resources;          // resources allocated to task
+  private TaskType        m_type;               // task type
+  private int             m_priority;           // overall task priority (0 to 999)
+  private DateTime        m_deadline;           // task warning deadline
+  private String          m_cost;               // calculated cost based on resource use
+  private String          m_comment;            // free text comment
 
-  private int                 m_indent;                         // task indent level, zero for no indent
-  private int                 m_summaryEnd;                     // last sub-task id, or -1 for non-summaries
-  private GanttData           m_gantt;                          // data for gantt bar display
+  private int             m_indent;             // task indent level, zero for no indent
+  private int             m_summaryEnd;         // last sub-task id, or -1 for non-summaries
+  private GanttData       m_gantt;              // data for gantt bar display
 
-  public static final int     SECTION_TITLE    = 0;
-  public static final int     SECTION_DURATION = 1;
-  public static final int     SECTION_START    = 2;
-  public static final int     SECTION_END      = 3;
-  public static final int     SECTION_WORK     = 4;
-  public static final int     SECTION_PRED     = 5;
-  public static final int     SECTION_RES      = 6;
-  public static final int     SECTION_TYPE     = 7;
-  public static final int     SECTION_PRIORITY = 8;
-  public static final int     SECTION_DEADLINE = 9;
-  public static final int     SECTION_COST     = 10;
-  public static final int     SECTION_COMMENT  = 11;
-  public static final int     SECTION_MAX      = 11;
-
-  public static final String  XML_TASK         = "task";
-  public static final String  XML_PREDECESSORS = "predecessors";
-  public static final String  XML_PREDS        = "preds";
-  private static final String XML_ID           = "id";
-  private static final String XML_TITLE        = "title";
-  private static final String XML_DURATION     = "duration";
-  private static final String XML_START        = "start";
-  private static final String XML_END          = "end";
-  private static final String XML_WORK         = "work";
-  private static final String XML_RESOURCES    = "resources";
-  private static final String XML_TYPE         = "type";
-  private static final String XML_PRIORITY     = "priority";
-  private static final String XML_DEADLINE     = "deadline";
-  private static final String XML_COST         = "cost";
-  private static final String XML_COMMENT      = "comment";
-  private static final String XML_INDENT       = "indent";
+  public static final int SECTION_TITLE    = 0;
+  public static final int SECTION_DURATION = 1;
+  public static final int SECTION_START    = 2;
+  public static final int SECTION_END      = 3;
+  public static final int SECTION_WORK     = 4;
+  public static final int SECTION_PRED     = 5;
+  public static final int SECTION_RES      = 6;
+  public static final int SECTION_TYPE     = 7;
+  public static final int SECTION_PRIORITY = 8;
+  public static final int SECTION_DEADLINE = 9;
+  public static final int SECTION_COST     = 10;
+  public static final int SECTION_COMMENT  = 11;
+  public static final int SECTION_MAX      = 11;
 
   /**************************************** constructor ******************************************/
   public Task()
@@ -94,42 +78,42 @@ public class Task implements Comparable<Task>
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_ID:
+        case XmlLabels.XML_ID:
           break;
-        case XML_TITLE:
+        case XmlLabels.XML_TITLE:
           m_title = xsr.getAttributeValue( i );
           break;
-        case XML_DURATION:
+        case XmlLabels.XML_DURATION:
           m_duration = new TimeSpan( xsr.getAttributeValue( i ) );
           break;
-        case XML_START:
+        case XmlLabels.XML_START:
           m_start = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XML_END:
+        case XmlLabels.XML_END:
           m_end = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XML_WORK:
+        case XmlLabels.XML_WORK:
           m_work = new TimeSpan( xsr.getAttributeValue( i ) );
           break;
-        case XML_RESOURCES:
+        case XmlLabels.XML_RESOURCES:
           m_resources = new TaskResources( xsr.getAttributeValue( i ) );
           break;
-        case XML_TYPE:
+        case XmlLabels.XML_TYPE:
           m_type = new TaskType( xsr.getAttributeValue( i ) );
           break;
-        case XML_PRIORITY:
+        case XmlLabels.XML_PRIORITY:
           m_priority = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
-        case XML_DEADLINE:
+        case XmlLabels.XML_DEADLINE:
           m_deadline = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XML_COST:
+        case XmlLabels.XML_COST:
           m_cost = xsr.getAttributeValue( i );
           break;
-        case XML_COMMENT:
+        case XmlLabels.XML_COMMENT:
           m_comment = xsr.getAttributeValue( i );
           break;
-        case XML_INDENT:
+        case XmlLabels.XML_INDENT:
           m_indent = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
         default:
@@ -309,25 +293,25 @@ public class Task implements Comparable<Task>
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write task data to XML stream (except predecessors)
-    xsw.writeStartElement( XML_TASK );
-    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeStartElement( XmlLabels.XML_TASK );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
 
     if ( !isNull() )
     {
-      xsw.writeAttribute( XML_TITLE, m_title );
-      xsw.writeAttribute( XML_DURATION, m_duration.toString() );
-      xsw.writeAttribute( XML_START, m_start.toString() );
-      xsw.writeAttribute( XML_END, m_end.toString() );
-      xsw.writeAttribute( XML_WORK, m_work.toString() );
-      xsw.writeAttribute( XML_RESOURCES, m_resources.toString() );
-      xsw.writeAttribute( XML_TYPE, m_type.toString() );
-      xsw.writeAttribute( XML_PRIORITY, Integer.toString( m_priority ) );
+      xsw.writeAttribute( XmlLabels.XML_TITLE, m_title );
+      xsw.writeAttribute( XmlLabels.XML_DURATION, m_duration.toString() );
+      xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
+      xsw.writeAttribute( XmlLabels.XML_END, m_end.toString() );
+      xsw.writeAttribute( XmlLabels.XML_WORK, m_work.toString() );
+      xsw.writeAttribute( XmlLabels.XML_RESOURCES, m_resources.toString() );
+      xsw.writeAttribute( XmlLabels.XML_TYPE, m_type.toString() );
+      xsw.writeAttribute( XmlLabels.XML_PRIORITY, Integer.toString( m_priority ) );
       if ( m_deadline != null )
-        xsw.writeAttribute( XML_DEADLINE, m_deadline.toString() );
+        xsw.writeAttribute( XmlLabels.XML_DEADLINE, m_deadline.toString() );
       if ( m_cost != null )
-        xsw.writeAttribute( XML_COST, m_cost );
+        xsw.writeAttribute( XmlLabels.XML_COST, m_cost );
       if ( m_comment != null )
-        xsw.writeAttribute( XML_COMMENT, m_comment.toString() );
+        xsw.writeAttribute( XmlLabels.XML_COMMENT, m_comment.toString() );
     }
 
     xsw.writeEndElement(); // XML_TASK

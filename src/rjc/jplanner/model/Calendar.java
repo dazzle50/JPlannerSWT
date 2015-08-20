@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.model.Day.DefaultDayTypes;
 
 /*************************************************************************************************/
@@ -49,15 +50,6 @@ public class Calendar
   public static final int     SECTION_EXCEPTIONS = 2;
   public static final int     SECTION_CYCLE      = 3;
   public static final int     SECTION_NORMAL1    = 4;
-
-  public static final String  XML_CALENDAR       = "calendar";
-  private static final String XML_ID             = "id";
-  private static final String XML_NAME           = "name";
-  private static final String XML_ANCHOR         = "anchor";
-  private static final String XML_NORMAL         = "normal";
-  private static final String XML_DAY            = "day";
-  private static final String XML_EXCEPTION      = "exception";
-  private static final String XML_DATE           = "date";
 
   /**************************************** constructor ******************************************/
   public Calendar()
@@ -148,12 +140,12 @@ public class Calendar
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_ID:
+        case XmlLabels.XML_ID:
           break;
-        case XML_NAME:
+        case XmlLabels.XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
-        case XML_ANCHOR:
+        case XmlLabels.XML_ANCHOR:
           m_cycleAnchor = Date.fromString( xsr.getAttributeValue( i ) );
           break;
         default:
@@ -165,17 +157,17 @@ public class Calendar
     while ( xsr.hasNext() )
     {
       // if reached end of calendar, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_CALENDAR ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_CALENDAR ) )
         return;
 
       // if a normal element, add it to list
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_NORMAL ) )
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XmlLabels.XML_NORMAL ) )
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
           switch ( xsr.getAttributeLocalName( i ) )
           {
-            case XML_ID:
+            case XmlLabels.XML_ID:
               break;
-            case XML_DAY:
+            case XmlLabels.XML_DAY:
               int dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
               m_normal.add( JPlanner.plan.day( dayIndex ) );
               break;
@@ -185,7 +177,7 @@ public class Calendar
           }
 
       // if an exception element, add it to list
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_EXCEPTION ) )
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XmlLabels.XML_EXCEPTION ) )
       {
         Date date = null;
         int dayIndex = -1;
@@ -193,10 +185,10 @@ public class Calendar
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
           switch ( xsr.getAttributeLocalName( i ) )
           {
-            case XML_DATE:
+            case XmlLabels.XML_DATE:
               date = Date.fromString( xsr.getAttributeValue( i ) );
               break;
-            case XML_DAY:
+            case XmlLabels.XML_DAY:
               dayIndex = Integer.parseInt( xsr.getAttributeValue( i ) );
               break;
             default:
@@ -391,23 +383,23 @@ public class Calendar
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write calendar data to XML stream
-    xsw.writeStartElement( XML_CALENDAR );
-    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
-    xsw.writeAttribute( XML_NAME, m_name );
-    xsw.writeAttribute( XML_ANCHOR, m_cycleAnchor.toString() );
+    xsw.writeStartElement( XmlLabels.XML_CALENDAR );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_NAME, m_name );
+    xsw.writeAttribute( XmlLabels.XML_ANCHOR, m_cycleAnchor.toString() );
 
     for ( int p = 0; p < m_normal.size(); p++ )
     {
-      xsw.writeEmptyElement( XML_NORMAL );
-      xsw.writeAttribute( XML_ID, Integer.toString( p ) );
-      xsw.writeAttribute( XML_DAY, Integer.toString( JPlanner.plan.index( m_normal.get( p ) ) ) );
+      xsw.writeEmptyElement( XmlLabels.XML_NORMAL );
+      xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( p ) );
+      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( JPlanner.plan.index( m_normal.get( p ) ) ) );
     }
 
     for ( HashMap.Entry<Date, Day> except : m_exceptions.entrySet() )
     {
-      xsw.writeEmptyElement( XML_EXCEPTION );
-      xsw.writeAttribute( XML_DATE, except.getKey().toString() );
-      xsw.writeAttribute( XML_DAY, Integer.toString( JPlanner.plan.index( except.getValue() ) ) );
+      xsw.writeEmptyElement( XmlLabels.XML_EXCEPTION );
+      xsw.writeAttribute( XmlLabels.XML_DATE, except.getKey().toString() );
+      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( JPlanner.plan.index( except.getValue() ) ) );
     }
 
     xsw.writeEndElement(); // XML_CALENDAR

@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.model.Calendar.DefaultCalendarTypes;
 
 /*************************************************************************************************/
@@ -53,14 +54,14 @@ public class Calendars extends ArrayList<Calendar>
       xsr.next();
 
       // if reached end of calendar data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_CAL_DATA ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_CAL_DATA ) )
         return;
 
       // if a calendar element, construct a calendar from it
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
-          case Calendar.XML_CALENDAR:
+          case XmlLabels.XML_CALENDAR:
             add( new Calendar( xsr ) );
             break;
           default:
@@ -75,7 +76,7 @@ public class Calendars extends ArrayList<Calendar>
   public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write calendars data to XML stream
-    xsw.writeStartElement( Plan.XML_CAL_DATA );
+    xsw.writeStartElement( XmlLabels.XML_CAL_DATA );
     for ( Calendar cal : this )
       cal.saveToXML( xsw );
     xsw.writeEndElement(); // XML_CAL_DATA

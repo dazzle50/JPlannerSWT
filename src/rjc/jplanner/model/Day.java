@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 
 /*************************************************************************************************/
 /***************************** Single day type as used by calendars ******************************/
@@ -48,14 +49,6 @@ public class Day
   public static final int     SECTION_PERIODS = 2;
   public static final int     SECTION_START1  = 3;
   public static final int     SECTION_END1    = 4;
-
-  public static final String  XML_DAY         = "day";
-  private static final String XML_ID          = "id";
-  private static final String XML_NAME        = "name";
-  private static final String XML_WORK        = "work";
-  private static final String XML_PERIOD      = "period";
-  private static final String XML_START       = "start";
-  private static final String XML_END         = "end";
 
   /**************************************** constructor ******************************************/
   public Day()
@@ -119,12 +112,12 @@ public class Day
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XML_ID:
+        case XmlLabels.XML_ID:
           break;
-        case XML_NAME:
+        case XmlLabels.XML_NAME:
           m_name = xsr.getAttributeValue( i );
           break;
-        case XML_WORK:
+        case XmlLabels.XML_WORK:
           m_work = Double.parseDouble( xsr.getAttributeValue( i ) );
           break;
         default:
@@ -136,14 +129,14 @@ public class Day
     while ( xsr.hasNext() )
     {
       // if reached end of day, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XML_DAY ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_DAY ) )
       {
         calcWorkMS();
         return;
       }
 
       // if a work-period element, construct a period from it
-      if ( xsr.isStartElement() && xsr.getLocalName().equals( XML_PERIOD ) )
+      if ( xsr.isStartElement() && xsr.getLocalName().equals( XmlLabels.XML_PERIOD ) )
       {
         Double start = -1.0;
         Double end = -1.0;
@@ -152,13 +145,13 @@ public class Day
         for ( int i = 0; i < xsr.getAttributeCount(); i++ )
           switch ( xsr.getAttributeLocalName( i ) )
           {
-            case XML_ID:
+            case XmlLabels.XML_ID:
               break;
-            case XML_START:
+            case XmlLabels.XML_START:
               time = Time.fromString( xsr.getAttributeValue( i ) );
               start = time.milliseconds() / 3600_000.0;
               break;
-            case XML_END:
+            case XmlLabels.XML_END:
               time = Time.fromString( xsr.getAttributeValue( i ) );
               end = time.milliseconds() / 3600_000.0;
               break;
@@ -355,17 +348,17 @@ public class Day
   public void saveToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write day-type data to XML stream
-    xsw.writeStartElement( XML_DAY );
-    xsw.writeAttribute( XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
-    xsw.writeAttribute( XML_NAME, m_name );
-    xsw.writeAttribute( XML_WORK, Double.toString( m_work ) );
+    xsw.writeStartElement( XmlLabels.XML_DAY );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_NAME, m_name );
+    xsw.writeAttribute( XmlLabels.XML_WORK, Double.toString( m_work ) );
 
     for ( int p = 0; p < m_periods.size(); p++ )
     {
-      xsw.writeEmptyElement( XML_PERIOD );
-      xsw.writeAttribute( XML_ID, Integer.toString( p ) );
-      xsw.writeAttribute( XML_START, m_periods.get( p ).m_start.toString() );
-      xsw.writeAttribute( XML_END, m_periods.get( p ).m_end.toString() );
+      xsw.writeEmptyElement( XmlLabels.XML_PERIOD );
+      xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( p ) );
+      xsw.writeAttribute( XmlLabels.XML_START, m_periods.get( p ).m_start.toString() );
+      xsw.writeAttribute( XmlLabels.XML_END, m_periods.get( p ).m_end.toString() );
     }
 
     xsw.writeEndElement(); // XML_DAY

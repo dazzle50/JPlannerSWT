@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 
 /*************************************************************************************************/
 /************************** Holds the complete list of plan resources ****************************/
@@ -52,14 +53,14 @@ public class Resources extends ArrayList<Resource>
       xsr.next();
 
       // if reached end of resource data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_RES_DATA ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_RES_DATA ) )
         return;
 
       // if a resource element, construct a resource from it
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
-          case Resource.XML_RESOURCE:
+          case XmlLabels.XML_RESOURCE:
             add( new Resource( xsr ) );
             break;
           default:
@@ -74,7 +75,7 @@ public class Resources extends ArrayList<Resource>
   public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write resources data to XML stream
-    xsw.writeStartElement( Plan.XML_RES_DATA );
+    xsw.writeStartElement( XmlLabels.XML_RES_DATA );
     for ( Resource res : this )
       res.saveToXML( xsw );
     xsw.writeEndElement(); // XML_RES_DATA

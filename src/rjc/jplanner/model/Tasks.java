@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 
 /*************************************************************************************************/
 /**************************** Holds the complete list of plan tasks ******************************/
@@ -53,17 +54,17 @@ public class Tasks extends ArrayList<Task>
       xsr.next();
 
       // if reached end of task data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( Plan.XML_TASK_DATA ) )
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_TASK_DATA ) )
         return;
 
       // if element start, load the contents
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
-          case Task.XML_TASK:
+          case XmlLabels.XML_TASK:
             add( new Task( xsr ) );
             break;
-          case Task.XML_PREDECESSORS:
+          case XmlLabels.XML_PREDECESSORS:
             loadPredecessors( xsr );
             break;
           default:
@@ -85,10 +86,10 @@ public class Tasks extends ArrayList<Task>
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case Task.XML_TASK:
+        case XmlLabels.XML_TASK:
           task = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
-        case Task.XML_PREDS:
+        case XmlLabels.XML_PREDS:
           preds = xsr.getAttributeValue( i );
           break;
         default:
@@ -104,7 +105,7 @@ public class Tasks extends ArrayList<Task>
   public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write tasks data to XML stream
-    xsw.writeStartElement( Plan.XML_TASK_DATA );
+    xsw.writeStartElement( XmlLabels.XML_TASK_DATA );
     for ( Task task : this )
       task.saveToXML( xsw );
     xsw.writeEndElement(); // XML_TASK_DATA 
