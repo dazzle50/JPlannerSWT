@@ -18,6 +18,9 @@
 
 package rjc.jplanner.gui;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -25,6 +28,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
@@ -84,5 +88,27 @@ public class Gantt extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /****************************************** writeXML *******************************************/
+  public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write gantt display data to XML stream
+    xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
+    xsw.writeAttribute( XmlLabels.XML_END, m_end.toString() );
+    xsw.writeAttribute( XmlLabels.XML_MSPP, Long.toString( m_millisecondsPP ) );
+    xsw.writeAttribute( XmlLabels.XML_NONWORKING, "???" );
+    xsw.writeAttribute( XmlLabels.XML_CURRENT, "???" );
+    xsw.writeAttribute( XmlLabels.XML_STRETCH, "???" );
+
+    // write upper-scale display data
+    xsw.writeStartElement( XmlLabels.XML_UPPER_SCALE );
+    m_upperScale.writeXML( xsw );
+    xsw.writeEndElement(); // XML_UPPER_SCALE
+
+    // write lower-scale display data
+    xsw.writeStartElement( XmlLabels.XML_LOWER_SCALE );
+    m_lowerScale.writeXML( xsw );
+    xsw.writeEndElement(); // XML_LOWER_SCALE
   }
 }

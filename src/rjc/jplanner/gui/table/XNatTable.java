@@ -20,6 +20,9 @@ package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
@@ -48,6 +51,7 @@ import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.editor.CalendarCellEditor;
 import rjc.jplanner.gui.editor.DayCellEditor;
 import rjc.jplanner.gui.editor.ResourceCellEditor;
@@ -80,6 +84,7 @@ public class XNatTable extends NatTable
   public SelectionLayer      selectionLayer;
   public RowHideShowLayer    rowHideShowLayer;
   public ViewportLayer       viewport;
+  public DataLayer           bodyDataLayer;
 
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
@@ -201,9 +206,8 @@ public class XNatTable extends NatTable
       int[] widths, int chHeight )
   {
     // create body layer stack
-    DataLayer bodyDataLayer = new DataLayer( body, widths[0], 20 );
+    bodyDataLayer = new DataLayer( body, widths[0], 20 );
     bodyDataLayer.setConfigLabelAccumulator( label );
-    //selectionLayer = new SelectionLayer( bodyDataLayer );
     rowHideShowLayer = new RowHideShowLayer( bodyDataLayer );
     selectionLayer = new SelectionLayer( rowHideShowLayer );
     viewport = new ViewportLayer( selectionLayer );
@@ -272,6 +276,41 @@ public class XNatTable extends NatTable
   {
     // return height of specified row
     return viewport.getRowHeightByPosition( viewport.getRowPositionByIndex( row ) );
+  }
+
+  /***************************************** columnWidth *****************************************/
+  private int columnWidth( int col )
+  {
+    // return width of specified column
+    return viewport.getColumnWidthByPosition( viewport.getColumnPositionByIndex( col ) );
+  }
+
+  /****************************************** writeXML *******************************************/
+  public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write column widths
+    xsw.writeStartElement( XmlLabels.XML_COLUMNS );
+    int count = bodyDataLayer.getColumnCount();
+    for ( int col = 0; col < count; col++ )
+    {
+      xsw.writeStartElement( XmlLabels.XML_COLUMN );
+      xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( col ) );
+      xsw.writeAttribute( XmlLabels.XML_WIDTH, Integer.toString( columnWidth( col ) ) );
+      xsw.writeEndElement(); // XML_COLUMN
+    }
+    xsw.writeEndElement(); // XML_COLUMNS
+
+    // write row heights
+    xsw.writeStartElement( XmlLabels.XML_ROWS );
+    count = bodyDataLayer.getRowCount();
+    for ( int row = 0; row < count; row++ )
+    {
+      xsw.writeStartElement( XmlLabels.XML_ROW );
+      xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( row ) );
+      xsw.writeAttribute( XmlLabels.XML_HEIGHT, Integer.toString( rowHeight( row ) ) );
+      xsw.writeEndElement(); // XML_ROW
+    }
+    xsw.writeEndElement(); // XML_ROWS
   }
 
 }

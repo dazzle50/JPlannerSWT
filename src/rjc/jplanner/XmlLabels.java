@@ -24,63 +24,84 @@ package rjc.jplanner;
 
 public class XmlLabels
 {
+  public static final String VERSION             = "1.0";
+  public static final String ENCODING            = "UTF-8";
+
   // 'JPlanner' labels
-  public static final String VERSION          = "2015-08";
-  public static final String XML_JPLANNER     = "JPlanner";
-  public static final String XML_VERSION      = "version";
-  public static final String XML_USER         = "user";
-  public static final String XML_WHEN         = "when";
+  public static final String FORMAT              = "2015-08";
+  public static final String XML_JPLANNER        = "JPlanner";
+  public static final String XML_FORMAT          = "format";
+  public static final String XML_USER            = "user";
+  public static final String XML_WHEN            = "when";
 
   // 'plan' labels
-  public static final String XML_DAY_DATA     = "days-data";
-  public static final String XML_CAL_DATA     = "calendars-data";
-  public static final String XML_RES_DATA     = "resources-data";
-  public static final String XML_TASK_DATA    = "tasks-data";
-  public static final String XML_PLAN_DATA    = "plan-data";
-  public static final String XML_TITLE        = "title";
-  public static final String XML_START        = "start";
-  public static final String XML_DT_FORMAT    = "datetime-format";
-  public static final String XML_D_FORMAT     = "date-format";
-  public static final String XML_NOTES        = "notes";
+  public static final String XML_DAY_DATA        = "days-data";
+  public static final String XML_CAL_DATA        = "calendars-data";
+  public static final String XML_RES_DATA        = "resources-data";
+  public static final String XML_TASK_DATA       = "tasks-data";
+  public static final String XML_PLAN_DATA       = "plan-data";
+  public static final String XML_TITLE           = "title";
+  public static final String XML_START           = "start";
+  public static final String XML_DT_FORMAT       = "datetime-format";
+  public static final String XML_D_FORMAT        = "date-format";
+  public static final String XML_NOTES           = "notes";
 
   // 'calendar' labels
-  public static final String XML_CALENDAR     = "calendar";
-  public static final String XML_ID           = "id";
-  public static final String XML_NAME         = "name";
-  public static final String XML_ANCHOR       = "anchor";
-  public static final String XML_NORMAL       = "normal";
-  public static final String XML_DAY          = "day";
-  public static final String XML_EXCEPTION    = "exception";
-  public static final String XML_DATE         = "date";
+  public static final String XML_CALENDAR        = "calendar";
+  public static final String XML_ID              = "id";
+  public static final String XML_NAME            = "name";
+  public static final String XML_ANCHOR          = "anchor";
+  public static final String XML_NORMAL          = "normal";
+  public static final String XML_DAY             = "day";
+  public static final String XML_EXCEPTION       = "exception";
+  public static final String XML_DATE            = "date";
 
   // 'resource' labels
-  public static final String XML_RESOURCE     = "resource";
-  public static final String XML_INITIALS     = "initials";
-  public static final String XML_ORG          = "org";
-  public static final String XML_GROUP        = "group";
-  public static final String XML_ROLE         = "role";
-  public static final String XML_ALIAS        = "alias";
-  public static final String XML_END          = "end";
-  public static final String XML_AVAIL        = "availability";
-  public static final String XML_COST         = "cost";
-  public static final String XML_COMMENT      = "comment";
+  public static final String XML_RESOURCE        = "resource";
+  public static final String XML_INITIALS        = "initials";
+  public static final String XML_ORG             = "org";
+  public static final String XML_GROUP           = "group";
+  public static final String XML_ROLE            = "role";
+  public static final String XML_ALIAS           = "alias";
+  public static final String XML_END             = "end";
+  public static final String XML_AVAIL           = "availability";
+  public static final String XML_COST            = "cost";
+  public static final String XML_COMMENT         = "comment";
 
   // 'day' labels
-  public static final String XML_WORK         = "work";
-  public static final String XML_PERIOD       = "period";
+  public static final String XML_WORK            = "work";
+  public static final String XML_PERIOD          = "period";
 
   // 'task' labels
-  public static final String XML_TASK         = "task";
-  public static final String XML_PREDECESSORS = "predecessors";
-  public static final String XML_PREDS        = "preds";
-  public static final String XML_DURATION     = "duration";
-  public static final String XML_RESOURCES    = "resources";
-  public static final String XML_TYPE         = "type";
-  public static final String XML_PRIORITY     = "priority";
-  public static final String XML_DEADLINE     = "deadline";
-  public static final String XML_INDENT       = "indent";
+  public static final String XML_TASK            = "task";
+  public static final String XML_PREDECESSORS    = "predecessors";
+  public static final String XML_PREDS           = "preds";
+  public static final String XML_DURATION        = "duration";
+  public static final String XML_RESOURCES       = "resources";
+  public static final String XML_TYPE            = "type";
+  public static final String XML_PRIORITY        = "priority";
+  public static final String XML_DEADLINE        = "deadline";
+  public static final String XML_INDENT          = "indent";
 
   // 'display' labels
-  public static final String XML_DISPLAY_DATA = "display-data";
+  public static final String XML_DISPLAY_DATA    = "display-data";
+  public static final String XML_TASKS_GANTT_TAB = "tasks-gantt";
+  public static final String XML_RESOURCES_TAB   = "resources-tab";
+  public static final String XML_CALENDARS_TAB   = "calendars-tab";
+  public static final String XML_DAYS_TAB        = "days-tab";
+  public static final String XML_COLUMNS         = "columns";
+  public static final String XML_COLUMN          = "column";
+  public static final String XML_ROWS            = "rows";
+  public static final String XML_ROW             = "row";
+  public static final String XML_WIDTH           = "width";
+  public static final String XML_HEIGHT          = "height";
+  public static final String XML_UPPER_SCALE     = "upper-scale";
+  public static final String XML_LOWER_SCALE     = "lower-scale";
+  public static final String XML_INTERVAL        = "interval";
+  public static final String XML_MSPP            = "mspp";
+  public static final String XML_NONWORKING      = "nonworking";
+  public static final String XML_CURRENT         = "current";
+  public static final String XML_STRETCH         = "stretch";
+  public static final String XML_SPLITTER        = "splitter";
 
 }

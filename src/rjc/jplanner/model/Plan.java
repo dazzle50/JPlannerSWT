@@ -21,10 +21,10 @@ package rjc.jplanner.model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -34,8 +34,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.UndoStack;
-
-import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 /*************************************************************************************************/
 /************************** Holds the complete data model for the plan ***************************/
@@ -320,26 +318,22 @@ public class Plan
     m_dateFormat = Dformat;
   }
 
-  /****************************************** savePlan *******************************************/
-  public boolean savePlan( File file )
+  /*************************************** setFileDetails ****************************************/
+  public void setFileDetails( String name, String loc, String user, DateTime when )
   {
-    // attempt to save plan as XML to specified file
+    // set details related to file 
+    m_filename = name;
+    m_fileLocation = loc;
+    m_savedBy = user;
+    m_savedWhen = when;
+  }
+
+  /****************************************** savePlan *******************************************/
+  public boolean savePlan( XMLStreamWriter xsw, FileOutputStream fos )
+  {
+    // save plan to specified XML stream
     try
     {
-      // create XML stream writer
-      XMLOutputFactory xof = XMLOutputFactory.newInstance();
-      FileOutputStream fos = new FileOutputStream( file );
-      XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( fos, "UTF-8" ) );
-
-      // start XML document
-      xsw.writeStartDocument( "UTF-8", "1.0" );
-      xsw.writeStartElement( XmlLabels.XML_JPLANNER );
-      xsw.writeAttribute( XmlLabels.XML_VERSION, XmlLabels.VERSION );
-      String saveUser = System.getProperty( "user.name" );
-      xsw.writeAttribute( XmlLabels.XML_USER, saveUser );
-      DateTime saveWhen = DateTime.now();
-      xsw.writeAttribute( XmlLabels.XML_WHEN, saveWhen.toString() );
-
       // write day, calendar, resource, and task data to XML stream
       m_daytypes.writeXML( xsw );
       m_calendars.writeXML( xsw );
@@ -354,26 +348,15 @@ public class Plan
       xsw.writeAttribute( XmlLabels.XML_DT_FORMAT, m_datetimeFormat );
       xsw.writeAttribute( XmlLabels.XML_D_FORMAT, m_dateFormat );
 
-      // as java doesn't encode new-lines correctly, write notes attribute manually
-      // instead of xsw.writeAttribute( XML_NOTES, m_notes );
+      // because XMLStreamWriter doesn't encode new-lines correctly 
+      // write notes attribute directly instead of xsw.writeAttribute( XML_NOTES, m_notes );
       String notes = StringEscapeUtils.escapeXml( m_notes ).replaceAll( "\\n", "&#10;" );
       notes = " " + XmlLabels.XML_NOTES + "=\"" + notes + "\"";
-      fos.write( notes.getBytes( Charset.forName( "UTF-8" ) ) );
+      fos.write( notes.getBytes( Charset.forName( XmlLabels.ENCODING ) ) );
 
-      // close XML document
-      xsw.writeEndElement(); // XML_JPLANNER
-      xsw.writeEndDocument();
-      xsw.flush();
-      xsw.close();
-      fos.close();
-
-      m_filename = file.getName();
-      m_fileLocation = file.getParent();
-      m_savedBy = saveUser;
-      m_savedWhen = saveWhen;
       return true;
     }
-    catch ( Exception exception )
+    catch ( XMLStreamException | IOException exception )
     {
       // some sort of exception thrown
       exception.printStackTrace();
@@ -433,7 +416,7 @@ public class Plan
       fis.close();
       return true;
     }
-    catch ( Exception exception )
+    catch ( XMLStreamException | IOException exception )
     {
       // some sort of exception thrown
       exception.printStackTrace();
@@ -486,7 +469,7 @@ public class Plan
         case XmlLabels.XML_WHEN:
           m_savedWhen = new DateTime( xsr.getAttributeValue( i ) );
           break;
-        case XmlLabels.XML_VERSION:
+        case XmlLabels.XML_FORMAT:
           break;
         default:
           JPlanner.trace( "loadXmlJPlanner - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );

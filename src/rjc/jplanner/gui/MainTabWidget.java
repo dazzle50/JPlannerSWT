@@ -18,6 +18,9 @@
 
 package rjc.jplanner.gui;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +29,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.table.XNatTable;
 
 /*************************************************************************************************/
@@ -37,6 +41,12 @@ public class MainTabWidget extends TabFolder
   private PlanProperties m_planProperties;
   private PlanNotes      m_planNotes;
   private TabItem        m_tabTasks;
+  private Gantt          m_gantt;
+  XSashForm              m_splitterTasksGantt;
+  private XNatTable      m_tasksTable;
+  private XNatTable      m_resourcesTable;
+  private XNatTable      m_calendarsTable;
+  private XNatTable      m_daysTable;
 
   /**************************************** constructor ******************************************/
   public MainTabWidget( Composite parent, boolean showPlanTab )
@@ -72,39 +82,39 @@ public class MainTabWidget extends TabFolder
     m_tabTasks = new TabItem( this, SWT.NONE );
     m_tabTasks.setText( "Tasks && Gantt" );
 
-    XSashForm splitterTasksGantt = new XSashForm( this, SWT.SMOOTH );
-    m_tabTasks.setControl( splitterTasksGantt );
+    m_splitterTasksGantt = new XSashForm( this, SWT.SMOOTH );
+    m_tabTasks.setControl( m_splitterTasksGantt );
 
-    XNatTable tableTasks = new XNatTable( splitterTasksGantt, XNatTable.TableType.TASK );
-    tableTasks.hideRow( 0 );
+    m_tasksTable = new XNatTable( m_splitterTasksGantt, XNatTable.TableType.TASK );
+    m_tasksTable.hideRow( 0 );
 
-    ScrolledComposite ganttView = new ScrolledComposite( splitterTasksGantt, SWT.H_SCROLL );
+    ScrolledComposite ganttView = new ScrolledComposite( m_splitterTasksGantt, SWT.H_SCROLL );
     ganttView.setExpandHorizontal( true );
     ganttView.setExpandVertical( true );
-    Gantt gantt = new Gantt( ganttView, tableTasks );
-    ganttView.setContent( gantt );
-    ganttView.setMinSize( gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
-    splitterTasksGantt.preferredLeftChildWidth = 650;
-    splitterTasksGantt.monitor( tableTasks, ganttView );
+    m_gantt = new Gantt( ganttView, m_tasksTable );
+    ganttView.setContent( m_gantt );
+    ganttView.setMinSize( m_gantt.computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+    m_splitterTasksGantt.preferredLeftChildWidth = 650;
+    m_splitterTasksGantt.monitor( m_tasksTable, ganttView );
 
     // Resources tab
     TabItem tabResources = new TabItem( this, SWT.NONE );
     tabResources.setText( "Resources" );
-    XNatTable tableResources = new XNatTable( this, XNatTable.TableType.RESOURCE );
-    tableResources.hideRow( 0 );
-    tabResources.setControl( tableResources );
+    m_resourcesTable = new XNatTable( this, XNatTable.TableType.RESOURCE );
+    m_resourcesTable.hideRow( 0 );
+    tabResources.setControl( m_resourcesTable );
 
     // Calendars tab
     TabItem tabCalendars = new TabItem( this, SWT.NONE );
     tabCalendars.setText( "Calendars" );
-    XNatTable tableCalendars = new XNatTable( this, XNatTable.TableType.CALENDAR );
-    tabCalendars.setControl( tableCalendars );
+    m_calendarsTable = new XNatTable( this, XNatTable.TableType.CALENDAR );
+    tabCalendars.setControl( m_calendarsTable );
 
     // Days-type tab
     TabItem tabDays = new TabItem( this, SWT.NONE );
     tabDays.setText( "Days" );
-    XNatTable tableDays = new XNatTable( this, XNatTable.TableType.DAY );
-    tabDays.setControl( tableDays );
+    m_daysTable = new XNatTable( this, XNatTable.TableType.DAY );
+    tabDays.setControl( m_daysTable );
 
     // listener to detect when selected tab changed
     addListener( SWT.Selection, new Listener()
@@ -140,6 +150,48 @@ public class MainTabWidget extends TabFolder
   public TabItem tasksTab()
   {
     return m_tabTasks;
+  }
+
+  /************************************* saveXmlDisplayData **************************************/
+  public boolean saveXmlDisplayData( XMLStreamWriter xsw )
+  {
+    // write display data to XML stream
+    try
+    {
+      xsw.writeStartElement( XmlLabels.XML_DISPLAY_DATA );
+
+      // write tasks-gantt display data
+      xsw.writeStartElement( XmlLabels.XML_TASKS_GANTT_TAB );
+      xsw.writeAttribute( XmlLabels.XML_SPLITTER, Integer.toString( m_splitterTasksGantt.preferredLeftChildWidth ) );
+      m_gantt.writeXML( xsw );
+      m_tasksTable.writeXML( xsw );
+      xsw.writeEndElement(); // XML_TASKS_GANTT_TAB
+
+      // write resources display data
+      xsw.writeStartElement( XmlLabels.XML_RESOURCES_TAB );
+      m_resourcesTable.writeXML( xsw );
+      xsw.writeEndElement(); // XML_RESOURCES_TAB
+
+      // write calendars display data
+      xsw.writeStartElement( XmlLabels.XML_CALENDARS_TAB );
+      m_calendarsTable.writeXML( xsw );
+      xsw.writeEndElement(); // XML_CALENDARS_TAB
+
+      // write day-types display data
+      xsw.writeStartElement( XmlLabels.XML_DAYS_TAB );
+      m_daysTable.writeXML( xsw );
+      xsw.writeEndElement(); // XML_DAYS_TAB
+
+      xsw.writeEndElement(); // XML_DISPLAY_DATA
+    }
+    catch ( XMLStreamException exception )
+    {
+      // some sort of exception thrown
+      exception.printStackTrace();
+      return false;
+    }
+
+    return true;
   }
 
 }

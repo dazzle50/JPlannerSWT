@@ -108,6 +108,11 @@ public class Tasks extends ArrayList<Task>
     xsw.writeStartElement( XmlLabels.XML_TASK_DATA );
     for ( Task task : this )
       task.saveToXML( xsw );
+
+    // write predecessors data to XML stream
+    for ( Task task : this )
+      task.savePredecessorToXML( xsw );
+
     xsw.writeEndElement(); // XML_TASK_DATA 
   }
 

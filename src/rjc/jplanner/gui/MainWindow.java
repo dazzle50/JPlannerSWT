@@ -19,11 +19,15 @@
 package rjc.jplanner.gui;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -49,7 +53,10 @@ import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.gui.table.TableRegister;
+import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
+
+import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -794,10 +801,55 @@ public class MainWindow extends Shell
       return false;
     }
 
-    // save plan to file
-    if ( !JPlanner.plan.savePlan( file ) )
+    // create XML stream writer to temporary file
+    try
     {
-      message( "Failed to save plan to '" + file.getPath() + "'" );
+      File tempFile = tempFile( file );
+      XMLOutputFactory xof = XMLOutputFactory.newInstance();
+      FileOutputStream fos = new FileOutputStream( tempFile );
+      XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( fos, XmlLabels.ENCODING ) );
+
+      // start XML document
+      xsw.writeStartDocument( XmlLabels.ENCODING, XmlLabels.VERSION );
+      xsw.writeStartElement( XmlLabels.XML_JPLANNER );
+      xsw.writeAttribute( XmlLabels.XML_FORMAT, XmlLabels.FORMAT );
+      String saveUser = System.getProperty( "user.name" );
+      xsw.writeAttribute( XmlLabels.XML_USER, saveUser );
+      DateTime saveWhen = DateTime.now();
+      xsw.writeAttribute( XmlLabels.XML_WHEN, saveWhen.toString() );
+
+      // save plan data to stream
+      if ( !JPlanner.plan.savePlan( xsw, fos ) )
+      {
+        message( "Failed to save plan to '" + file.getPath() + "'" );
+        return false;
+      }
+
+      // save display data to stream
+      if ( !m_mainTabWidget.saveXmlDisplayData( xsw ) )
+      {
+        message( "Failed to save display data to '" + file.getPath() + "'" );
+        return false;
+      }
+
+      // close XML document
+      xsw.writeEndElement(); // XML_JPLANNER
+      xsw.writeEndDocument();
+      xsw.flush();
+      xsw.close();
+      fos.close();
+
+      // rename files, and update plan file details
+      File backupFile = new File( file.getAbsolutePath() + "~" );
+      backupFile.delete();
+      file.renameTo( backupFile );
+      tempFile.renameTo( file );
+      JPlanner.plan.setFileDetails( file.getName(), file.getParent(), saveUser, saveWhen );
+    }
+    catch ( XMLStreamException | IOException exception )
+    {
+      // some sort of exception thrown
+      exception.printStackTrace();
       return false;
     }
 
@@ -807,6 +859,21 @@ public class MainWindow extends Shell
     updateTitles();
     message( "Saved plan to '" + file.getPath() + "'" );
     return true;
+  }
+
+  /**************************************** tempFileName *****************************************/
+  private File tempFile( File file )
+  {
+    // return temporary file name based on given file
+    String path = file.getParent();
+    String name = file.getName();
+    int last = name.lastIndexOf( '.' );
+    if ( last >= 0 )
+      name = name.substring( 0, last ) + DateTime.now().milliseconds() + name.substring( last, name.length() );
+    else
+      name += DateTime.now();
+
+    return new File( path + file.separator + name );
   }
 
   /************************************* loadXmlDisplayData **************************************/

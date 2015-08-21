@@ -317,6 +317,21 @@ public class Task implements Comparable<Task>
     xsw.writeEndElement(); // XML_TASK
   }
 
+  /************************************ savePredecessorToXML *************************************/
+  public void savePredecessorToXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write task predecessor data to XML stream
+    String preds = m_predecessors.toString();
+
+    if ( preds.length() > 0 )
+    {
+      xsw.writeStartElement( XmlLabels.XML_PREDECESSORS );
+      xsw.writeAttribute( XmlLabels.XML_TASK, Integer.toString( JPlanner.plan.index( this ) ) );
+      xsw.writeAttribute( XmlLabels.XML_PREDS, preds );
+      xsw.writeEndElement(); // XML_PREDECESSORS
+    }
+  }
+
   /****************************************** compareTo ******************************************/
   @Override
   public int compareTo( Task other )
@@ -526,4 +541,5 @@ public class Task implements Comparable<Task>
     // return gantt-data associated with the task
     return m_gantt;
   }
+
 }

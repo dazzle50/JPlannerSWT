@@ -18,6 +18,9 @@
 
 package rjc.jplanner.gui;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -26,6 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.XmlLabels;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
@@ -168,5 +172,13 @@ public class GanttScale extends Composite
     m_millisecondsPP = msPP;
     m_interval = interval;
     m_format = format;
+  }
+
+  /****************************************** writeXML *******************************************/
+  public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
+  {
+    // write gantt-scale display data to XML stream
+    xsw.writeAttribute( XmlLabels.XML_INTERVAL, m_interval.toString() );
+    xsw.writeAttribute( XmlLabels.XML_FORMAT, m_format );
   }
 }
