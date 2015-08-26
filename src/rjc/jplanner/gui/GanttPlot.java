@@ -71,11 +71,9 @@ public class GanttPlot extends Composite
   }
 
   /****************************************** setConfig ******************************************/
-  public void setConfig( DateTime start, long msPP, XNatTable table )
+  public void setTable( XNatTable table )
   {
-    // set gantt-plot configuration
-    m_start = start;
-    m_millisecondsPP = msPP;
+    // set gantt-plot associated table
     m_table = table;
 
     // add listener for table scrolling and row height changes
@@ -93,6 +91,18 @@ public class GanttPlot extends Composite
           redraw();
       }
     } );
+  }
+
+  /****************************************** setStart *******************************************/
+  public void setStart( DateTime start )
+  {
+    m_start = start;
+  }
+
+  /****************************************** setMsPP ********************************************/
+  public void setMsPP( long mspp )
+  {
+    m_millisecondsPP = mspp;
   }
 
   /********************************************** x **********************************************/

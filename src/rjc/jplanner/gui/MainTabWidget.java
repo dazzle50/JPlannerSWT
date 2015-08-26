@@ -42,7 +42,7 @@ public class MainTabWidget extends TabFolder
   private PlanNotes      m_planNotes;
   private TabItem        m_tabTasks;
   private Gantt          m_gantt;
-  XSashForm              m_splitterTasksGantt;
+  private XSashForm      m_splitterTasksGantt;
   private XNatTable      m_tasksTable;
   private XNatTable      m_resourcesTable;
   private XNatTable      m_calendarsTable;
@@ -150,6 +150,20 @@ public class MainTabWidget extends TabFolder
   public TabItem tasksTab()
   {
     return m_tabTasks;
+  }
+
+  /******************************************** gantt ********************************************/
+  public Gantt gantt()
+  {
+    return m_gantt;
+  }
+
+  /************************************ setTasksGanttSplitter ************************************/
+  public void setTasksGanttSplitter( int pos )
+  {
+    // set tasks-gantt splitter preferred position
+    m_splitterTasksGantt.preferredLeftChildWidth = pos;
+    m_splitterTasksGantt.setWeights();
   }
 
   /************************************* saveXmlDisplayData **************************************/

@@ -351,6 +351,7 @@ public class Plan
       // because XMLStreamWriter doesn't encode new-lines correctly 
       // write notes attribute directly instead of xsw.writeAttribute( XML_NOTES, m_notes );
       String notes = StringEscapeUtils.escapeXml( m_notes ).replaceAll( "\\n", "&#10;" );
+      notes = notes.replaceAll( "\\r", "" );
       notes = " " + XmlLabels.XML_NOTES + "=\"" + notes + "\"";
       fos.write( notes.getBytes( Charset.forName( XmlLabels.ENCODING ) ) );
 

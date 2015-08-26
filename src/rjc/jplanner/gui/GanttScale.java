@@ -165,13 +165,23 @@ public class GanttScale extends Composite
   }
 
   /****************************************** setConfig ******************************************/
-  public void setConfig( DateTime start, long msPP, Interval interval, String format )
+  public void setInterval( Interval interval, String format )
   {
     // set gantt-scale configuration
-    m_start = start;
-    m_millisecondsPP = msPP;
     m_interval = interval;
     m_format = format;
+  }
+
+  /****************************************** setStart *******************************************/
+  public void setStart( DateTime start )
+  {
+    m_start = start;
+  }
+
+  /****************************************** setMsPP ********************************************/
+  public void setMsPP( long mspp )
+  {
+    m_millisecondsPP = mspp;
   }
 
   /****************************************** writeXML *******************************************/
@@ -181,4 +191,5 @@ public class GanttScale extends Composite
     xsw.writeAttribute( XmlLabels.XML_INTERVAL, m_interval.toString() );
     xsw.writeAttribute( XmlLabels.XML_FORMAT, m_format );
   }
+
 }

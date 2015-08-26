@@ -38,7 +38,6 @@ public class XSashForm extends SashForm
     super( parent, style );
 
     // add listener for when sashform resized to left child to preferred width
-    XSashForm form = this;
     addControlListener( new ControlListener()
     {
       @Override
@@ -50,18 +49,25 @@ public class XSashForm extends SashForm
       @Override
       public void controlResized( ControlEvent e )
       {
-        // when sashform resize re-calc weights so left child has preferred width
-        int width = form.getSize().x - 2;
-        int[] weights = new int[2];
-        weights[0] = preferredLeftChildWidth;
-        weights[1] = width - preferredLeftChildWidth;
-        if ( weights[1] < 0 )
-          weights[1] = 0;
-
-        form.setWeights( weights );
+        // when sashform resized re-calc weights so left child has preferred width
+        setWeights();
       }
     } );
 
+  }
+
+  /***************************************** setWeights ******************************************/
+  public void setWeights()
+  {
+    // calculate weights so left child has preferred width
+    int width = getSize().x - 2;
+    int[] weights = new int[2];
+    weights[0] = preferredLeftChildWidth;
+    weights[1] = width - preferredLeftChildWidth;
+    if ( weights[1] < 0 )
+      weights[1] = 0;
+
+    setWeights( weights );
   }
 
   /****************************************** monitor ********************************************/

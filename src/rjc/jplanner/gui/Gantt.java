@@ -22,6 +22,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -51,11 +52,9 @@ public class Gantt extends Composite
   public Gantt( Composite parent, XNatTable table )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
-    setBackground( getBackground() ); // needed for some strange reason for no_redraw_resize to work!
 
-    m_start = new DateTime( JPlanner.plan.start().milliseconds() - 300000000L );
-    m_end = m_start.plusDays( 100 );
-    m_millisecondsPP = 3600 * 6000;
+    // needed for some strange reason for no_redraw_resize to work!
+    setBackground( getBackground() );
 
     GridLayout gridLayout = new GridLayout( 1, false );
     gridLayout.verticalSpacing = 0;
@@ -66,15 +65,18 @@ public class Gantt extends Composite
 
     m_upperScale = new GanttScale( this );
     m_upperScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-    m_upperScale.setConfig( m_start, m_millisecondsPP, Interval.MONTH, "MMM-YYYY" );
+    m_upperScale.setInterval( Interval.MONTH, "MMM-YYYY" );
 
     m_lowerScale = new GanttScale( this );
     m_lowerScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-    m_lowerScale.setConfig( m_start, m_millisecondsPP, Interval.WEEK, "dd" );
+    m_lowerScale.setInterval( Interval.WEEK, "dd" );
 
     m_plot = new GanttPlot( this );
     m_plot.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
-    m_plot.setConfig( m_start, m_millisecondsPP, table );
+    m_plot.setTable( table );
+
+    // set default gantt start, end, and milliseconds-per-pixel
+    setDefault();
   }
 
   @Override
@@ -111,4 +113,60 @@ public class Gantt extends Composite
     m_lowerScale.writeXML( xsw );
     xsw.writeEndElement(); // XML_LOWER_SCALE
   }
+
+  /***************************************** setDefault ******************************************/
+  public void setDefault()
+  {
+    // set gantt to default start/end/milliseconds-per-pixel and trigger redraw
+    setStart( new DateTime( JPlanner.plan.start().milliseconds() - 300000000L ) );
+    setEnd( m_start.plusDays( 100 ) );
+    setMsPP( 3600 * 6000 );
+    updateGantt();
+  }
+
+  /****************************************** setStart *******************************************/
+  public void setStart( DateTime start )
+  {
+    // set start for gantt and scale/plot components
+    m_start = start;
+    m_upperScale.setStart( start );
+    m_lowerScale.setStart( start );
+    m_plot.setStart( start );
+  }
+
+  /******************************************* setEnd ********************************************/
+  public void setEnd( DateTime end )
+  {
+    // set end for gantt, scale/plot components don't have end
+    m_end = end;
+  }
+
+  /******************************************* setMsPP *******************************************/
+  public void setMsPP( long mspp )
+  {
+    // set milliseconds-per-pixel for gantt and scale/plot components
+    m_millisecondsPP = mspp;
+    m_upperScale.setMsPP( mspp );
+    m_lowerScale.setMsPP( mspp );
+    m_plot.setMsPP( mspp );
+  }
+
+  /***************************************** setConfig *******************************************/
+  public void setConfig( Gantt other )
+  {
+    // set this gantt to same config as other gantt
+    setStart( other.m_start );
+    setEnd( other.m_end );
+    setMsPP( other.m_millisecondsPP );
+  }
+
+  /**************************************** updateGantt ******************************************/
+  public void updateGantt()
+  {
+    // to force redraw/update of scrolling gantt, reset the parent scrolled-composite content
+    ScrolledComposite sc = (ScrolledComposite) getParent();
+    sc.setContent( this );
+    sc.setMinSize( computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+  }
+
 }

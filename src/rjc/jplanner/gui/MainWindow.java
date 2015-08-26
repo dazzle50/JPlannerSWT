@@ -64,43 +64,44 @@ import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 public class MainWindow extends Shell
 {
-  private MainTabWidget      m_mainTabWidget;       // MainTabWidget associated with MainWindow
-  private ArrayList<Shell>   m_windows;             // list of windows including this one
-  private Text               m_statusBar;
-  private MenuListener       m_menuListener;
-  private MenuItem           m_menuTask;
-  private TableRegister      m_taskTables;          // register of tables showing tasks
-  private TableRegister      m_resourceTables;      // register of tables showing resources
-  private TableRegister      m_calendarTables;      // register of tables showing calendars
-  private TableRegister      m_dayTables;           // register of tables showing day-types
+  private MainTabWidget            m_mainTabWidget;       // MainTabWidget associated with MainWindow
+  private ArrayList<Shell>         m_windows;             // list of windows including this one
+  private ArrayList<MainTabWidget> m_tabWidgets;          // list of MainTabWidget including one in MainWindow
+  private Text                     m_statusBar;
+  private MenuListener             m_menuListener;
+  private MenuItem                 m_menuTask;
+  private TableRegister            m_taskTables;          // register of tables showing tasks
+  private TableRegister            m_resourceTables;      // register of tables showing resources
+  private TableRegister            m_calendarTables;      // register of tables showing calendars
+  private TableRegister            m_dayTables;           // register of tables showing day-types
 
-  public UndoStackWindow     undoWindow;            // window to show plan undo-stack
-  public MenuItem            actionUndoStackView;   // action to show plan undo-stack window
-  public MenuItem            actionUndo;
-  public MenuItem            actionRedo;
+  public UndoStackWindow           undoWindow;            // window to show plan undo-stack
+  public MenuItem                  actionUndoStackView;   // action to show plan undo-stack window
+  public MenuItem                  actionUndo;
+  public MenuItem                  actionRedo;
 
-  public Color               COLOR_BLACK;
-  public Color               COLOR_WHITE;
-  public Color               COLOR_RED;
-  public Color               COLOR_YELLOW;
-  public Color               COLOR_GRAY_DARK;
-  public Color               COLOR_GRAY_LIGHT;
+  public Color                     COLOR_BLACK;
+  public Color                     COLOR_WHITE;
+  public Color                     COLOR_RED;
+  public Color                     COLOR_YELLOW;
+  public Color                     COLOR_GRAY_DARK;
+  public Color                     COLOR_GRAY_LIGHT;
 
-  public Color               COLOR_GANTT_BACKGROUND;
-  public Color               COLOR_GANTT_NONWORKING;
-  public Color               COLOR_GANTT_DIVIDER;
-  public Color               COLOR_GANTT_TASK_EDGE;
-  public Color               COLOR_GANTT_TASK_FILL;
-  public Color               COLOR_GANTT_SUMMARY;
-  public Color               COLOR_GANTT_MILESTONE;
+  public Color                     COLOR_GANTT_BACKGROUND;
+  public Color                     COLOR_GANTT_NONWORKING;
+  public Color                     COLOR_GANTT_DIVIDER;
+  public Color                     COLOR_GANTT_TASK_EDGE;
+  public Color                     COLOR_GANTT_TASK_FILL;
+  public Color                     COLOR_GANTT_SUMMARY;
+  public Color                     COLOR_GANTT_MILESTONE;
 
-  public Color               COLOR_ERROR;
-  public Color               COLOR_NO_ERROR;
+  public Color                     COLOR_ERROR;
+  public Color                     COLOR_NO_ERROR;
 
-  public Transform           TRANSFORM;
-  public int                 GANTTSCALE_HEIGHT = 15;
+  public Transform                 TRANSFORM;
+  public int                       GANTTSCALE_HEIGHT = 15;
 
-  public XAbstractCellEditor m_cellEditorInProgress;
+  public XAbstractCellEditor       m_cellEditorInProgress;
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -194,6 +195,8 @@ public class MainWindow extends Shell
     // add main tab widget
     m_mainTabWidget = new MainTabWidget( this, true );
     m_mainTabWidget.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
+    m_tabWidgets = new ArrayList<MainTabWidget>();
+    m_tabWidgets.add( m_mainTabWidget );
 
     // listener to detect when selected tab changed
     m_mainTabWidget.addListener( SWT.Selection, new Listener()
@@ -552,7 +555,10 @@ public class MainWindow extends Shell
         Shell newWindow = new Shell( MainWindow.this.getDisplay(), SWT.SHELL_TRIM );
         newWindow.setSize( 700, 400 );
         newWindow.setLayout( new FillLayout( SWT.FILL ) );
-        new MainTabWidget( newWindow, false );
+        MainTabWidget newTabWidget = new MainTabWidget( newWindow, false );
+        newTabWidget.gantt().setConfig( m_tabWidgets.get( 0 ).gantt() );
+        newTabWidget.setTasksGanttSplitter( 350 );
+        m_tabWidgets.add( newTabWidget );
         newWindow.open();
 
         m_windows.add( newWindow );
@@ -676,6 +682,10 @@ public class MainWindow extends Shell
     taskTables().refresh();
     updateTitles();
     message( "New plan" );
+
+    // ensure all gantts are updated to reflect any display-data changes
+    for ( MainTabWidget tabs : m_tabWidgets )
+      tabs.gantt().setDefault();
   }
 
   /****************************************** loadPlan *******************************************/
@@ -760,6 +770,7 @@ public class MainWindow extends Shell
     taskTables().refresh();
     updateTitles();
     message( "Successfully loaded '" + file.getPath() + "'" );
+    JPlanner.plan.schedule();
     return true;
   }
 
@@ -873,7 +884,7 @@ public class MainWindow extends Shell
     else
       name += DateTime.now();
 
-    return new File( path + file.separator + name );
+    return new File( path + File.separator + name );
   }
 
   /************************************* loadXmlDisplayData **************************************/
@@ -892,7 +903,18 @@ public class MainWindow extends Shell
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
-
+          case XmlLabels.XML_TASKS_GANTT_TAB:
+            loadXmlTasksGanttDisplayData( xsr );
+            break;
+          case XmlLabels.XML_RESOURCES_TAB:
+            loadXmlResourcesDisplayData( xsr );
+            break;
+          case XmlLabels.XML_CALENDARS_TAB:
+            loadXmlCalendarsDisplayData( xsr );
+            break;
+          case XmlLabels.XML_DAYS_TAB:
+            loadXmlDayTypesDisplayData( xsr );
+            break;
           default:
             JPlanner.trace( "MainWindow.loadXmlDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
             break;
@@ -900,4 +922,63 @@ public class MainWindow extends Shell
     }
 
   }
+
+  /******************************** loadXmlTasksGanttDisplayData *********************************/
+  private void loadXmlTasksGanttDisplayData( XMLStreamReader xsr )
+  {
+    // read XML attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
+        case XmlLabels.XML_SPLITTER:
+          for ( MainTabWidget tabs : m_tabWidgets )
+            tabs.setTasksGanttSplitter( Integer.parseInt( xsr.getAttributeValue( i ) ) );
+          break;
+
+        case XmlLabels.XML_START:
+          for ( MainTabWidget tabs : m_tabWidgets )
+            tabs.gantt().setStart( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_END:
+          for ( MainTabWidget tabs : m_tabWidgets )
+            tabs.gantt().setEnd( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_MSPP:
+          for ( MainTabWidget tabs : m_tabWidgets )
+            tabs.gantt().setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
+          break;
+
+        default:
+          JPlanner
+              .trace( "loadXmlTasksGanttDisplayData - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
+      }
+
+    // ensure all gantts are updated to reflect any display-data changes
+    for ( MainTabWidget tabs : m_tabWidgets )
+      tabs.gantt().updateGantt();
+
+  }
+
+  /******************************** loadXmlResourcesDisplayData **********************************/
+  private void loadXmlResourcesDisplayData( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  /******************************** loadXmlCalendarsDisplayData **********************************/
+  private void loadXmlCalendarsDisplayData( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  /********************************* loadXmlDayTypesDisplayData **********************************/
+  private void loadXmlDayTypesDisplayData( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
 }
