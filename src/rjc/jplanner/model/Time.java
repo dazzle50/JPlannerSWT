@@ -26,9 +26,11 @@ import java.time.LocalTime;
 
 public class Time
 {
-  private int             m_milliseconds;        // milliseconds from 00:00:00.000 start of day
+  private int              m_milliseconds;                                              // milliseconds from 00:00:00.000 start of day
 
-  public static final int MAX = 24 * 3600 * 1000; // milliseconds in day
+  public static final int  DAY_MILLISECONDS = 24 * 3600 * 1000;                         // milliseconds in day
+  public static final Time MIN_TIME         = Time.fromMilliseconds( 0 );
+  public static final Time MAX_TIME         = Time.fromMilliseconds( DAY_MILLISECONDS );
 
   // anything between Zero and MAX inclusive is valid, anything else invalid
 
@@ -122,7 +124,7 @@ public class Time
   public static Time fromMilliseconds( int milliseconds )
   {
     // return a Time from int milliseconds
-    if ( milliseconds < 0 || milliseconds > MAX )
+    if ( milliseconds < 0 || milliseconds > DAY_MILLISECONDS )
       throw new IllegalArgumentException( "milliseconds=" + milliseconds );
 
     return new Time( milliseconds );

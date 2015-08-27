@@ -33,6 +33,7 @@ import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
+import rjc.jplanner.model.GanttData;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
@@ -41,9 +42,13 @@ import rjc.jplanner.model.Task;
 
 public class GanttPlot extends Composite
 {
-  private DateTime  m_start;
-  private long      m_millisecondsPP;
-  private XNatTable m_table;
+  private DateTime      m_start;
+  private long          m_millisecondsPP;
+  private XNatTable     m_table;
+
+  private static int    m_taskHeight = 6;
+
+  public static boolean ganttStretch;
 
   /**************************************** constructor ******************************************/
   public GanttPlot( Composite parent )
@@ -111,12 +116,6 @@ public class GanttPlot extends Composite
     return (int) ( ( date.epochday() * DateTime.MILLISECONDS_IN_DAY - m_start.milliseconds() ) / m_millisecondsPP );
   }
 
-  /********************************************** x **********************************************/
-  private int x( DateTime dt )
-  {
-    return (int) ( ( dt.milliseconds() - m_start.milliseconds() ) / m_millisecondsPP );
-  }
-
   /****************************************** datetime *******************************************/
   private DateTime datetime( int x )
   {
@@ -179,13 +178,11 @@ public class GanttPlot extends Composite
   private void drawTasks( PaintEvent event )
   {
     // draw tasks on gantt
-    int x = event.x;
     int y = event.y;
     int h = event.height;
-    int w = event.width;
     GC gc = event.gc;
 
-    // negative first means area to be drawn is below bottom of table, so just return  
+    // if negative means area to be drawn is below bottom of table, so just return  
     int first = m_table.rowAt( y );
     if ( first < 0 )
       return;
@@ -202,7 +199,7 @@ public class GanttPlot extends Composite
       Task task = JPlanner.plan.task( row );
       if ( task.isNull() )
         continue;
-      task.ganttData().drawTask( gc, ry + rh / 2, m_start, m_millisecondsPP, "TBD" );
+      drawTask( gc, ry + rh / 2, task.ganttData(), "TBD" );
 
       // if beyond area to be drawn, exit loop
       if ( ry + rh > y + h )
@@ -226,6 +223,120 @@ public class GanttPlot extends Composite
   {
     // TODO Auto-generated method stub
 
+  }
+
+  /********************************************** x **********************************************/
+  private int x( DateTime dt )
+  {
+    // return x-coordinate for stretched if needed date-time
+    dt = JPlanner.plan.stretch( dt, ganttStretch );
+    long dtMilliseconds = dt.milliseconds();
+    long startMilliseconds = m_start.milliseconds();
+
+    if ( dtMilliseconds > startMilliseconds )
+      return (int) ( ( dtMilliseconds - startMilliseconds ) / m_millisecondsPP );
+    return (int) ( ( startMilliseconds - dtMilliseconds ) / -m_millisecondsPP );
+  }
+
+  /****************************************** drawTask *******************************************/
+  public void drawTask( GC gc, int y, GanttData gd, String label )
+  {
+    // if gantt-data start not valid, don't draw anything
+    if ( gd.start == null )
+      return;
+
+    // if no gantt-data value, draw milestone, otherwise summary or task bar
+    if ( gd.end == null )
+      drawMilestone( gc, y, gd );
+    else if ( gd.isSummary() )
+      drawSummary( gc, y, gd );
+    else
+      drawTaskBar( gc, y, gd );
+
+    // TODO draw label !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  }
+
+  /***************************************** drawTaskBar *****************************************/
+  private void drawTaskBar( GC gc, int ty, GanttData gd )
+  {
+    // determine scale to draw offset
+    double scale = 0.0;
+    for ( int period = 0; period < gd.value.size(); period++ )
+      if ( gd.value.get( period ) > scale )
+        scale = gd.value.get( period );
+    scale *= m_taskHeight;
+
+    // set pen and fill colours
+    gc.setForeground( JPlanner.gui.COLOR_GANTT_TASK_EDGE );
+    gc.setBackground( JPlanner.gui.COLOR_GANTT_TASK_FILL );
+
+    // calc start position of task bar
+    int tx = x( gd.start );
+    int offset = (int) ( gd.value.get( 0 ) * scale );
+
+    // draw front edge
+    gc.drawLine( tx, ty + offset, tx, ty - offset );
+
+    // for each period within task bar draw next section
+    int newX, newOffset;
+    for ( int period = 1; period < gd.value.size(); period++ )
+    {
+      newX = x( gd.end.get( period - 1 ) );
+      newOffset = (int) ( gd.value.get( period ) * scale );
+      if ( offset > 0 && newX > tx )
+      {
+        gc.fillRectangle( tx + 1, ty - offset + 1, newX - tx, offset + offset - 1 );
+        gc.drawLine( tx, ty + offset, newX, ty + offset );
+      }
+      gc.drawLine( tx, ty - offset, newX, ty - offset );
+      gc.drawLine( newX, ty + offset, newX, ty + newOffset );
+      gc.drawLine( newX, ty - offset, newX, ty - newOffset );
+
+      tx = newX;
+      offset = newOffset;
+    }
+
+    // calc end position and draw edges and fill
+    newX = x( gd.end.get( gd.end.size() - 1 ) );
+    if ( offset > 0 && newX > tx )
+    {
+      gc.fillRectangle( tx + 1, ty - offset + 1, newX - tx - 1, offset + offset - 1 );
+      gc.drawLine( tx, ty + offset, newX, ty + offset );
+      gc.drawLine( newX, ty + offset, newX, ty - offset );
+    }
+    gc.drawLine( tx, ty - offset, newX, ty - offset );
+  }
+
+  /***************************************** drawSummary *****************************************/
+  private void drawSummary( GC gc, int y, GanttData gd )
+  {
+    // draw summary
+    int xs = x( gd.start );
+    int xe = x( gd.end.get( 0 ) );
+    int h = m_taskHeight;
+    int w = h;
+    if ( w > xe - xs )
+      w = xe - xs;
+
+    int[] point1 = { xs + w, y, xs, y + h, xs, y - h, xe + 1, y - h, xe + 1, y + h, xe - w, y };
+    int[] point2 = { xs + w, y, xs, y + h, xs, y - h };
+
+    gc.setBackground( JPlanner.gui.COLOR_GANTT_SUMMARY );
+    gc.fillPolygon( point1 );
+    gc.fillPolygon( point2 );
+  }
+
+  /**************************************** drawMilestone ****************************************/
+  private void drawMilestone( GC gc, int y, GanttData gd )
+  {
+    // draw diamond shaped milestone marker
+    int x = x( gd.start );
+    int h = m_taskHeight;
+
+    int[] points = { x, y - h, x + h, y, x, y + h, x - h, y, x };
+
+    gc.setBackground( JPlanner.gui.COLOR_GANTT_MILESTONE );
+    gc.fillPolygon( points );
   }
 
 }

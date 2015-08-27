@@ -101,8 +101,6 @@ public class MainWindow extends Shell
   public Transform                 TRANSFORM;
   public int                       GANTTSCALE_HEIGHT = 15;
 
-  public XAbstractCellEditor       m_cellEditorInProgress;
-
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
   {
@@ -149,8 +147,8 @@ public class MainWindow extends Shell
         notes().updatePlan();
 
         // if any table cell editing in progress, end it
-        if ( m_cellEditorInProgress != null )
-          m_cellEditorInProgress.endEditing();
+        if ( XAbstractCellEditor.cellEditorInProgress != null )
+          XAbstractCellEditor.cellEditorInProgress.endEditing();
       }
 
       @Override
@@ -526,7 +524,7 @@ public class MainWindow extends Shell
     // clear any old status-bar message when menu shown
     viewMenu.addMenuListener( m_menuListener );
 
-    // add view menu items
+    // menu item to open undo-stack window
     actionUndoStackView = new MenuItem( viewMenu, SWT.CHECK );
     actionUndoStackView.setText( "Undo Stack..." );
     actionUndoStackView.addSelectionListener( new SelectionAdapter()
@@ -545,6 +543,7 @@ public class MainWindow extends Shell
       }
     } );
 
+    // menu item to open new window
     MenuItem actionNewWindow = new MenuItem( viewMenu, SWT.NONE );
     actionNewWindow.setText( "New window..." );
     actionNewWindow.addSelectionListener( new SelectionAdapter()
@@ -568,9 +567,21 @@ public class MainWindow extends Shell
 
     new MenuItem( viewMenu, SWT.SEPARATOR );
 
-    MenuItem actionStretchTasks = new MenuItem( viewMenu, SWT.NONE );
+    // menu item to toggle gantt stretching of tasks
+    MenuItem actionStretchTasks = new MenuItem( viewMenu, SWT.CHECK );
     actionStretchTasks.setText( "Stretch tasks" );
-    actionStretchTasks.setEnabled( false );
+    GanttPlot.ganttStretch = true;
+    actionStretchTasks.setSelection( GanttPlot.ganttStretch );
+    actionStretchTasks.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        GanttPlot.ganttStretch = actionStretchTasks.getSelection();
+        for ( MainTabWidget tabs : m_tabWidgets )
+          tabs.gantt().updateGantt();
+      }
+    } );
   }
 
   /*************************************** addReportMenu *****************************************/

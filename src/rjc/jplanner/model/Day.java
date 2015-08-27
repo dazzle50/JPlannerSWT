@@ -44,11 +44,11 @@ public class Day
     NONWORK, STANDARDWORK, SHORT, EVENING, TWENTYFOURHOURS
   }
 
-  public static final int     SECTION_NAME    = 0;
-  public static final int     SECTION_WORK    = 1;
-  public static final int     SECTION_PERIODS = 2;
-  public static final int     SECTION_START1  = 3;
-  public static final int     SECTION_END1    = 4;
+  public static final int SECTION_NAME    = 0;
+  public static final int SECTION_WORK    = 1;
+  public static final int SECTION_PERIODS = 2;
+  public static final int SECTION_START1  = 3;
+  public static final int SECTION_END1    = 4;
 
   /**************************************** constructor ******************************************/
   public Day()
@@ -569,4 +569,23 @@ public class Day
     return m_workMS;
   }
 
+  /******************************************* stretch *******************************************/
+  public Time stretch( Time time )
+  {
+    // if no working times return original date-time
+    if ( m_periods.size() == 0 )
+      return time;
+
+    int s = m_periods.get( 0 ).m_start.milliseconds();
+    int e = m_periods.get( m_periods.size() - 1 ).m_end.milliseconds();
+    int now = time.milliseconds();
+    if ( now <= s )
+      return Time.MIN_TIME;
+    if ( now >= e )
+      return Time.MAX_TIME;
+
+    // stretch time component so it uses whole 24 hours
+    double scale = Time.DAY_MILLISECONDS / ( e - s );
+    return Time.fromMilliseconds( (int) ( scale * ( now - s ) ) );
+  }
 }

@@ -45,11 +45,11 @@ public class Calendar
     STANDARD, FULLTIME, FANCY
   };
 
-  public static final int     SECTION_NAME       = 0;
-  public static final int     SECTION_ANCHOR     = 1;
-  public static final int     SECTION_EXCEPTIONS = 2;
-  public static final int     SECTION_CYCLE      = 3;
-  public static final int     SECTION_NORMAL1    = 4;
+  public static final int SECTION_NAME       = 0;
+  public static final int SECTION_ANCHOR     = 1;
+  public static final int SECTION_EXCEPTIONS = 2;
+  public static final int SECTION_CYCLE      = 3;
+  public static final int SECTION_NORMAL1    = 4;
 
   /**************************************** constructor ******************************************/
   public Calendar()
@@ -305,7 +305,7 @@ public class Calendar
   }
 
   /********************************************* day *********************************************/
-  private Day day( Date date )
+  public Day day( Date date )
   {
     // if exception exists return it, otherwise return normal cycle day
     if ( m_exceptions.containsKey( date ) )

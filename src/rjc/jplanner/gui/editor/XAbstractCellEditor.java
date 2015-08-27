@@ -37,14 +37,16 @@ import rjc.jplanner.JPlanner;
 
 public abstract class XAbstractCellEditor extends AbstractCellEditor
 {
-  private Control m_editor; // editor for cell
+  private Control                   m_editor;            // editor for cell
+
+  public static XAbstractCellEditor cellEditorInProgress; // in progress cell editor, or null
 
   /************************************ createEditorControl **************************************/
   @Override
   public Control createEditorControl( Composite parent )
   {
     // create editor based on column
-    JPlanner.gui.m_cellEditorInProgress = this;
+    cellEditorInProgress = this;
     m_editor = createEditor( getRowIndex(), getColumnIndex() );
 
     // add key listener for escape & carriage-return
@@ -195,7 +197,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   public void close()
   {
     // editor being closed, so clear cell editor in progress
-    JPlanner.gui.m_cellEditorInProgress = null;
+    cellEditorInProgress = null;
     super.close();
   }
 
@@ -204,7 +206,7 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   public boolean commit( MoveDirectionEnum direction, boolean closeAfterCommit, boolean skipValidation )
   {
     // editor being committed, so clear cell editor in progress
-    JPlanner.gui.m_cellEditorInProgress = null;
+    cellEditorInProgress = null;
     return super.commit( direction, closeAfterCommit, skipValidation );
   }
 

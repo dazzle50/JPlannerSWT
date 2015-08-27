@@ -510,6 +510,24 @@ public class Plan
     return false;
   }
 
+  /******************************************* stretch *******************************************/
+  public DateTime stretch( DateTime dt, boolean stretchTasks )
+  {
+    // if input date-time is null return null
+    if ( dt == null )
+      return dt;
+
+    // return date-time stretched across full 24 hrs if plan stretchTasks flag is true
+    if ( stretchTasks )
+    {
+      Time time = m_calendar.day( dt.date() ).stretch( dt.time() );
+      return new DateTime( dt.date(), time );
+    }
+
+    // plan stretchTasks flag not true, so return original date-time
+    return dt;
+  }
+
   /****************************************** schedule *******************************************/
   public void schedule()
   {
