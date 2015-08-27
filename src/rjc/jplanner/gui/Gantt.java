@@ -101,7 +101,7 @@ public class Gantt extends Composite
     xsw.writeAttribute( XmlLabels.XML_MSPP, Long.toString( m_millisecondsPP ) );
     xsw.writeAttribute( XmlLabels.XML_NONWORKING, "???" );
     xsw.writeAttribute( XmlLabels.XML_CURRENT, "???" );
-    xsw.writeAttribute( XmlLabels.XML_STRETCH, "???" );
+    xsw.writeAttribute( XmlLabels.XML_STRETCH, Boolean.toString( GanttPlot.ganttStretch ) );
 
     // write upper-scale display data
     xsw.writeStartElement( XmlLabels.XML_UPPER_SCALE );

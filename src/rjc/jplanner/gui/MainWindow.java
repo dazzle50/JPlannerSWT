@@ -19,11 +19,13 @@
 package rjc.jplanner.gui;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -36,6 +38,7 @@ import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -251,7 +254,7 @@ public class MainWindow extends Shell
             int ret = dialog.open();
 
             if ( ret == 0 ) // save
-              ask = !saveAsPlan();
+              ask = !saveAs();
 
             if ( ret == 1 ) // discard
               ask = false;
@@ -274,8 +277,8 @@ public class MainWindow extends Shell
     // Disable the check that prevents subclassing of SWT components
   }
 
-  /*************************************** updateTitles ******************************************/
-  public void updateTitles()
+  /************************************ updateWindowTitles ***************************************/
+  public void updateWindowTitles()
   {
     // refresh title on each JPlanner window
     Iterator<Shell> iter = m_windows.iterator();
@@ -345,7 +348,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        loadPlan();
+        load();
       }
     } );
 
@@ -358,7 +361,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        savePlan();
+        save();
       }
     } );
 
@@ -370,7 +373,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        saveAsPlan();
+        saveAs();
       }
     } );
 
@@ -551,17 +554,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        Shell newWindow = new Shell( MainWindow.this.getDisplay(), SWT.SHELL_TRIM );
-        newWindow.setSize( 700, 400 );
-        newWindow.setLayout( new FillLayout( SWT.FILL ) );
-        MainTabWidget newTabWidget = new MainTabWidget( newWindow, false );
-        newTabWidget.gantt().setConfig( m_tabWidgets.get( 0 ).gantt() );
-        newTabWidget.setTasksGanttSplitter( 350 );
-        m_tabWidgets.add( newTabWidget );
-        newWindow.open();
-
-        m_windows.add( newWindow );
-        updateTitles();
+        newWindow();
       }
     } );
 
@@ -582,6 +575,24 @@ public class MainWindow extends Shell
           tabs.gantt().updateGantt();
       }
     } );
+  }
+
+  /***************************************** newWindow *******************************************/
+  private MainTabWidget newWindow()
+  {
+    // create new window
+    Shell newWindow = new Shell( MainWindow.this.getDisplay(), SWT.SHELL_TRIM );
+    newWindow.setSize( 700, 400 );
+    newWindow.setLayout( new FillLayout( SWT.FILL ) );
+    MainTabWidget newTabWidget = new MainTabWidget( newWindow, false );
+    newTabWidget.gantt().setConfig( m_tabWidgets.get( 0 ).gantt() );
+    newTabWidget.setTasksGanttSplitter( 350 );
+    m_tabWidgets.add( newTabWidget );
+    newWindow.open();
+    m_windows.add( newWindow );
+    newWindow.setText( getShell().getText() );
+
+    return newTabWidget;
   }
 
   /*************************************** addReportMenu *****************************************/
@@ -670,7 +681,7 @@ public class MainWindow extends Shell
         int ret = dialog.open();
 
         if ( ret == 0 ) // save
-          ask = !saveAsPlan();
+          ask = !saveAs();
 
         if ( ret == 1 ) // discard
           ask = false;
@@ -691,16 +702,15 @@ public class MainWindow extends Shell
     calendarTables().refresh();
     resourceTables().refresh();
     taskTables().refresh();
-    updateTitles();
-    message( "New plan" );
-
-    // ensure all gantts are updated to reflect any display-data changes
+    updateWindowTitles();
     for ( MainTabWidget tabs : m_tabWidgets )
       tabs.gantt().setDefault();
+
+    message( "New plan" );
   }
 
-  /****************************************** loadPlan *******************************************/
-  public boolean loadPlan()
+  /******************************************** load *********************************************/
+  public boolean load()
   {
     // if undo-stack not clean, ask user what to do
     if ( !JPlanner.plan.undostack().isClean() )
@@ -713,7 +723,7 @@ public class MainWindow extends Shell
         int ret = dialog.open();
 
         if ( ret == 0 ) // save
-          ask = !saveAsPlan();
+          ask = !saveAs();
 
         if ( ret == 1 ) // discard
           ask = false;
@@ -734,11 +744,11 @@ public class MainWindow extends Shell
       return false;
 
     // attempt to load from user supplied filename & location
-    return loadPlan( new File( filename ) );
+    return load( new File( filename ) );
   }
 
-  /****************************************** loadPlan *******************************************/
-  public boolean loadPlan( File file )
+  /******************************************** load *********************************************/
+  public boolean load( File file )
   {
     // check file exists
     if ( !file.exists() )
@@ -754,39 +764,61 @@ public class MainWindow extends Shell
       return false;
     }
 
-    // attempt to load plan from file
+    // create temporary plan for loading into
     Plan oldPlan = JPlanner.plan;
     JPlanner.plan = new Plan();
-    if ( !JPlanner.plan.loadPlan( file ) )
+
+    // attempt to load plan and display-data from XML file
+    try
     {
+      // create XML stream reader
+      XMLInputFactory xif = XMLInputFactory.newInstance();
+      FileInputStream fis = new FileInputStream( file );
+      XMLStreamReader xsr = xif.createXMLStreamReader( fis );
+
+      JPlanner.plan.loadXML( xsr, file.getName(), file.getParent() );
+
+      // if new plan not okay, revert back to old plan
+      if ( JPlanner.plan.errors() != null )
+      {
+        message( "Plan '" + file.getPath() + "' not valid (" + JPlanner.plan.errors() + ")" );
+        JPlanner.plan = oldPlan;
+        fis.close();
+        xsr.close();
+        return false;
+      }
+
+      loadDisplayData( xsr );
+
+      fis.close();
+      xsr.close();
+    }
+    catch ( XMLStreamException | IOException exception )
+    {
+      // some sort of exception thrown
       message( "Failed to load '" + file.getPath() + "'" );
       JPlanner.plan = oldPlan;
+      exception.printStackTrace();
       return false;
     }
 
-    // if new plan not okay, revert back to old plan
-    if ( JPlanner.plan.errors() != null )
-    {
-      message( "Plan '" + file.getPath() + "' not valid (" + JPlanner.plan.errors() + ")" );
-      JPlanner.plan = oldPlan;
-      return false;
-    }
-
-    // successfully loaded plan, so update gui
+    // update gui
     properties().updateFromPlan();
     notes().updateFromPlan();
     dayTables().refresh();
     calendarTables().refresh();
     resourceTables().refresh();
     taskTables().refresh();
-    updateTitles();
+    updateWindowTitles();
+
     message( "Successfully loaded '" + file.getPath() + "'" );
     JPlanner.plan.schedule();
+
     return true;
   }
 
-  /***************************************** saveAsPlan ******************************************/
-  public boolean saveAsPlan()
+  /******************************************* saveAs ********************************************/
+  public boolean saveAs()
   {
     // open file-dialog to ask for filename & location
     FileDialog fd = new FileDialog( this, SWT.SAVE );
@@ -799,22 +831,22 @@ public class MainWindow extends Shell
       return false;
 
     // attempt to save using user supplied filename & location
-    return savePlan( new File( filename ) );
+    return save( new File( filename ) );
   }
 
-  /****************************************** savePlan *******************************************/
-  public boolean savePlan()
+  /******************************************** save *********************************************/
+  public boolean save()
   {
     // if no existing filename set, use save-as
     if ( JPlanner.plan.filename() == null || JPlanner.plan.filename().equals( "" ) )
-      return saveAsPlan();
+      return saveAs();
 
     // attempt to save using existing filename & location
-    return savePlan( new File( JPlanner.plan.fileLocation(), JPlanner.plan.filename() ) );
+    return save( new File( JPlanner.plan.fileLocation(), JPlanner.plan.filename() ) );
   }
 
-  /****************************************** savePlan *******************************************/
-  public boolean savePlan( File file )
+  /******************************************** save *********************************************/
+  public boolean save( File file )
   {
     // if file exists already, check file can be written
     if ( file.exists() && !file.canWrite() )
@@ -826,7 +858,7 @@ public class MainWindow extends Shell
     // create XML stream writer to temporary file
     try
     {
-      File tempFile = tempFile( file );
+      File tempFile = temporaryFile( file );
       XMLOutputFactory xof = XMLOutputFactory.newInstance();
       FileOutputStream fos = new FileOutputStream( tempFile );
       XMLStreamWriter xsw = new IndentingXMLStreamWriter( xof.createXMLStreamWriter( fos, XmlLabels.ENCODING ) );
@@ -836,9 +868,11 @@ public class MainWindow extends Shell
       xsw.writeStartElement( XmlLabels.XML_JPLANNER );
       xsw.writeAttribute( XmlLabels.XML_FORMAT, XmlLabels.FORMAT );
       String saveUser = System.getProperty( "user.name" );
-      xsw.writeAttribute( XmlLabels.XML_USER, saveUser );
+      xsw.writeAttribute( XmlLabels.XML_SAVEUSER, saveUser );
       DateTime saveWhen = DateTime.now();
-      xsw.writeAttribute( XmlLabels.XML_WHEN, saveWhen.toString() );
+      xsw.writeAttribute( XmlLabels.XML_SAVEWHEN, saveWhen.toString() );
+      xsw.writeAttribute( XmlLabels.XML_SAVENAME, file.getName() );
+      xsw.writeAttribute( XmlLabels.XML_SAVEWHERE, file.getParent() );
 
       // save plan data to stream
       if ( !JPlanner.plan.savePlan( xsw, fos ) )
@@ -848,7 +882,7 @@ public class MainWindow extends Shell
       }
 
       // save display data to stream
-      if ( !m_mainTabWidget.saveXmlDisplayData( xsw ) )
+      if ( !saveDisplayData( xsw ) )
       {
         message( "Failed to save display data to '" + file.getPath() + "'" );
         return false;
@@ -878,13 +912,13 @@ public class MainWindow extends Shell
     // save succeed, so update gui
     properties().updateFromPlan();
     JPlanner.plan.undostack().setClean();
-    updateTitles();
+    updateWindowTitles();
     message( "Saved plan to '" + file.getPath() + "'" );
     return true;
   }
 
-  /**************************************** tempFileName *****************************************/
-  private File tempFile( File file )
+  /**************************************** temporaryFile ****************************************/
+  private File temporaryFile( File file )
   {
     // return temporary file name based on given file
     String path = file.getParent();
@@ -898,97 +932,128 @@ public class MainWindow extends Shell
     return new File( path + File.separator + name );
   }
 
-  /************************************* loadXmlDisplayData **************************************/
-  public void loadXmlDisplayData( XMLStreamReader xsr ) throws XMLStreamException
+  /*************************************** saveDisplayData ***************************************/
+  private boolean saveDisplayData( XMLStreamWriter xsw ) throws XMLStreamException
   {
+    // remove disposed entries from m_windows
+    Iterator<Shell> iter = m_windows.iterator();
+    while ( iter.hasNext() )
+    {
+      Shell shell = iter.next();
+      if ( shell.isDisposed() )
+        iter.remove();
+    }
+
+    // remove disposed entries from m_tabWidgets
+    Iterator<MainTabWidget> iter2 = m_tabWidgets.iterator();
+    while ( iter2.hasNext() )
+    {
+      MainTabWidget tabs = iter2.next();
+      if ( tabs.isDisposed() )
+        iter2.remove();
+    }
+
+    // save display data to stream for each window
+    for ( int count = 0; count < m_windows.size(); count++ )
+    {
+      Shell window = m_windows.get( count );
+      MainTabWidget tabs = m_tabWidgets.get( count );
+
+      xsw.writeStartElement( XmlLabels.XML_DISPLAY_DATA );
+      xsw.writeAttribute( XmlLabels.XML_WINDOW, Integer.toString( count ) );
+      xsw.writeAttribute( XmlLabels.XML_X, Integer.toString( window.getBounds().x ) );
+      xsw.writeAttribute( XmlLabels.XML_Y, Integer.toString( window.getBounds().y ) );
+      xsw.writeAttribute( XmlLabels.XML_WIDTH, Integer.toString( window.getBounds().width ) );
+      xsw.writeAttribute( XmlLabels.XML_HEIGHT, Integer.toString( window.getBounds().height ) );
+      xsw.writeAttribute( XmlLabels.XML_TAB, Integer.toString( tabs.getSelectionIndex() ) );
+
+      tabs.writeXML( xsw );
+
+      xsw.writeEndElement(); // XML_DISPLAY_DATA
+    }
+
+    return true;
+  }
+
+  /*************************************** loadDisplayData ***************************************/
+  public void loadDisplayData( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // close all but main window
+    for ( Shell window : m_windows )
+    {
+      if ( window != this.getShell() )
+        window.dispose();
+    }
+    m_windows.clear();
+    m_windows.add( this.getShell() );
+    m_tabWidgets.clear();
+    m_tabWidgets.add( m_mainTabWidget );
+
     // read XML display data
+    MainTabWidget tabs = null;
     while ( xsr.hasNext() )
     {
       xsr.next();
 
-      // if reached end of display data, return
-      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_DISPLAY_DATA ) )
-        return;
-
-      // check for new elements
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {
+          case XmlLabels.XML_DISPLAY_DATA:
+            if ( tabs == null )
+              tabs = m_mainTabWidget;
+            else
+              tabs = newWindow();
+
+            Rectangle rect = tabs.getShell().getBounds();
+            int tab = 0;
+
+            // read XML attributes
+            for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+              switch ( xsr.getAttributeLocalName( i ) )
+              {
+                case XmlLabels.XML_X:
+                  rect.x = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_Y:
+                  rect.y = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_WIDTH:
+                  rect.width = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_HEIGHT:
+                  rect.height = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_TAB:
+                  tab = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+
+                default:
+                  JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+                  break;
+              }
+
+            // set window bounding rectangle and selected tab
+            tabs.getShell().setBounds( rect );
+            tabs.setSelection( tab );
+            break;
+
           case XmlLabels.XML_TASKS_GANTT_TAB:
-            loadXmlTasksGanttDisplayData( xsr );
+            tabs.loadXmlTasksGantt( xsr );
             break;
           case XmlLabels.XML_RESOURCES_TAB:
-            loadXmlResourcesDisplayData( xsr );
+            tabs.loadXmlResources( xsr );
             break;
           case XmlLabels.XML_CALENDARS_TAB:
-            loadXmlCalendarsDisplayData( xsr );
+            tabs.loadXmlCalendars( xsr );
             break;
           case XmlLabels.XML_DAYS_TAB:
-            loadXmlDayTypesDisplayData( xsr );
+            tabs.loadXmlDayTypes( xsr );
             break;
           default:
             JPlanner.trace( "MainWindow.loadXmlDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
     }
-
-  }
-
-  /******************************** loadXmlTasksGanttDisplayData *********************************/
-  private void loadXmlTasksGanttDisplayData( XMLStreamReader xsr )
-  {
-    // read XML attributes
-    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
-      switch ( xsr.getAttributeLocalName( i ) )
-      {
-        case XmlLabels.XML_SPLITTER:
-          for ( MainTabWidget tabs : m_tabWidgets )
-            tabs.setTasksGanttSplitter( Integer.parseInt( xsr.getAttributeValue( i ) ) );
-          break;
-
-        case XmlLabels.XML_START:
-          for ( MainTabWidget tabs : m_tabWidgets )
-            tabs.gantt().setStart( new DateTime( xsr.getAttributeValue( i ) ) );
-          break;
-        case XmlLabels.XML_END:
-          for ( MainTabWidget tabs : m_tabWidgets )
-            tabs.gantt().setEnd( new DateTime( xsr.getAttributeValue( i ) ) );
-          break;
-        case XmlLabels.XML_MSPP:
-          for ( MainTabWidget tabs : m_tabWidgets )
-            tabs.gantt().setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
-          break;
-
-        default:
-          JPlanner
-              .trace( "loadXmlTasksGanttDisplayData - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
-          break;
-      }
-
-    // ensure all gantts are updated to reflect any display-data changes
-    for ( MainTabWidget tabs : m_tabWidgets )
-      tabs.gantt().updateGantt();
-
-  }
-
-  /******************************** loadXmlResourcesDisplayData **********************************/
-  private void loadXmlResourcesDisplayData( XMLStreamReader xsr )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  /******************************** loadXmlCalendarsDisplayData **********************************/
-  private void loadXmlCalendarsDisplayData( XMLStreamReader xsr )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  /********************************* loadXmlDayTypesDisplayData **********************************/
-  private void loadXmlDayTypesDisplayData( XMLStreamReader xsr )
-  {
-    // TODO Auto-generated method stub
 
   }
 

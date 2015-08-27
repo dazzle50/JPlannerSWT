@@ -1,87 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JPlanner format="2015-08" user="Richard" when="2015-08-27T11:22:11.598">
-  <days-data>
-    <day id="0" name="Non working" work="0.0"></day>
-    <day id="1" name="Standard work day" work="1.0">
-      <period id="0" start="09:00:00.000" end="13:00:00.000"/>
-      <period id="1" start="14:00:00.000" end="18:00:00.000"/>
-    </day>
-    <day id="2" name="Morning only" work="0.5">
-      <period id="0" start="09:00:00.000" end="13:00:00.000"/>
-    </day>
-    <day id="3" name="Evening shift" work="0.6">
-      <period id="0" start="18:00:00.000" end="22:00:00.000"/>
-    </day>
-    <day id="4" name="24H day" work="1.5">
-      <period id="0" start="00:00:00.000" end="24:00:00.000"/>
-    </day>
-  </days-data>
-  <calendars-data>
-    <calendar id="0" name="Standard" anchor="2000-01-01">
-      <normal id="0" day="0"/>
-      <normal id="1" day="0"/>
-      <normal id="2" day="1"/>
-      <normal id="3" day="1"/>
-      <normal id="4" day="1"/>
-      <normal id="5" day="1"/>
-      <normal id="6" day="1"/>
-      <exception date="2013-12-25" day="0"/>
-      <exception date="2013-04-01" day="0"/>
-      <exception date="2013-08-26" day="0"/>
-      <exception date="2012-12-25" day="0"/>
-      <exception date="2013-03-29" day="0"/>
-      <exception date="2013-12-26" day="0"/>
-      <exception date="2012-12-26" day="0"/>
-      <exception date="2013-05-06" day="0"/>
-      <exception date="2013-05-27" day="0"/>
-      <exception date="2013-01-01" day="0"/>
-    </calendar>
-    <calendar id="1" name="Full Time" anchor="2012-01-01">
-      <normal id="0" day="4"/>
-    </calendar>
-    <calendar id="2" name="Fancy" anchor="2012-01-01">
-      <normal id="0" day="0"/>
-      <normal id="1" day="0"/>
-      <normal id="2" day="0"/>
-      <normal id="3" day="2"/>
-      <normal id="4" day="2"/>
-      <normal id="5" day="3"/>
-      <normal id="6" day="3"/>
-      <normal id="7" day="4"/>
-      <normal id="8" day="0"/>
-      <normal id="9" day="4"/>
-      <exception date="2012-12-25" day="0"/>
-      <exception date="2012-12-26" day="0"/>
-    </calendar>
-  </calendars-data>
-  <resources-data>
-    <resource id="0"></resource>
-    <resource id="1"></resource>
-    <resource id="2" initials="JS" name="John Smith" org="XYZ" group="Example" role="PM" alias="Joe" availability="1.0" cost="0.0" calendar="0" comment=""></resource>
-    <resource id="3" initials="SH" name="Simon Hammond" org="XYZ" group="Example" role="Support" alias="Si" availability="1.0" cost="0.0" calendar="0" comment=""></resource>
-    <resource id="4"></resource>
-    <resource id="5"></resource>
-  </resources-data>
-  <tasks-data>
-    <task id="0"></task>
-    <task id="1" title="xxxx" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" deadline="2014-08-26T18:00:00.000" cost="0.0" comment=""></task>
-    <task id="2"></task>
-    <task id="3" title="aaa" duration="6 d" start="2014-09-01T09:00:00.000" end="2014-09-08T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <task id="4" title="bbb" duration="3 d" start="2014-09-01T09:00:00.000" end="2014-09-03T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <task id="5"></task>
-    <task id="6" title="sss" duration="0 d" start="2014-09-01T09:00:00.000" end="2014-09-01T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <task id="7" title="eeeeeeee" duration="4 d" start="2014-09-01T09:00:00.000" end="2014-09-04T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <task id="8" title="ccc" duration="2 d" start="2014-09-01T09:00:00.000" end="2014-09-02T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <task id="9"></task>
-    <task id="10" title="eee" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-    <predecessors task="3" preds="6"></predecessors>
-    <predecessors task="6" preds="4FS-4 d"></predecessors>
-    <predecessors task="8" preds="7"></predecessors>
-    <predecessors task="10" preds="3"></predecessors>
-  </tasks-data>
-  <plan-data title="DEFAULT" start="2014-08-31T09:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="Saving multiple windows&#10;TableRegister re-selects last selected cell, but not selected range (for example in secondary windows)&#10;Move Plan.isDuplicateDayName to Days ?&#10;&#10;&#10;Todo&#10;&#10;0) All dependencies types need to be drawn correctly&#10;&#10;&#10;1) Ability to re-order (start with something simpler like day-types, not tasks)&#10;2) Ability to delete&#10;3) Ability to insert (blank or duplicate)&#10;&#10;&#10;&#10;&#10;"/>
-  <display-data>
-    <tasks-gantt splitter="562" start="2014-08-30T08:58:00.000" end="2014-09-20T15:00:00.000" mspp="2200000" nonworking="???" current="???" stretch="???">
+<JPlanner format="2015-08" saved-by="Richard" saved-when="2015-08-27T19:54:30.466" saved-name="!defaultload.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
+  <plan-data title="DEFAULT" start="2014-08-31T09:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="Saving multiple windows&#10;TableRegister re-selects last selected cell, but not selected range (for example in secondary windows)&#10;Move Plan.isDuplicateDayName to Days ?&#10;&#10;&#10;Todo&#10;&#10;0) All dependencies types need to be drawn correctly&#10;&#10;&#10;1) Ability to re-order (start with something simpler like day-types, not tasks)&#10;2) Ability to delete&#10;3) Ability to insert (blank or duplicate)&#10;&#10;&#10;&#10;&#10;">
+    <days-data>
+      <day id="0" name="Non working" work="0.0"></day>
+      <day id="1" name="Standard work day" work="1.0">
+        <period id="0" start="09:00:00.000" end="13:00:00.000"/>
+        <period id="1" start="14:00:00.000" end="18:00:00.000"/>
+      </day>
+      <day id="2" name="Morning only" work="0.5">
+        <period id="0" start="09:00:00.000" end="13:00:00.000"/>
+      </day>
+      <day id="3" name="Evening shift" work="0.6">
+        <period id="0" start="18:00:00.000" end="22:00:00.000"/>
+      </day>
+      <day id="4" name="24H day" work="1.5">
+        <period id="0" start="00:00:00.000" end="24:00:00.000"/>
+      </day>
+    </days-data>
+    <calendars-data>
+      <calendar id="0" name="Standard" anchor="2000-01-01">
+        <normal id="0" day="0"/>
+        <normal id="1" day="0"/>
+        <normal id="2" day="1"/>
+        <normal id="3" day="1"/>
+        <normal id="4" day="1"/>
+        <normal id="5" day="1"/>
+        <normal id="6" day="1"/>
+        <exception date="2013-05-27" day="0"/>
+        <exception date="2013-05-06" day="0"/>
+        <exception date="2013-01-01" day="0"/>
+        <exception date="2013-04-01" day="0"/>
+        <exception date="2012-12-25" day="0"/>
+        <exception date="2013-12-26" day="0"/>
+        <exception date="2013-12-25" day="0"/>
+        <exception date="2013-03-29" day="0"/>
+        <exception date="2012-12-26" day="0"/>
+        <exception date="2013-08-26" day="0"/>
+      </calendar>
+      <calendar id="1" name="Full Time" anchor="2012-01-01">
+        <normal id="0" day="4"/>
+      </calendar>
+      <calendar id="2" name="Fancy" anchor="2012-01-01">
+        <normal id="0" day="0"/>
+        <normal id="1" day="0"/>
+        <normal id="2" day="0"/>
+        <normal id="3" day="2"/>
+        <normal id="4" day="2"/>
+        <normal id="5" day="3"/>
+        <normal id="6" day="3"/>
+        <normal id="7" day="4"/>
+        <normal id="8" day="0"/>
+        <normal id="9" day="4"/>
+        <exception date="2012-12-25" day="0"/>
+        <exception date="2012-12-26" day="0"/>
+      </calendar>
+    </calendars-data>
+    <resources-data>
+      <resource id="0"></resource>
+      <resource id="1"></resource>
+      <resource id="2" initials="JS" name="John Smith" org="XYZ" group="Example" role="PM" alias="Joe" availability="1.0" cost="0.0" calendar="0" comment=""></resource>
+      <resource id="3" initials="SH" name="Simon Hammond" org="XYZ" group="Example" role="Support" alias="Si" availability="1.0" cost="0.0" calendar="0" comment=""></resource>
+      <resource id="4"></resource>
+      <resource id="5"></resource>
+    </resources-data>
+    <tasks-data>
+      <task id="0"></task>
+      <task id="1" title="xxxx" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" deadline="2014-08-26T18:00:00.000" cost="0.0" comment=""></task>
+      <task id="2"></task>
+      <task id="3" title="aaa" duration="6 d" start="2014-09-01T09:00:00.000" end="2014-09-08T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="4" title="bbb" duration="3 d" start="2014-09-01T09:00:00.000" end="2014-09-03T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="5"></task>
+      <task id="6" title="sss" duration="0 d" start="2014-09-01T09:00:00.000" end="2014-09-01T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="7" title="eeeeeeee" duration="4 d" start="2014-09-01T09:00:00.000" end="2014-09-04T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="8" title="ccc" duration="2 d" start="2014-09-01T09:00:00.000" end="2014-09-02T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="9"></task>
+      <task id="10" title="eee" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <predecessors task="3" preds="6"></predecessors>
+      <predecessors task="6" preds="4FS-4 d"></predecessors>
+      <predecessors task="8" preds="7"></predecessors>
+      <predecessors task="10" preds="3"></predecessors>
+    </tasks-data>
+  </plan-data>
+  <display-data window="0" x="-3158" y="303" width="1117" height="516" tab="1">
+    <tasks-gantt-tab splitter="635" start="2014-08-30T08:58:00.000" end="2014-09-20T15:00:00.000" mspp="2200000" nonworking="???" current="???" stretch="true">
       <upper-scale interval="MONTH" format="MMM-YYYY"></upper-scale>
       <lower-scale interval="WEEK" format="dd"></lower-scale>
       <columns>
@@ -111,7 +112,7 @@
         <row id="9" height="20"></row>
         <row id="10" height="20"></row>
       </rows>
-    </tasks-gantt>
+    </tasks-gantt-tab>
     <resources-tab>
       <columns>
         <column id="0" width="50"></column>

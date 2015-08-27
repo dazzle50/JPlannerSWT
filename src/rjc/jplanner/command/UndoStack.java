@@ -131,7 +131,7 @@ public class UndoStack
 
     // if clean state changed, update window titles
     if ( m_previousCleanState != isClean() )
-      JPlanner.gui.updateTitles();
+      JPlanner.gui.updateWindowTitles();
     m_previousCleanState = isClean();
   }
 

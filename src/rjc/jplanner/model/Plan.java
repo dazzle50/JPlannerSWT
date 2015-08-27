@@ -18,13 +18,10 @@
 
 package rjc.jplanner.model;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -334,14 +331,8 @@ public class Plan
     // save plan to specified XML stream
     try
     {
-      // write day, calendar, resource, and task data to XML stream
-      m_daytypes.writeXML( xsw );
-      m_calendars.writeXML( xsw );
-      m_resources.writeXML( xsw );
-      m_tasks.writeXML( xsw );
-
       // write plan data to XML stream
-      xsw.writeEmptyElement( XmlLabels.XML_PLAN_DATA );
+      xsw.writeStartElement( XmlLabels.XML_PLAN_DATA );
       xsw.writeAttribute( XmlLabels.XML_TITLE, m_title );
       xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
       xsw.writeAttribute( XmlLabels.XML_CALENDAR, Integer.toString( index( m_calendar ) ) );
@@ -355,6 +346,13 @@ public class Plan
       notes = " " + XmlLabels.XML_NOTES + "=\"" + notes + "\"";
       fos.write( notes.getBytes( Charset.forName( XmlLabels.ENCODING ) ) );
 
+      // write day, calendar, resource, and task data to XML stream
+      m_daytypes.writeXML( xsw );
+      m_calendars.writeXML( xsw );
+      m_resources.writeXML( xsw );
+      m_tasks.writeXML( xsw );
+
+      xsw.writeEndElement(); // XML_PLAN_DATA
       return true;
     }
     catch ( XMLStreamException | IOException exception )
@@ -365,70 +363,65 @@ public class Plan
     }
   }
 
-  /****************************************** loadPlan *******************************************/
-  public boolean loadPlan( File file )
+  /******************************************* loadXML *******************************************/
+  public void loadXML( XMLStreamReader xsr, String filename, String fileloc ) throws XMLStreamException
   {
-    // attempt to save plan as XML to specified file
-    JPlanner.trace( "######## Loading '" + file + "' ########" );
-    try
+    // as id of plan-calendar read before the calendars, need temporary store
+    int calendarId = -1;
+
+    // load plan from XML stream
+    while ( xsr.hasNext() )
     {
-      // create XML stream reader
-      XMLInputFactory xif = XMLInputFactory.newInstance();
-      FileInputStream fis = new FileInputStream( file );
-      XMLStreamReader xsr = xif.createXMLStreamReader( fis );
+      // if reached end of plan data, exit loop
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_PLAN_DATA ) )
+        break;
 
-      while ( xsr.hasNext() )
-      {
-        if ( xsr.isStartElement() )
-          switch ( xsr.getLocalName() )
-          {
-            case XmlLabels.XML_JPLANNER:
-              loadXmlJPlanner( xsr );
-              break;
-            case XmlLabels.XML_DAY_DATA:
-              m_daytypes.loadXML( xsr );
-              break;
-            case XmlLabels.XML_CAL_DATA:
-              m_calendars.loadXML( xsr );
-              break;
-            case XmlLabels.XML_RES_DATA:
-              m_resources.loadXML( xsr );
-              break;
-            case XmlLabels.XML_TASK_DATA:
-              m_tasks.loadXML( xsr );
-              break;
-            case XmlLabels.XML_PLAN_DATA:
-              loadXmlPlan( xsr );
-              break;
-            case XmlLabels.XML_DISPLAY_DATA:
-              JPlanner.gui.loadXmlDisplayData( xsr );
-              break;
-            default:
-              JPlanner.trace( "loadPlan - unhandled start element '" + xsr.getLocalName() + "'" );
-              break;
-          }
+      // if start element read data
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case XmlLabels.XML_JPLANNER:
+            loadXmlJPlanner( xsr );
+            break;
+          case XmlLabels.XML_PLAN_DATA:
+            calendarId = loadXmlPlan( xsr );
+            break;
+          case XmlLabels.XML_DAY_DATA:
+            m_daytypes.loadXML( xsr );
+            break;
+          case XmlLabels.XML_CAL_DATA:
+            m_calendars.loadXML( xsr );
+            break;
+          case XmlLabels.XML_RES_DATA:
+            m_resources.loadXML( xsr );
+            break;
+          case XmlLabels.XML_TASK_DATA:
+            m_tasks.loadXML( xsr );
+            break;
+          default:
+            JPlanner.trace( "Plan.loadXML - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
 
-        xsr.next();
-      }
-
-      m_filename = file.getName();
-      m_fileLocation = file.getParent();
-      xsr.close();
-      fis.close();
-      return true;
-    }
-    catch ( XMLStreamException | IOException exception )
-    {
-      // some sort of exception thrown
-      exception.printStackTrace();
-      return false;
+      xsr.next();
     }
 
+    // if calendar-id still negative, default to first calendar
+    if ( calendarId < 0 )
+      m_calendar = calendar( 0 );
+    else
+      m_calendar = calendar( calendarId );
+
+    m_filename = filename;
+    m_fileLocation = fileloc;
   }
 
   /***************************************** loadXmlPlan *****************************************/
-  private void loadXmlPlan( XMLStreamReader xsr ) throws XMLStreamException
+  private int loadXmlPlan( XMLStreamReader xsr ) throws XMLStreamException
   {
+    // as calendars not yet loaded just keep calendar-id
+    int calendarId = -1;
+
     // read XML plan attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
@@ -446,7 +439,7 @@ public class Plan
           m_dateFormat = xsr.getAttributeValue( i );
           break;
         case XmlLabels.XML_CALENDAR:
-          m_calendar = calendar( Integer.parseInt( xsr.getAttributeValue( i ) ) );
+          calendarId = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
         case XmlLabels.XML_NOTES:
           m_notes = xsr.getAttributeValue( i );
@@ -455,6 +448,9 @@ public class Plan
           JPlanner.trace( "loadXmlPlan - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
+
+    // return calendar-id to be set as default calendar
+    return calendarId;
   }
 
   /*************************************** loadXmlJPlanner ***************************************/
@@ -464,13 +460,15 @@ public class Plan
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
-        case XmlLabels.XML_USER:
+        case XmlLabels.XML_SAVEUSER:
           m_savedBy = xsr.getAttributeValue( i );
           break;
-        case XmlLabels.XML_WHEN:
+        case XmlLabels.XML_SAVEWHEN:
           m_savedWhen = new DateTime( xsr.getAttributeValue( i ) );
           break;
         case XmlLabels.XML_FORMAT:
+        case XmlLabels.XML_SAVENAME:
+        case XmlLabels.XML_SAVEWHERE:
           break;
         default:
           JPlanner.trace( "loadXmlJPlanner - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );

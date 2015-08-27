@@ -19,6 +19,7 @@
 package rjc.jplanner.gui;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
@@ -29,8 +30,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.table.XNatTable;
+import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
 /*************** Widget showing the Plan/Tasks&Gantt/Resources/Calendars/Days tabs ***************/
@@ -166,14 +169,12 @@ public class MainTabWidget extends TabFolder
     m_splitterTasksGantt.setWeights();
   }
 
-  /************************************* saveXmlDisplayData **************************************/
-  public boolean saveXmlDisplayData( XMLStreamWriter xsw )
+  /****************************************** writeXML *******************************************/
+  public boolean writeXML( XMLStreamWriter xsw )
   {
     // write display data to XML stream
     try
     {
-      xsw.writeStartElement( XmlLabels.XML_DISPLAY_DATA );
-
       // write tasks-gantt display data
       xsw.writeStartElement( XmlLabels.XML_TASKS_GANTT_TAB );
       xsw.writeAttribute( XmlLabels.XML_SPLITTER, Integer.toString( m_splitterTasksGantt.preferredLeftChildWidth ) );
@@ -195,8 +196,6 @@ public class MainTabWidget extends TabFolder
       xsw.writeStartElement( XmlLabels.XML_DAYS_TAB );
       m_daysTable.writeXML( xsw );
       xsw.writeEndElement(); // XML_DAYS_TAB
-
-      xsw.writeEndElement(); // XML_DISPLAY_DATA
     }
     catch ( XMLStreamException exception )
     {
@@ -206,6 +205,57 @@ public class MainTabWidget extends TabFolder
     }
 
     return true;
+  }
+
+  /******************************** loadXmlTasksGantt *********************************/
+  public void loadXmlTasksGantt( XMLStreamReader xsr )
+  {
+    // read XML attributes
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
+        case XmlLabels.XML_SPLITTER:
+          setTasksGanttSplitter( Integer.parseInt( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_START:
+          m_gantt.setStart( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_END:
+          m_gantt.setEnd( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_MSPP:
+          m_gantt.setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
+          break;
+
+        default:
+          JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
+      }
+
+    // ensure gantt is updated to reflect any changes
+    m_gantt.updateGantt();
+
+  }
+
+  /******************************** loadXmlResources **********************************/
+  public void loadXmlResources( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  /******************************** loadXmlCalendars **********************************/
+  public void loadXmlCalendars( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
+  }
+
+  /********************************* loadXmlDayTypes **********************************/
+  public void loadXmlDayTypes( XMLStreamReader xsr )
+  {
+    // TODO Auto-generated method stub
+
   }
 
 }

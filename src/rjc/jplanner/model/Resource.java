@@ -31,32 +31,32 @@ import rjc.jplanner.XmlLabels;
 
 public class Resource
 {
-  private String              m_initials;                       // must be unique across all resources in model
-  private String              m_name;                           // free text
-  private String              m_org;                            // free text
-  private String              m_group;                          // free text
-  private String              m_role;                           // free text
-  private String              m_alias;                          // free text
-  private Date                m_start;                          // date availability starts inclusive
-  private Date                m_end;                            // date availability end inclusive
-  private double              m_availability;                   // number available
-  private double              m_cost;                           // cost TODO
-  private Calendar            m_calendar;                       // calendar for resource
-  private String              m_comment;                        // free text
+  private String          m_initials;           // must be unique across all resources in model
+  private String          m_name;               // free text
+  private String          m_org;                // free text
+  private String          m_group;              // free text
+  private String          m_role;               // free text
+  private String          m_alias;              // free text
+  private Date            m_start;              // date availability starts inclusive
+  private Date            m_end;                // date availability end inclusive
+  private double          m_availability;       // number available
+  private double          m_cost;               // cost TODO
+  private Calendar        m_calendar;           // calendar for resource
+  private String          m_comment;            // free text
 
-  public static final int     SECTION_INITIALS = 0;
-  public static final int     SECTION_NAME     = 1;
-  public static final int     SECTION_ORG      = 2;
-  public static final int     SECTION_GROUP    = 3;
-  public static final int     SECTION_ROLE     = 4;
-  public static final int     SECTION_ALIAS    = 5;
-  public static final int     SECTION_START    = 6;
-  public static final int     SECTION_END      = 7;
-  public static final int     SECTION_AVAIL    = 8;
-  public static final int     SECTION_COST     = 9;
-  public static final int     SECTION_CALENDAR = 10;
-  public static final int     SECTION_COMMENT  = 11;
-  public static final int     SECTION_MAX      = 11;
+  public static final int SECTION_INITIALS = 0;
+  public static final int SECTION_NAME     = 1;
+  public static final int SECTION_ORG      = 2;
+  public static final int SECTION_GROUP    = 3;
+  public static final int SECTION_ROLE     = 4;
+  public static final int SECTION_ALIAS    = 5;
+  public static final int SECTION_START    = 6;
+  public static final int SECTION_END      = 7;
+  public static final int SECTION_AVAIL    = 8;
+  public static final int SECTION_COST     = 9;
+  public static final int SECTION_CALENDAR = 10;
+  public static final int SECTION_COMMENT  = 11;
+  public static final int SECTION_MAX      = 11;
 
   /**************************************** constructor ******************************************/
   public Resource()
