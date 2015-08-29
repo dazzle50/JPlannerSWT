@@ -148,7 +148,7 @@ public class Resource
       if ( m_start == null )
         return "NA";
       else
-        return m_start.toString();
+        return m_start.toString( JPlanner.plan.dateFormat() );
     }
 
     if ( section == SECTION_END )
@@ -156,7 +156,7 @@ public class Resource
       if ( m_end == null )
         return "NA";
       else
-        return m_end.toString();
+        return m_end.toString( JPlanner.plan.dateFormat() );
     }
 
     if ( section == SECTION_AVAIL )
@@ -292,6 +292,12 @@ public class Resource
     }
 
     xsw.writeEndElement(); // XML_RESOURCE
+  }
+
+  /******************************************** index ********************************************/
+  public int index()
+  {
+    return JPlanner.plan.index( this );
   }
 
 }

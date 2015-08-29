@@ -28,9 +28,11 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTime
 {
-  private long             m_milliseconds;                        // milliseconds from 00:00:00.000 start of epoch-day
+  private long                 m_milliseconds;                                                      // milliseconds from 00:00:00.000 start of epoch-day
 
-  public static final long MILLISECONDS_IN_DAY = 24 * 3600 * 1000; // milliseconds in day
+  public static final long     MILLISECONDS_IN_DAY = Time.MILLISECONDS_IN_DAY;                      // milliseconds in day
+  public static final DateTime MIN_VALUE           = new DateTime( Date.MIN_VALUE, Time.MIN_VALUE );
+  public static final DateTime MAX_VALUE           = new DateTime( Date.MAX_VALUE, Time.MAX_VALUE );
 
   public enum Interval
   {
@@ -263,6 +265,12 @@ public class DateTime
   public boolean isLessThan( DateTime other )
   {
     return m_milliseconds < other.m_milliseconds;
+  }
+
+  /******************************************* equals ********************************************/
+  public boolean equals( DateTime other )
+  {
+    return m_milliseconds == other.m_milliseconds;
   }
 
 }

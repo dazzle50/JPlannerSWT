@@ -220,15 +220,67 @@ public class Plan
   /****************************************** earliest *******************************************/
   public DateTime earliest()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    return null;
+    // return start date-time of earliest starting plan task
+    DateTime earliest = null;
+    DateTime start = null;
+
+    for ( Task task : m_tasks )
+    {
+      // if task is null, skip
+      if ( task.isNull() )
+        continue;
+
+      // if task is summary, skip
+      if ( task.isSummary() )
+        continue;
+
+      // if earliest is null, this must be earliest so far
+      if ( earliest == null )
+      {
+        earliest = task.start();
+        continue;
+      }
+
+      // check is task start is earlier
+      start = task.start();
+      if ( start.isLessThan( earliest ) )
+        earliest = start;
+    }
+
+    return earliest;
   }
 
   /********************************************* end *********************************************/
   public DateTime end()
   {
-    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    return null;
+    // return end date-time of latest ending plan task
+    DateTime latest = null;
+    DateTime end = null;
+
+    for ( Task task : m_tasks )
+    {
+      // if task is null, skip
+      if ( task.isNull() )
+        continue;
+
+      // if task is summary, skip
+      if ( task.isSummary() )
+        continue;
+
+      // if latest is null, this must be latest so far
+      if ( latest == null )
+      {
+        latest = task.end();
+        continue;
+      }
+
+      // check is task end is later
+      end = task.end();
+      if ( latest.isLessThan( end ) )
+        latest = end;
+    }
+
+    return latest;
   }
 
   /******************************************* calendar ******************************************/

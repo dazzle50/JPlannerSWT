@@ -580,12 +580,19 @@ public class Day
     int e = m_periods.get( m_periods.size() - 1 ).m_end.milliseconds();
     int now = time.milliseconds();
     if ( now <= s )
-      return Time.MIN_TIME;
+      return Time.MIN_VALUE;
     if ( now >= e )
-      return Time.MAX_TIME;
+      return Time.MAX_VALUE;
 
     // stretch time component so it uses whole 24 hours
-    double scale = Time.DAY_MILLISECONDS / ( e - s );
+    double scale = Time.MILLISECONDS_IN_DAY / ( e - s );
     return Time.fromMilliseconds( (int) ( scale * ( now - s ) ) );
   }
+
+  /******************************************** index ********************************************/
+  public int index()
+  {
+    return JPlanner.plan.index( this );
+  }
+
 }

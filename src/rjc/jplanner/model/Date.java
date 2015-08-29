@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /*************************************************************************************************/
 /************************************ Date (with no timezone) ************************************/
@@ -26,10 +27,13 @@ import java.time.LocalDate;
 
 public class Date
 {
-  private int m_epochday; // simple count of days where day 0 is 01-Jan-1970
+  private int              m_epochday;                               // simple count of days where day 0 is 01-Jan-1970
 
   // min int=-2^31 gives minimum date of approx 5,800,000 BC
+  public static final Date MIN_VALUE = new Date( Integer.MIN_VALUE );
+
   // max int=2^31-1 gives maximum date of approx 5,800,000 AD
+  public static final Date MAX_VALUE = new Date( Integer.MAX_VALUE );
 
   /**************************************** constructor ******************************************/
   public Date( int epochday )
@@ -63,9 +67,17 @@ public class Date
   @Override
   public String toString()
   {
-    // convert to string in "YYYY-MM-DD" format
+    // convert to string in ISO-8601 format "uuuu-MM-dd"
     LocalDate ld = LocalDate.ofEpochDay( m_epochday );
     return ld.toString();
+  }
+
+  /****************************************** toString *******************************************/
+  public String toString( String format )
+  {
+    // convert to string in specified format
+    LocalDate ld = LocalDate.ofEpochDay( m_epochday );
+    return ld.format( DateTimeFormatter.ofPattern( format ) );
   }
 
   /********************************************* now *********************************************/
@@ -134,6 +146,12 @@ public class Date
   public Date plusYears( int years )
   {
     return new Date( LocalDate.ofEpochDay( m_epochday ).plusYears( years ) );
+  }
+
+  /******************************************* equals ********************************************/
+  public boolean equals( Date other )
+  {
+    return m_epochday == other.m_epochday;
   }
 
 }

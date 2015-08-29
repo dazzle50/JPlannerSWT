@@ -19,6 +19,10 @@
 package rjc.jplanner.gui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.CommandSetPlanProperties;
 import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
@@ -75,7 +80,7 @@ public class PlanProperties extends Composite
 
     Label earliestLabel = new Label( this, SWT.NONE );
     earliestLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    earliestLabel.setText( "Earliest" );
+    earliestLabel.setText( "Actual Start" );
 
     m_earliestText = new Text( this, SWT.BORDER );
     m_earliestText.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
@@ -174,12 +179,130 @@ public class PlanProperties extends Composite
     m_daysNum = new Label( grpNumberOf, SWT.NONE );
     m_daysNum.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
     m_daysNum.setText( ": 0" );
+
+    verifyDateTimeFormat();
+    verifyDateFormat();
   }
 
   @Override
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /************************************ verifyDateTimeFormat *************************************/
+  private void verifyDateTimeFormat()
+  {
+    // keep the earliest/end/saved-when fields updated and in user entered date-time format
+    m_DTformatText.addVerifyListener( new VerifyListener()
+    {
+      @Override
+      public void verifyText( VerifyEvent event )
+      {
+        m_DTformatText.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+        String oldS = m_DTformatText.getText();
+        String format = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
+
+        try
+        {
+          JPlanner.gui.message( "Date-time format example: " + DateTime.now().toString( format ) );
+
+          // if plan earliest or end not available, display blank
+          try
+          {
+            m_earliestText.setText( JPlanner.plan.earliest().toString( format ) );
+          }
+          catch ( NullPointerException exception )
+          {
+            m_earliestText.setText( "" );
+          }
+
+          try
+          {
+            m_endText.setText( JPlanner.plan.end().toString( format ) );
+          }
+          catch ( NullPointerException exception )
+          {
+            m_endText.setText( "" );
+          }
+
+          // if plan hasn't been saved, the saved-when is null so display blank
+          try
+          {
+            m_savedwhenText.setText( JPlanner.plan.savedWhen().toString( format ) );
+          }
+          catch ( NullPointerException exception )
+          {
+            m_savedwhenText.setText( "" );
+          }
+        }
+        catch ( Exception exception )
+        {
+          String err = exception.getMessage();
+
+          // time zone presentation not supported
+          if ( "VzOXxZ".contains( event.text ) )
+            err = "Unknown pattern letter: " + event.text;
+
+          JPlanner.gui.message( "Date-time format error '" + err + "'" );
+          m_DTformatText.setForeground( JPlanner.gui.COLOR_ERROR );
+        }
+      }
+    } );
+
+    // if user pressed ESC key, revert editor back to plan value
+    m_DTformatText.addKeyListener( new KeyAdapter()
+    {
+      @Override
+      public void keyPressed( KeyEvent event )
+      {
+        if ( event.keyCode == SWT.ESC )
+          m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
+      }
+    } );
+  }
+
+  /************************************** verifyDateFormat ***************************************/
+  private void verifyDateFormat()
+  {
+    // check user entered format
+    m_DformatText.addVerifyListener( new VerifyListener()
+    {
+      @Override
+      public void verifyText( VerifyEvent event )
+      {
+        m_DformatText.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+        String oldS = m_DformatText.getText();
+        String format = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
+
+        try
+        {
+          JPlanner.gui.message( "Date format example: " + Date.now().toString( format ) );
+        }
+        catch ( Exception exception )
+        {
+          String err = exception.getMessage();
+
+          // time zone presentation not supported
+          if ( "VzOXxZ".contains( event.text ) )
+            err = "Unknown pattern letter: " + event.text;
+
+          JPlanner.gui.message( "Date format error '" + err + "'" );
+          m_DformatText.setForeground( JPlanner.gui.COLOR_ERROR );
+        }
+      }
+    } );
+
+    // if user pressed ESC key, revert editor back to plan value
+    m_DformatText.addKeyListener( new KeyAdapter()
+    {
+      @Override
+      public void keyPressed( KeyEvent event )
+      {
+        if ( event.keyCode == SWT.ESC )
+          m_DformatText.setText( JPlanner.plan.dateFormat() );
+      }
+    } );
   }
 
   /*************************************** updateFromPlan ****************************************/
@@ -196,35 +319,6 @@ public class PlanProperties extends Composite
     m_filelocText.setText( JPlanner.plan.fileLocation() );
     m_savedbyText.setText( JPlanner.plan.savedBy() );
 
-    // if plan earliest or end not available, display blank
-    try
-    {
-      m_earliestText.setText( JPlanner.plan.earliest().toString() );
-    }
-    catch ( NullPointerException e )
-    {
-      m_earliestText.setText( "" );
-    }
-
-    try
-    {
-      m_endText.setText( JPlanner.plan.end().toString() );
-    }
-    catch ( NullPointerException e )
-    {
-      m_endText.setText( "" );
-    }
-
-    // if plan hasn't been saved, the saved-when is null so display blank
-    try
-    {
-      m_savedwhenText.setText( JPlanner.plan.savedWhen().toString() );
-    }
-    catch ( NullPointerException e )
-    {
-      m_savedwhenText.setText( "" );
-    }
-
     // update the gui "number of" widgets
     m_tasksNum.setText( ": " + JPlanner.plan.tasksNotNullCount() );
     m_resourcesNum.setText( ": " + JPlanner.plan.resourcesNotNullCount() );
@@ -235,18 +329,29 @@ public class PlanProperties extends Composite
   /************************************ updatePlanProperties *************************************/
   public void updatePlan()
   {
-    // if properties not changed, return doing nothing, otherwise update via undostack command
+    // get values from gui editors
     String title = m_titleText.getText();
     DateTime start = new DateTime( m_startDT.milliseconds() );
     Calendar cal = JPlanner.plan.calendar( m_calCombo.getSelectionIndex() );
     String DTformat = m_DTformatText.getText();
     String Dformat = m_DformatText.getText();
 
+    // if m_DTformatText colour indicates error, don't use
+    if ( m_DTformatText.getForeground().equals( JPlanner.gui.COLOR_ERROR ) )
+      DTformat = JPlanner.plan.datetimeFormat();
+
+    // if m_DformatText colour indicates error, don't use
+    if ( m_DformatText.getForeground().equals( JPlanner.gui.COLOR_ERROR ) )
+      Dformat = JPlanner.plan.dateFormat();
+
+    // if properties not changed, return doing nothing
     if ( JPlanner.plan.title().equals( title ) && JPlanner.plan.start().milliseconds() == start.milliseconds()
         && JPlanner.plan.calendar() == cal && JPlanner.plan.datetimeFormat().equals( DTformat )
         && JPlanner.plan.dateFormat().equals( Dformat ) )
       return;
 
+    // update plan via undo-stack
     JPlanner.plan.undostack().push( new CommandSetPlanProperties( title, start, cal, DTformat, Dformat ) );
   }
+
 }

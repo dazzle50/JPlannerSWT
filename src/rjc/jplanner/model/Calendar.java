@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.xml.stream.XMLStreamException;
@@ -395,11 +396,22 @@ public class Calendar
       xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( JPlanner.plan.index( m_normal.get( p ) ) ) );
     }
 
-    for ( HashMap.Entry<Date, Day> except : m_exceptions.entrySet() )
+    // generate sorted list of exception keys so order always same in XML file
+    ArrayList<Date> keys = new ArrayList<Date>( m_exceptions.keySet() );
+    keys.sort( new Comparator<Date>()
+    {
+      @Override
+      public int compare( Date date1, Date date2 )
+      {
+        return Integer.compare( date1.epochday(), date2.epochday() );
+      }
+    } );
+
+    for ( Date date : keys )
     {
       xsw.writeEmptyElement( XmlLabels.XML_EXCEPTION );
-      xsw.writeAttribute( XmlLabels.XML_DATE, except.getKey().toString() );
-      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( JPlanner.plan.index( except.getValue() ) ) );
+      xsw.writeAttribute( XmlLabels.XML_DATE, date.toString() );
+      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( m_exceptions.get( date ).index() ) );
     }
 
     xsw.writeEndElement(); // XML_CALENDAR
@@ -599,4 +611,11 @@ public class Calendar
     // if fraction, add years and months
     return workMonths( start.plusYears( (int) whole ), 12.0 * fraction );
   }
+
+  /******************************************** index ********************************************/
+  public int index()
+  {
+    return JPlanner.plan.index( this );
+  }
+
 }

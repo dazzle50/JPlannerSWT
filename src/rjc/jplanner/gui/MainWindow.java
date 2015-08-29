@@ -310,7 +310,10 @@ public class MainWindow extends Shell
   public void message( String msg )
   {
     // display message on status-bar
-    m_statusBar.setText( msg );
+    if ( m_statusBar == null )
+      JPlanner.trace( "MESSAGE BUT NO STATUS-BAR: " + msg );
+    else
+      m_statusBar.setText( msg );
   }
 
   /**************************************** addFileMenu ******************************************/

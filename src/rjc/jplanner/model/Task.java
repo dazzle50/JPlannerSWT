@@ -465,7 +465,7 @@ public class Task implements Comparable<Task>
   }
 
   /********************************************* end *********************************************/
-  private DateTime end()
+  public DateTime end()
   {
     // return task or summary end date-time
     if ( isSummary() )
@@ -489,7 +489,7 @@ public class Task implements Comparable<Task>
   }
 
   /******************************************** start ********************************************/
-  private DateTime start()
+  public DateTime start()
   {
     // return task or summary start date-time
     if ( isSummary() )
@@ -540,6 +540,12 @@ public class Task implements Comparable<Task>
   {
     // return gantt-data associated with the task
     return m_gantt;
+  }
+
+  /******************************************** index ********************************************/
+  public int index()
+  {
+    return JPlanner.plan.index( this );
   }
 
 }
