@@ -265,7 +265,7 @@ public class Resource
   {
     // write resource data to xml stream
     xsw.writeStartElement( XmlLabels.XML_RESOURCE );
-    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( this.index() ) );
 
     if ( !isNull() )
     {
@@ -286,7 +286,7 @@ public class Resource
         xsw.writeAttribute( XmlLabels.XML_END, m_end.toString() );
       xsw.writeAttribute( XmlLabels.XML_AVAIL, Double.toString( m_availability ) );
       xsw.writeAttribute( XmlLabels.XML_COST, Double.toString( m_cost ) );
-      xsw.writeAttribute( XmlLabels.XML_CALENDAR, Integer.toString( JPlanner.plan.index( m_calendar ) ) );
+      xsw.writeAttribute( XmlLabels.XML_CALENDAR, Integer.toString( m_calendar.index() ) );
       if ( m_comment != null )
         xsw.writeAttribute( XmlLabels.XML_COMMENT, m_comment );
     }

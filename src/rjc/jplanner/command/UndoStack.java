@@ -70,6 +70,7 @@ public class UndoStack
     // add new command to stack, do it, and increment stack index
     m_stack.add( command );
     command.redo();
+    command.update();
     m_index++;
     updateUndoRedoMenuItems();
 
@@ -84,6 +85,7 @@ public class UndoStack
     // decrement index and revert command
     m_index--;
     m_stack.get( m_index ).undo();
+    m_stack.get( m_index ).update();
     updateUndoRedoMenuItems();
   }
 
@@ -92,6 +94,7 @@ public class UndoStack
   {
     // action command and increment index
     m_stack.get( m_index ).redo();
+    m_stack.get( m_index ).update();
     m_index++;
     updateUndoRedoMenuItems();
   }

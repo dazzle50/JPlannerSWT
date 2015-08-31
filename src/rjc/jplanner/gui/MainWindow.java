@@ -33,6 +33,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -316,6 +318,19 @@ public class MainWindow extends Shell
       m_statusBar.setText( msg );
   }
 
+  /****************************************** schedule *******************************************/
+  public void schedule()
+  {
+    // trigger a plan re-schedule and update gui
+    JPlanner.plan.schedule();
+    JPlanner.gui.properties().updateFromPlan();
+    JPlanner.gui.taskTables().refresh();
+
+    // also update gantts
+    for ( MainTabWidget tabs : m_tabWidgets )
+      tabs.gantt().updatePlot();
+  }
+
   /**************************************** addFileMenu ******************************************/
   private void addFileMenu( Menu menuBar )
   {
@@ -489,9 +504,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        JPlanner.plan.schedule();
-        JPlanner.gui.properties().updateFromPlan();
-        JPlanner.gui.taskTables().refresh();
+        JPlanner.gui.schedule();
       }
     } );
   }
@@ -575,7 +588,7 @@ public class MainWindow extends Shell
       {
         GanttPlot.ganttStretch = actionStretchTasks.getSelection();
         for ( MainTabWidget tabs : m_tabWidgets )
-          tabs.gantt().updateGantt();
+          tabs.gantt().updateAll();
       }
     } );
   }
@@ -587,14 +600,29 @@ public class MainWindow extends Shell
     Shell newWindow = new Shell( MainWindow.this.getDisplay(), SWT.SHELL_TRIM );
     newWindow.setSize( 700, 400 );
     newWindow.setLayout( new FillLayout( SWT.FILL ) );
+    newWindow.setText( getShell().getText() );
+
+    // populate window with MainTabWidget
     MainTabWidget newTabWidget = new MainTabWidget( newWindow, false );
     newTabWidget.gantt().setConfig( m_tabWidgets.get( 0 ).gantt() );
     newTabWidget.setTasksGanttSplitter( 350 );
-    m_tabWidgets.add( newTabWidget );
-    newWindow.open();
-    m_windows.add( newWindow );
-    newWindow.setText( getShell().getText() );
 
+    // add new window and new MainTabWidget to respective tracking lists
+    m_windows.add( newWindow );
+    m_tabWidgets.add( newTabWidget );
+
+    // add dispose listener to keep tracking lists updated
+    newWindow.addDisposeListener( new DisposeListener()
+    {
+      @Override
+      public void widgetDisposed( DisposeEvent event )
+      {
+        m_windows.remove( newWindow );
+        m_tabWidgets.remove( newTabWidget );
+      }
+    } );
+
+    newWindow.open();
     return newTabWidget;
   }
 
@@ -815,7 +843,7 @@ public class MainWindow extends Shell
     updateWindowTitles();
 
     message( "Successfully loaded '" + file.getPath() + "'" );
-    JPlanner.plan.schedule();
+    JPlanner.gui.schedule();
 
     return true;
   }

@@ -48,13 +48,6 @@ public class CommandSetResourceValue implements IUndoCommand
   {
     // action command
     JPlanner.plan.resource( m_resID ).setData( m_section, m_newValue );
-
-    // update resources tables
-    JPlanner.gui.resourceTables().refresh();
-
-    // if initials and old value was null, update properties so it shows new count of resources
-    if ( m_section == Resource.SECTION_INITIALS && m_oldValue == null )
-      JPlanner.gui.properties().updateFromPlan();
   }
 
   /******************************************* undo **********************************************/
@@ -63,13 +56,22 @@ public class CommandSetResourceValue implements IUndoCommand
   {
     // revert command
     JPlanner.plan.resource( m_resID ).setData( m_section, m_oldValue );
+  }
 
+  /****************************************** update *********************************************/
+  @Override
+  public void update()
+  {
     // update resources tables
     JPlanner.gui.resourceTables().refresh();
 
     // if initials and old value was null, update properties so it shows new count of resources
     if ( m_section == Resource.SECTION_INITIALS && m_oldValue == null )
       JPlanner.gui.properties().updateFromPlan();
+
+    // update schedule
+    if ( m_section != Resource.SECTION_COMMENT )
+      JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/

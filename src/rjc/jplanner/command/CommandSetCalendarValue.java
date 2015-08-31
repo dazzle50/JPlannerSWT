@@ -48,16 +48,6 @@ public class CommandSetCalendarValue implements IUndoCommand
   {
     // action command
     JPlanner.plan.calendar( m_calID ).setData( m_section, m_newValue );
-
-    // update calendars tables
-    JPlanner.gui.calendarTables().refresh();
-
-    // if name being changed, update resources table and properties in case name displayed there
-    if ( m_section == Calendar.SECTION_NAME )
-    {
-      JPlanner.gui.resourceTables().refresh();
-      JPlanner.gui.properties().updateFromPlan();
-    }
   }
 
   /******************************************* undo **********************************************/
@@ -66,7 +56,12 @@ public class CommandSetCalendarValue implements IUndoCommand
   {
     // revert command
     JPlanner.plan.calendar( m_calID ).setData( m_section, m_oldValue );
+  }
 
+  /****************************************** update *********************************************/
+  @Override
+  public void update()
+  {
     // update calendars tables
     JPlanner.gui.calendarTables().refresh();
 
@@ -76,6 +71,10 @@ public class CommandSetCalendarValue implements IUndoCommand
       JPlanner.gui.resourceTables().refresh();
       JPlanner.gui.properties().updateFromPlan();
     }
+
+    // update schedule
+    if ( m_section != Calendar.SECTION_NAME )
+      JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/

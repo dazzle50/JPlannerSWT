@@ -18,6 +18,8 @@
 
 package rjc.jplanner.command;
 
+import rjc.jplanner.JPlanner;
+
 /*************************************************************************************************/
 /************************* UndoCommand for updating calendar exceptions **************************/
 /*************************************************************************************************/
@@ -45,6 +47,17 @@ public class CommandSetCalendarExceptions implements IUndoCommand
   {
     // TODO Auto-generated method stub
 
+  }
+
+  /****************************************** update *********************************************/
+  @Override
+  public void update()
+  {
+    // update plan properties on gui
+    JPlanner.gui.calendarTables().refresh();
+
+    // update schedule
+    JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/

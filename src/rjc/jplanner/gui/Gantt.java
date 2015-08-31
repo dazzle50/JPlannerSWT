@@ -121,7 +121,7 @@ public class Gantt extends Composite
     setStart( new DateTime( JPlanner.plan.start().milliseconds() - 300000000L ) );
     setEnd( m_start.plusDays( 100 ) );
     setMsPP( 3600 * 6000 );
-    updateGantt();
+    updateAll();
   }
 
   /****************************************** setStart *******************************************/
@@ -160,13 +160,22 @@ public class Gantt extends Composite
     setMsPP( other.m_millisecondsPP );
   }
 
-  /**************************************** updateGantt ******************************************/
-  public void updateGantt()
+  /***************************************** updateAll *******************************************/
+  public void updateAll()
   {
-    // to force redraw/update of scrolling gantt, reset the parent scrolled-composite content
+    // cause whole gantt to be redrawn and size to be re-calculated
     ScrolledComposite sc = (ScrolledComposite) getParent();
-    sc.setContent( this );
     sc.setMinSize( computeSize( SWT.DEFAULT, SWT.DEFAULT ) );
+    m_plot.redraw();
+    m_upperScale.redraw();
+    m_lowerScale.redraw();
+  }
+
+  /**************************************** updatePlot *******************************************/
+  public void updatePlot()
+  {
+    // cause gantt plot to be redrawn
+    m_plot.redraw();
   }
 
 }

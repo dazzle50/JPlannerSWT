@@ -67,7 +67,6 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setCalendar( m_newCal );
     JPlanner.plan.setDatetimeFormat( m_newDTformat );
     JPlanner.plan.setDateFormat( m_newDformat );
-    update();
   }
 
   /******************************************* undo **********************************************/
@@ -80,10 +79,10 @@ public class CommandSetPlanProperties implements IUndoCommand
     JPlanner.plan.setCalendar( m_oldCal );
     JPlanner.plan.setDatetimeFormat( m_oldDTformat );
     JPlanner.plan.setDateFormat( m_oldDformat );
-    update();
   }
 
   /****************************************** update *********************************************/
+  @Override
   public void update()
   {
     // update plan properties on gui
@@ -102,7 +101,7 @@ public class CommandSetPlanProperties implements IUndoCommand
 
     // if start or calendar changed
     if ( !m_oldStart.equals( m_newStart ) || !m_oldCal.equals( m_newCal ) )
-      JPlanner.plan.schedule();
+      JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/

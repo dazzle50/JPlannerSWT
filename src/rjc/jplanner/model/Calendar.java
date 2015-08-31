@@ -385,7 +385,7 @@ public class Calendar
   {
     // write calendar data to XML stream
     xsw.writeStartElement( XmlLabels.XML_CALENDAR );
-    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( this.index() ) );
     xsw.writeAttribute( XmlLabels.XML_NAME, m_name );
     xsw.writeAttribute( XmlLabels.XML_ANCHOR, m_cycleAnchor.toString() );
 
@@ -393,7 +393,7 @@ public class Calendar
     {
       xsw.writeEmptyElement( XmlLabels.XML_NORMAL );
       xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( p ) );
-      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( JPlanner.plan.index( m_normal.get( p ) ) ) );
+      xsw.writeAttribute( XmlLabels.XML_DAY, Integer.toString( m_normal.get( p ).index() ) );
     }
 
     // generate sorted list of exception keys so order always same in XML file

@@ -349,7 +349,7 @@ public class Day
   {
     // write day-type data to XML stream
     xsw.writeStartElement( XmlLabels.XML_DAY );
-    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( this.index() ) );
     xsw.writeAttribute( XmlLabels.XML_NAME, m_name );
     xsw.writeAttribute( XmlLabels.XML_WORK, Double.toString( m_work ) );
 

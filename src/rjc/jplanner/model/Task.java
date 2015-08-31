@@ -294,7 +294,7 @@ public class Task implements Comparable<Task>
   {
     // write task data to XML stream (except predecessors)
     xsw.writeStartElement( XmlLabels.XML_TASK );
-    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( JPlanner.plan.index( this ) ) );
+    xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( this.index() ) );
 
     if ( !isNull() )
     {
@@ -326,7 +326,7 @@ public class Task implements Comparable<Task>
     if ( preds.length() > 0 )
     {
       xsw.writeStartElement( XmlLabels.XML_PREDECESSORS );
-      xsw.writeAttribute( XmlLabels.XML_TASK, Integer.toString( JPlanner.plan.index( this ) ) );
+      xsw.writeAttribute( XmlLabels.XML_TASK, Integer.toString( this.index() ) );
       xsw.writeAttribute( XmlLabels.XML_PREDS, preds );
       xsw.writeEndElement(); // XML_PREDECESSORS
     }
@@ -349,7 +349,7 @@ public class Task implements Comparable<Task>
       return -1;
 
     // finally by index
-    return JPlanner.plan.index( this ) - JPlanner.plan.index( other );
+    return this.index() - other.index();
   }
 
   /***************************************** toString ********************************************/
@@ -372,8 +372,8 @@ public class Task implements Comparable<Task>
     // if task is summary, then sub-tasks are implicit predecessors
     if ( m_summaryEnd > 0 )
     {
-      int thisNum = JPlanner.plan.index( this );
-      int otherNum = JPlanner.plan.index( other );
+      int thisNum = this.index();
+      int otherNum = other.index();
       if ( otherNum > thisNum && otherNum <= m_summaryEnd )
         return true;
     }
@@ -420,7 +420,7 @@ public class Task implements Comparable<Task>
     // if this task doesn't have predecessors, does a summary?
     if ( !hasToStart && !hasToFinish )
     {
-      int index = JPlanner.plan.index( this );
+      int index = this.index();
       for ( int indent = m_indent; indent > 0; indent-- )
       {
         // find task summary
@@ -470,7 +470,7 @@ public class Task implements Comparable<Task>
     // return task or summary end date-time
     if ( isSummary() )
     {
-      int here = JPlanner.plan.index( this );
+      int here = this.index();
       DateTime e = new DateTime( Long.MIN_VALUE );
 
       // loop through each subtask
@@ -494,7 +494,7 @@ public class Task implements Comparable<Task>
     // return task or summary start date-time
     if ( isSummary() )
     {
-      int here = JPlanner.plan.index( this );
+      int here = this.index();
       DateTime s = new DateTime( Long.MAX_VALUE );
 
       // loop through each subtask
@@ -519,7 +519,7 @@ public class Task implements Comparable<Task>
     DateTime start = m_predecessors.start();
 
     // if indented also check start against summary(s) predecessors
-    int index = JPlanner.plan.index( this );
+    int index = this.index();
     for ( int indent = m_indent; indent > 0; indent-- )
     {
       // find task summary

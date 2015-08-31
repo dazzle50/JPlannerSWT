@@ -231,10 +231,6 @@ public class MainTabWidget extends TabFolder
           JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
-
-    // ensure gantt is updated to reflect any changes
-    m_gantt.updateGantt();
-
   }
 
   /******************************** loadXmlResources **********************************/

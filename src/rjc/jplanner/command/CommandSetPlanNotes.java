@@ -43,9 +43,6 @@ public class CommandSetPlanNotes implements IUndoCommand
   {
     // action command
     JPlanner.plan.setNotes( m_newNotes );
-
-    // update plan notes on gui
-    JPlanner.gui.notes().updateFromPlan();
   }
 
   /******************************************* undo **********************************************/
@@ -54,7 +51,12 @@ public class CommandSetPlanNotes implements IUndoCommand
   {
     // revert command
     JPlanner.plan.setNotes( m_oldNotes );
+  }
 
+  /****************************************** update *********************************************/
+  @Override
+  public void update()
+  {
     // update plan notes on gui
     JPlanner.gui.notes().updateFromPlan();
   }

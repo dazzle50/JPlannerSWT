@@ -87,7 +87,7 @@ public class Predecessors
       }
 
       Predecessor pred = new Predecessor();
-      pred.task = JPlanner.plan.task( taskNum - 1 );
+      pred.task = JPlanner.plan.task( taskNum );
       pred.type = type;
       pred.lag = lag;
       m_preds.add( pred );
@@ -104,7 +104,7 @@ public class Predecessors
     // build up string equivalent
     for ( Predecessor pred : m_preds )
     {
-      str += ( JPlanner.plan.index( pred.task ) + 1 );
+      str += pred.task.index();
 
       if ( pred.type != TYPE_DEFAULT || pred.lag.number() != 0.0 )
       {
@@ -165,10 +165,10 @@ public class Predecessors
       }
 
       // check number is non-null task
-      int taskNum = Integer.parseInt( part.substring( 0, digit ) ) - 1;
+      int taskNum = Integer.parseInt( part.substring( 0, digit ) );
       if ( taskNum >= JPlanner.plan.tasksCount() || JPlanner.plan.task( taskNum ).isNull() )
       {
-        error += "'" + ( taskNum + 1 ) + "' is a null task.\n";
+        error += "'" + taskNum + "' is a null task.\n";
         continue;
       }
 
@@ -176,7 +176,7 @@ public class Predecessors
       if ( JPlanner.plan.task( thisTaskNum ).isSummary() && taskNum > thisTaskNum
           && taskNum <= JPlanner.plan.task( thisTaskNum ).summaryEnd() )
       {
-        error += "'" + ( taskNum + 1 ) + "' is a sub-task of this summary.\n";
+        error += "'" + taskNum + "' is a sub-task of this summary.\n";
         continue;
       }
 
@@ -184,21 +184,21 @@ public class Predecessors
       if ( JPlanner.plan.task( taskNum ).isSummary() && thisTaskNum > taskNum
           && thisTaskNum <= JPlanner.plan.task( taskNum ).summaryEnd() )
       {
-        error += "'" + ( taskNum + 1 ) + "' is a summary containing this sub-task.\n";
+        error += "'" + taskNum + "' is a summary containing this sub-task.\n";
         continue;
       }
 
       // check number is not this task
       if ( taskNum == thisTaskNum )
       {
-        error += "'" + ( taskNum + 1 ) + "' is a reference to this task.\n";
+        error += "'" + taskNum + "' is a reference to this task.\n";
         continue;
       }
 
       // check number is does not cause circular reference
       if ( JPlanner.plan.task( taskNum ).hasPredecessor( JPlanner.plan.task( thisTaskNum ) ) )
       {
-        error += "'" + ( taskNum + 1 ) + "' gives a circular reference to this task.\n";
+        error += "'" + taskNum + "' gives a circular reference to this task.\n";
         continue;
       }
 
