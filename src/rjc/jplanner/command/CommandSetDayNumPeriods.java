@@ -106,7 +106,7 @@ public class CommandSetDayNumPeriods implements IUndoCommand
   public void update()
   {
     // update day-types table
-    JPlanner.gui.dayTables().refresh();
+    JPlanner.gui.updateTables();
 
     // update schedule
     JPlanner.gui.schedule();

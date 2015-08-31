@@ -51,19 +51,19 @@ public class Plan
 
   private UndoStack m_undostack;     // undo stack for plan editing
 
-  private Tasks     m_tasks;         // list of plan tasks
-  private Resources m_resources;     // list of plan resources
-  private Calendars m_calendars;     // list of plan calendars
-  private Days      m_daytypes;      // list of plan day types
+  public Tasks      tasks;           // list of plan tasks
+  public Resources  resources;       // list of plan resources
+  public Calendars  calendars;       // list of plan calendars
+  public Days       daytypes;        // list of plan day types
 
   /**************************************** constructor ******************************************/
   public Plan()
   {
     // construct empty but usable Plan
-    m_tasks = new Tasks();
-    m_resources = new Resources();
-    m_calendars = new Calendars();
-    m_daytypes = new Days();
+    tasks = new Tasks();
+    resources = new Resources();
+    calendars = new Calendars();
+    daytypes = new Days();
 
     m_undostack = new UndoStack();
   }
@@ -75,18 +75,18 @@ public class Plan
     // convert to string
     String hash = super.toString();
     String id = hash.substring( hash.lastIndexOf( '.' ) + 1 );
-    return id + "[" + m_title + ", " + m_start + ", " + m_tasks.size() + " Tasks, " + m_resources.size()
-        + " Resources, " + m_calendars.size() + " Calendars, " + m_daytypes.size() + " DayTypes]";
+    return id + "[" + m_title + ", " + m_start + ", " + tasks.size() + " Tasks, " + resources.size() + " Resources, "
+        + calendars.size() + " Calendars, " + daytypes.size() + " DayTypes]";
   }
 
   /**************************************** initialise *******************************************/
   public void initialise()
   {
     // initialise plan with default settings and contents
-    m_daytypes.initialise();
-    m_calendars.initialise();
-    m_resources.initialise();
-    m_tasks.initialise();
+    daytypes.initialise();
+    calendars.initialise();
+    resources.initialise();
+    tasks.initialise();
 
     m_title = "";
     m_calendar = calendar( 0 );
@@ -104,8 +104,8 @@ public class Plan
   {
     // return number of not-null tasks in plan
     int count = 0;
-    for ( int i = 0; i < m_tasks.size(); i++ )
-      if ( !m_tasks.get( i ).isNull() )
+    for ( int i = 0; i < tasks.size(); i++ )
+      if ( !tasks.get( i ).isNull() )
         count++;
 
     return count;
@@ -116,8 +116,8 @@ public class Plan
   {
     // return number of not-null resources in plan
     int count = 0;
-    for ( int i = 0; i < m_resources.size(); i++ )
-      if ( !m_resources.get( i ).isNull() )
+    for ( int i = 0; i < resources.size(); i++ )
+      if ( !resources.get( i ).isNull() )
         count++;
 
     return count;
@@ -127,76 +127,76 @@ public class Plan
   public int tasksCount()
   {
     // return number of tasks in plan (including null tasks)
-    return m_tasks.size();
+    return tasks.size();
   }
 
   /************************************** resourcesCount *****************************************/
   public int resourcesCount()
   {
     // return number of resources in plan (including null resources)
-    return m_resources.size();
+    return resources.size();
   }
 
   /************************************** calendarsCount *****************************************/
   public int calendarsCount()
   {
     // return number of calendars in plan
-    return m_calendars.size();
+    return calendars.size();
   }
 
   /***************************************** daysCount *******************************************/
   public int daysCount()
   {
     // return number of day-types in plan
-    return m_daytypes.size();
+    return daytypes.size();
   }
 
   /******************************************** task *********************************************/
   public Task task( int index )
   {
     // return task corresponding to index
-    return m_tasks.get( index );
+    return tasks.get( index );
   }
 
   public int index( Task task )
   {
-    return m_tasks.indexOf( task );
+    return tasks.indexOf( task );
   }
 
   /****************************************** resource *******************************************/
   public Resource resource( int index )
   {
     // return resource corresponding to index
-    return m_resources.get( index );
+    return resources.get( index );
   }
 
   public int index( Resource res )
   {
-    return m_resources.indexOf( res );
+    return resources.indexOf( res );
   }
 
   /****************************************** calendar *******************************************/
   public Calendar calendar( int index )
   {
     // return calendar corresponding to index
-    return m_calendars.get( index );
+    return calendars.get( index );
   }
 
   public int index( Calendar cal )
   {
-    return m_calendars.indexOf( cal );
+    return calendars.indexOf( cal );
   }
 
   /********************************************* day *********************************************/
   public Day day( int index )
   {
     // return day-type corresponding to index
-    return m_daytypes.get( index );
+    return daytypes.get( index );
   }
 
   public int index( Day day )
   {
-    return m_daytypes.indexOf( day );
+    return daytypes.indexOf( day );
   }
 
   /******************************************** title ********************************************/
@@ -224,7 +224,7 @@ public class Plan
     DateTime earliest = null;
     DateTime start = null;
 
-    for ( Task task : m_tasks )
+    for ( Task task : tasks )
     {
       // if task is null, skip
       if ( task.isNull() )
@@ -257,7 +257,7 @@ public class Plan
     DateTime latest = null;
     DateTime end = null;
 
-    for ( Task task : m_tasks )
+    for ( Task task : tasks )
     {
       // if task is null, skip
       if ( task.isNull() )
@@ -399,10 +399,10 @@ public class Plan
       fos.write( notes.getBytes( Charset.forName( XmlLabels.ENCODING ) ) );
 
       // write day, calendar, resource, and task data to XML stream
-      m_daytypes.writeXML( xsw );
-      m_calendars.writeXML( xsw );
-      m_resources.writeXML( xsw );
-      m_tasks.writeXML( xsw );
+      daytypes.writeXML( xsw );
+      calendars.writeXML( xsw );
+      resources.writeXML( xsw );
+      tasks.writeXML( xsw );
 
       xsw.writeEndElement(); // XML_PLAN_DATA
       return true;
@@ -439,16 +439,16 @@ public class Plan
             calendarId = loadXmlPlan( xsr );
             break;
           case XmlLabels.XML_DAY_DATA:
-            m_daytypes.loadXML( xsr );
+            daytypes.loadXML( xsr );
             break;
           case XmlLabels.XML_CAL_DATA:
-            m_calendars.loadXML( xsr );
+            calendars.loadXML( xsr );
             break;
           case XmlLabels.XML_RES_DATA:
-            m_resources.loadXML( xsr );
+            resources.loadXML( xsr );
             break;
           case XmlLabels.XML_TASK_DATA:
-            m_tasks.loadXML( xsr );
+            tasks.loadXML( xsr );
             break;
           default:
             JPlanner.trace( "Plan.loadXML - unhandled start element '" + xsr.getLocalName() + "'" );
@@ -544,22 +544,6 @@ public class Plan
     return null;
   }
 
-  /************************************* isDuplicateDayName **************************************/
-  public boolean isDuplicateDayName( String txt, int index )
-  {
-    // return true if txt is a duplicate another day-type name
-    txt = JPlanner.clean( txt );
-    for ( int i = 0; i < daysCount(); i++ )
-    {
-      if ( i == index )
-        continue;
-      if ( txt.equals( day( i ).name() ) )
-        return true;
-    }
-
-    return false;
-  }
-
   /******************************************* stretch *******************************************/
   public DateTime stretch( DateTime dt, boolean stretchTasks )
   {
@@ -583,7 +567,7 @@ public class Plan
   {
     // schedule the plan!
     JPlanner.trace( "============================== SCHEDULE started ==============================" );
-    m_tasks.schedule();
+    tasks.schedule();
     JPlanner.trace( "============================== SCHEDULE finished ==============================" );
   }
 

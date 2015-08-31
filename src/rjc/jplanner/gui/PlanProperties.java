@@ -313,11 +313,16 @@ public class PlanProperties extends Composite
     m_startDT.setDateTime( JPlanner.plan.start() );
     m_calCombo.setCalendarItems();
     m_calCombo.setText( JPlanner.plan.calendar().name() );
-    m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
-    m_DformatText.setText( JPlanner.plan.dateFormat() );
     m_filenameText.setText( JPlanner.plan.filename() );
     m_filelocText.setText( JPlanner.plan.fileLocation() );
     m_savedbyText.setText( JPlanner.plan.savedBy() );
+
+    // to prevent unnecessary triggering of verify listener, only set if different
+    if ( !m_DTformatText.getText().equals( JPlanner.plan.datetimeFormat() ) )
+      m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
+
+    if ( !m_DformatText.getText().equals( JPlanner.plan.dateFormat() ) )
+      m_DformatText.setText( JPlanner.plan.dateFormat() );
 
     // update the gui "number of" widgets
     m_tasksNum.setText( ": " + JPlanner.plan.tasksNotNullCount() );

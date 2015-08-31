@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JPlanner format="2015-08" saved-by="Richard" saved-when="2015-08-31T10:55:33.750" saved-name="!defaultload.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
-  <plan-data title="DEFAULT" start="2014-08-31T09:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="TableRegister re-selects last selected cell, but not selected range (for example in secondary windows)&#10;Move Plan.isDuplicateDayName to Days ?&#10;Button bar (coolbar?)&#10;&#10;&#10;Todo&#10;&#10;0) All dependencies types need to be drawn correctly&#10;&#10;&#10;1) Ability to re-order (start with something simpler like day-types, not tasks)&#10;2) Ability to delete&#10;3) Ability to insert (blank or duplicate)&#10;&#10;&#10;&#10;&#10;">
+<JPlanner format="2015-08" saved-by="Richard" saved-when="2015-08-31T17:53:42.342" saved-name="!defaultload.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
+  <plan-data title="DEFAULT" start="2014-08-31T09:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="Todo&#10;&#10;0) All dependencies types need to be drawn correctly&#10;&#10;&#10;1) Ability to re-order (start with something simpler like day-types, not tasks)&#10;2) Ability to delete&#10;3) Ability to insert (blank or duplicate)&#10;&#10;&#10;&#10;&#10;">
     <days-data>
       <day id="0" name="Non working" work="0.0"></day>
       <day id="1" name="Standard work day" work="1.0">

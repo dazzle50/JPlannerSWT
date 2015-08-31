@@ -87,17 +87,7 @@ public class CommandSetPlanProperties implements IUndoCommand
   {
     // update plan properties on gui
     JPlanner.gui.properties().updateFromPlan();
-
-    // if date-time format changed
-    if ( !m_oldDTformat.equals( m_newDTformat ) )
-      JPlanner.gui.taskTables().refresh();
-
-    // if date format changed
-    if ( !m_oldDTformat.equals( m_newDTformat ) )
-    {
-      JPlanner.gui.resourceTables().refresh();
-      JPlanner.gui.calendarTables().refresh();
-    }
+    JPlanner.gui.updateTables();
 
     // if start or calendar changed
     if ( !m_oldStart.equals( m_newStart ) || !m_oldCal.equals( m_newCal ) )

@@ -56,7 +56,7 @@ public class DayCellEditor extends XAbstractCellEditor
             prime.setForeground( JPlanner.gui.COLOR_ERROR );
             JPlanner.gui.message( "Blank name not allowed" );
           }
-          else if ( JPlanner.plan.isDuplicateDayName( txt, row ) )
+          else if ( JPlanner.plan.daytypes.isDuplicateDayName( txt, row ) )
           {
             prime.setForeground( JPlanner.gui.COLOR_ERROR );
             JPlanner.gui.message( "Duplicate name not allowed" );

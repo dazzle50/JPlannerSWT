@@ -54,7 +54,7 @@ public class CommandSetCalendarExceptions implements IUndoCommand
   public void update()
   {
     // update plan properties on gui
-    JPlanner.gui.calendarTables().refresh();
+    JPlanner.gui.updateTables();
 
     // update schedule
     JPlanner.gui.schedule();

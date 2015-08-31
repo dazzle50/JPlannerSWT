@@ -125,8 +125,11 @@ public class MainTabWidget extends TabFolder
       @Override
       public void handleEvent( Event event )
       {
-        // ensure selected tab contents has keyboard focus
-        getSelection()[0].getControl().forceFocus();
+        // ensure selected tab table has keyboard focus
+        if ( getSelection()[0] == m_tabTasks )
+          m_tasksTable.forceFocus();
+        else
+          getSelection()[0].getControl().forceFocus();
       }
     } );
   }
@@ -159,6 +162,30 @@ public class MainTabWidget extends TabFolder
   public Gantt gantt()
   {
     return m_gantt;
+  }
+
+  /******************************************** tasks ********************************************/
+  public XNatTable tasks()
+  {
+    return m_tasksTable;
+  }
+
+  /****************************************** resources ******************************************/
+  public XNatTable resources()
+  {
+    return m_resourcesTable;
+  }
+
+  /****************************************** calendars ******************************************/
+  public XNatTable calendars()
+  {
+    return m_calendarsTable;
+  }
+
+  /******************************************** days *********************************************/
+  public XNatTable days()
+  {
+    return m_daysTable;
   }
 
   /************************************ setTasksGanttSplitter ************************************/

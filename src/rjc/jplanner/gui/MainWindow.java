@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -57,7 +56,6 @@ import org.eclipse.swt.widgets.Text;
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
-import rjc.jplanner.gui.table.TableRegister;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
 
@@ -70,15 +68,10 @@ import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 public class MainWindow extends Shell
 {
   private MainTabWidget            m_mainTabWidget;       // MainTabWidget associated with MainWindow
-  private ArrayList<Shell>         m_windows;             // list of windows including this one
-  private ArrayList<MainTabWidget> m_tabWidgets;          // list of MainTabWidget including one in MainWindow
+  private ArrayList<MainTabWidget> m_tabWidgets;          // list of MainTabWidgets including one in MainWindow
   private Text                     m_statusBar;
   private MenuListener             m_menuListener;
   private MenuItem                 m_menuTask;
-  private TableRegister            m_taskTables;          // register of tables showing tasks
-  private TableRegister            m_resourceTables;      // register of tables showing resources
-  private TableRegister            m_calendarTables;      // register of tables showing calendars
-  private TableRegister            m_dayTables;           // register of tables showing day-types
 
   public UndoStackWindow           undoWindow;            // window to show plan undo-stack
   public MenuItem                  actionUndoStackView;   // action to show plan undo-stack window
@@ -131,12 +124,6 @@ public class MainWindow extends Shell
     COLOR_ERROR = COLOR_RED;
     COLOR_NO_ERROR = COLOR_BLACK;
     TRANSFORM = new Transform( display );
-
-    // prepare the table registers for the different types of tables
-    m_taskTables = new TableRegister();
-    m_resourceTables = new TableRegister();
-    m_calendarTables = new TableRegister();
-    m_dayTables = new TableRegister();
 
     // prepare listener to for when menus shown
     m_menuListener = new MenuListener()
@@ -233,10 +220,6 @@ public class MainWindow extends Shell
     m_statusBar.setText( "JPlanner started" );
     m_statusBar.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
-    // add this window to list used for example when updating titles
-    m_windows = new ArrayList<Shell>();
-    m_windows.add( this );
-
     // listener to trap window close event to check user doesn't loss data
     getShell().addListener( SWT.Close, new Listener()
     {
@@ -283,16 +266,9 @@ public class MainWindow extends Shell
   public void updateWindowTitles()
   {
     // refresh title on each JPlanner window
-    Iterator<Shell> iter = m_windows.iterator();
-    while ( iter.hasNext() )
+    for ( MainTabWidget tabs : m_tabWidgets )
     {
-      // if table has been disposed, remove from list and skip
-      Shell window = iter.next();
-      if ( window.isDisposed() )
-      {
-        iter.remove();
-        continue;
-      }
+      Shell window = tabs.getShell();
 
       if ( JPlanner.plan.filename() == null || JPlanner.plan.filename().equals( "" ) )
       {
@@ -321,14 +297,13 @@ public class MainWindow extends Shell
   /****************************************** schedule *******************************************/
   public void schedule()
   {
-    // trigger a plan re-schedule and update gui
+    // re-schedule plan
     JPlanner.plan.schedule();
-    JPlanner.gui.properties().updateFromPlan();
-    JPlanner.gui.taskTables().refresh();
 
-    // also update gantts
-    for ( MainTabWidget tabs : m_tabWidgets )
-      tabs.gantt().updatePlot();
+    // update gui
+    JPlanner.gui.properties().updateFromPlan();
+    m_tabWidgets.forEach( tabs -> tabs.tasks().update() );
+    m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
   }
 
   /**************************************** addFileMenu ******************************************/
@@ -587,8 +562,7 @@ public class MainWindow extends Shell
       public void widgetSelected( SelectionEvent event )
       {
         GanttPlot.ganttStretch = actionStretchTasks.getSelection();
-        for ( MainTabWidget tabs : m_tabWidgets )
-          tabs.gantt().updateAll();
+        m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
       }
     } );
   }
@@ -607,17 +581,15 @@ public class MainWindow extends Shell
     newTabWidget.gantt().setConfig( m_tabWidgets.get( 0 ).gantt() );
     newTabWidget.setTasksGanttSplitter( 350 );
 
-    // add new window and new MainTabWidget to respective tracking lists
-    m_windows.add( newWindow );
+    // add new MainTabWidget to tracking list
     m_tabWidgets.add( newTabWidget );
 
-    // add dispose listener to keep tracking lists updated
+    // add dispose listener to keep tracking list updated
     newWindow.addDisposeListener( new DisposeListener()
     {
       @Override
       public void widgetDisposed( DisposeEvent event )
       {
-        m_windows.remove( newWindow );
         m_tabWidgets.remove( newTabWidget );
       }
     } );
@@ -662,30 +634,6 @@ public class MainWindow extends Shell
     actionAboutJplanner.setEnabled( false );
   }
 
-  /****************************************** dayTables ******************************************/
-  public TableRegister dayTables()
-  {
-    return m_dayTables;
-  }
-
-  /**************************************** calendarTables ***************************************/
-  public TableRegister calendarTables()
-  {
-    return m_calendarTables;
-  }
-
-  /**************************************** resourceTables ***************************************/
-  public TableRegister resourceTables()
-  {
-    return m_resourceTables;
-  }
-
-  /****************************************** taskTables *****************************************/
-  public TableRegister taskTables()
-  {
-    return m_taskTables;
-  }
-
   /***************************************** properties ******************************************/
   public PlanProperties properties()
   {
@@ -696,6 +644,26 @@ public class MainWindow extends Shell
   public PlanNotes notes()
   {
     return m_mainTabWidget.notes();
+  }
+
+  /***************************************** resetTables *****************************************/
+  public void resetTables()
+  {
+    // update all the tables
+    m_tabWidgets.forEach( tabs -> tabs.tasks().refresh() );
+    m_tabWidgets.forEach( tabs -> tabs.resources().refresh() );
+    m_tabWidgets.forEach( tabs -> tabs.calendars().refresh() );
+    m_tabWidgets.forEach( tabs -> tabs.days().refresh() );
+  }
+
+  /***************************************** updateTables ****************************************/
+  public void updateTables()
+  {
+    // update all the tables
+    m_tabWidgets.forEach( tabs -> tabs.tasks().redraw() );
+    m_tabWidgets.forEach( tabs -> tabs.resources().redraw() );
+    m_tabWidgets.forEach( tabs -> tabs.calendars().redraw() );
+    m_tabWidgets.forEach( tabs -> tabs.days().redraw() );
   }
 
   /******************************************* newPlan *******************************************/
@@ -727,15 +695,11 @@ public class MainWindow extends Shell
     JPlanner.plan.initialise();
 
     // update gui
+    updateWindowTitles();
     properties().updateFromPlan();
     notes().updateFromPlan();
-    dayTables().refresh();
-    calendarTables().refresh();
-    resourceTables().refresh();
-    taskTables().refresh();
-    updateWindowTitles();
-    for ( MainTabWidget tabs : m_tabWidgets )
-      tabs.gantt().setDefault();
+    resetTables();
+    m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
 
     message( "New plan" );
   }
@@ -834,16 +798,14 @@ public class MainWindow extends Shell
     }
 
     // update gui
+    updateWindowTitles();
     properties().updateFromPlan();
     notes().updateFromPlan();
-    dayTables().refresh();
-    calendarTables().refresh();
-    resourceTables().refresh();
-    taskTables().refresh();
-    updateWindowTitles();
+    resetTables();
+    m_tabWidgets.forEach( tabs -> tabs.gantt().updateAll() );
 
-    message( "Successfully loaded '" + file.getPath() + "'" );
     JPlanner.gui.schedule();
+    message( "Successfully loaded '" + file.getPath() + "'" );
 
     return true;
   }
@@ -913,11 +875,7 @@ public class MainWindow extends Shell
       }
 
       // save display data to stream
-      if ( !saveDisplayData( xsw ) )
-      {
-        message( "Failed to save display data to '" + file.getPath() + "'" );
-        return false;
-      }
+      saveDisplayData( xsw );
 
       // close XML document
       xsw.writeEndElement(); // XML_JPLANNER
@@ -964,34 +922,15 @@ public class MainWindow extends Shell
   }
 
   /*************************************** saveDisplayData ***************************************/
-  private boolean saveDisplayData( XMLStreamWriter xsw ) throws XMLStreamException
+  private void saveDisplayData( XMLStreamWriter xsw ) throws XMLStreamException
   {
-    // remove disposed entries from m_windows
-    Iterator<Shell> iter = m_windows.iterator();
-    while ( iter.hasNext() )
-    {
-      Shell shell = iter.next();
-      if ( shell.isDisposed() )
-        iter.remove();
-    }
-
-    // remove disposed entries from m_tabWidgets
-    Iterator<MainTabWidget> iter2 = m_tabWidgets.iterator();
-    while ( iter2.hasNext() )
-    {
-      MainTabWidget tabs = iter2.next();
-      if ( tabs.isDisposed() )
-        iter2.remove();
-    }
-
     // save display data to stream for each window
-    for ( int count = 0; count < m_windows.size(); count++ )
+    for ( MainTabWidget tabs : m_tabWidgets )
     {
-      Shell window = m_windows.get( count );
-      MainTabWidget tabs = m_tabWidgets.get( count );
+      Shell window = tabs.getShell();
 
       xsw.writeStartElement( XmlLabels.XML_DISPLAY_DATA );
-      xsw.writeAttribute( XmlLabels.XML_WINDOW, Integer.toString( count ) );
+      xsw.writeAttribute( XmlLabels.XML_WINDOW, Integer.toString( m_tabWidgets.indexOf( tabs ) ) );
       xsw.writeAttribute( XmlLabels.XML_X, Integer.toString( window.getBounds().x ) );
       xsw.writeAttribute( XmlLabels.XML_Y, Integer.toString( window.getBounds().y ) );
       xsw.writeAttribute( XmlLabels.XML_WIDTH, Integer.toString( window.getBounds().width ) );
@@ -1002,23 +941,19 @@ public class MainWindow extends Shell
 
       xsw.writeEndElement(); // XML_DISPLAY_DATA
     }
-
-    return true;
   }
 
   /*************************************** loadDisplayData ***************************************/
   public void loadDisplayData( XMLStreamReader xsr ) throws XMLStreamException
   {
     // close all but main window
-    for ( Shell window : m_windows )
+    for ( MainTabWidget tabs : m_tabWidgets )
     {
+      Shell window = tabs.getShell();
+
       if ( window != this.getShell() )
         window.dispose();
     }
-    m_windows.clear();
-    m_windows.add( this.getShell() );
-    m_tabWidgets.clear();
-    m_tabWidgets.add( m_mainTabWidget );
 
     // read XML display data
     MainTabWidget tabs = null;
