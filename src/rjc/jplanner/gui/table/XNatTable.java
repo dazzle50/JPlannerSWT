@@ -19,6 +19,8 @@
 package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -29,6 +31,7 @@ import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.IConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
+import org.eclipse.nebula.widgets.nattable.coordinate.Range;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
@@ -48,6 +51,10 @@ import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.theme.ModernNatTableThemeConfiguration;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
@@ -63,23 +70,28 @@ import rjc.jplanner.gui.editor.TaskCellEditor;
 
 public class XNatTable extends NatTable
 {
-  private static ModernNatTableThemeConfiguration m_theme; // theme to use for all the tables
-  private static IConfiguration                   m_labels; // to support styling of individual cells
+  private static ModernNatTableThemeConfiguration m_theme;                // theme to use for all the tables
+  private static IConfiguration                   m_labels;               // to support styling of individual cells
+  private static KeyListener                      m_indentOutdentListener; // to support indenting / outdenting
 
   public enum TableType
   {
     DAY, CALENDAR, RESOURCE, TASK
   }
 
-  public static final String LABEL_SHADE           = "Shade";
-  public static final String LABEL_ALIGN_LEFT      = "Left";
-  public static final String LABEL_ALIGN_RIGHT     = "Right";
-  public static final String LABEL_WRAP_TEXT       = "Wrap";
-  public static final String LABEL_CELL_EDITABLE   = "Edit";
-  public static final String LABEL_DAY_EDITOR      = "Day";
-  public static final String LABEL_CALENDAR_EDITOR = "Cal";
-  public static final String LABEL_RESOURCE_EDITOR = "Res";
-  public static final String LABEL_TASK_EDITOR     = "Task";
+  public static final String LABEL_SHADE            = "Shade";
+  public static final String LABEL_ALIGN_LEFT       = "Left";
+  public static final String LABEL_ALIGN_RIGHT      = "Right";
+  public static final String LABEL_WRAP_TEXT        = "Wrap";
+  public static final String LABEL_CELL_EDITABLE    = "Edit";
+  public static final String LABEL_DAY_EDITOR       = "DayE";
+  public static final String LABEL_CALENDAR_EDITOR  = "CalE";
+  public static final String LABEL_RESOURCE_EDITOR  = "ResE";
+  public static final String LABEL_TASK_EDITOR      = "TaskE";
+  public static final String LABEL_DAY_PAINTER      = "DayP";
+  public static final String LABEL_CALENDAR_PAINTER = "CalP";
+  public static final String LABEL_RESOURCE_PAINTER = "ResP";
+  public static final String LABEL_TASK_PAINTER     = "TaskP";
 
   public SelectionLayer      selectionLayer;
   public RowHideShowLayer    rowHideShowLayer;
@@ -126,6 +138,10 @@ public class XNatTable extends NatTable
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
               DisplayMode.NORMAL, LABEL_WRAP_TEXT );
 
+          // Cell config task cell painter
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TasksCellPainter(), DisplayMode.NORMAL,
+              LABEL_TASK_PAINTER );
+
           // Edit config cell is editable
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
               DisplayMode.EDIT, LABEL_CELL_EDITABLE );
@@ -145,6 +161,32 @@ public class XNatTable extends NatTable
           // Edit config use task cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new TaskCellEditor(), DisplayMode.EDIT,
               LABEL_TASK_EDITOR );
+        }
+      };
+
+    if ( m_indentOutdentListener == null )
+      m_indentOutdentListener = new KeyAdapter()
+      {
+        @Override
+        public void keyPressed( KeyEvent event )
+        {
+          // detect indent
+          if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_RIGHT )
+          {
+            JPlanner.trace( "==================> INDENT" );
+            JPlanner.plan.tasks.indent( selectedRows() );
+            JPlanner.gui.updateTables();
+            JPlanner.gui.schedule();
+          }
+
+          // detect outdent
+          if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_LEFT )
+          {
+            JPlanner.trace( "==================> OUTDENT" );
+            JPlanner.plan.tasks.outdent( selectedRows() );
+            JPlanner.gui.updateTables();
+            JPlanner.gui.schedule();
+          }
         }
       };
 
@@ -189,10 +231,11 @@ public class XNatTable extends NatTable
         label = new TasksLabelAccumulator();
         int[] widthT = { 110, 25, 200, 60, 130, 130, 60 };
         configTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
+        addKeyListener( m_indentOutdentListener );
         break;
 
       default:
-        throw new IllegalArgumentException( "type" );
+        throw new IllegalArgumentException( "type " + type );
     }
 
   }
@@ -235,6 +278,21 @@ public class XNatTable extends NatTable
     addConfiguration( m_theme );
     addConfiguration( m_labels );
     configure();
+  }
+
+  /**************************************** selectedRows *****************************************/
+  public Set<Integer> selectedRows()
+  {
+    // return set of selected row indexes
+    Set<Integer> rows = new HashSet<Integer>();
+
+    for ( Range range : selectionLayer.getSelectedRowPositions() )
+    {
+      for ( int pos = range.start; pos < range.end; ++pos )
+        rows.add( selectionLayer.getRowIndexByPosition( pos ) );
+    }
+
+    return rows;
   }
 
   /****************************************** hideRow ********************************************/

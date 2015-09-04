@@ -20,6 +20,7 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -121,14 +122,36 @@ public class Tasks extends ArrayList<Task>
   {
     // first construct list of tasks in correct order
     ArrayList<Task> scheduleList = new ArrayList<Task>();
-    for ( int i = 0; i < size(); i++ )
-      if ( !get( i ).isNull() )
-        scheduleList.add( get( i ) );
+    for ( int index = 0; index < size(); index++ )
+      if ( !get( index ).isNull() )
+        scheduleList.add( get( index ) );
     Collections.sort( scheduleList );
 
     // schedule tasks in this order
-    for ( int i = 0; i < scheduleList.size(); i++ )
-      scheduleList.get( i ).schedule();
+    for ( int index = 0; index < scheduleList.size(); index++ )
+      scheduleList.get( index ).schedule();
+  }
+
+  /******************************************* indent ********************************************/
+  public void indent( Set<Integer> rows )
+  {
+    // TODO Auto-generated method stub
+    for ( int row : rows )
+    {
+      Task task = get( row );
+      task.setIndent( task.indent() + 1 );
+    }
+  }
+
+  /******************************************* outdent *******************************************/
+  public void outdent( Set<Integer> rows )
+  {
+    // TODO Auto-generated method stub
+    for ( int row : rows )
+    {
+      Task task = get( row );
+      task.setIndent( task.indent() - 1 );
+    }
   }
 
 }

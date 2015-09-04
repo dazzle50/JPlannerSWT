@@ -82,8 +82,16 @@ public class MainWindow extends Shell
   public Color                     COLOR_WHITE;
   public Color                     COLOR_RED;
   public Color                     COLOR_YELLOW;
+  public Color                     COLOR_BLUE;
+  public Color                     COLOR_GREEN;
+  public Color                     COLOR_CYAN;
   public Color                     COLOR_GRAY_DARK;
+  public Color                     COLOR_GRAY_MID;
   public Color                     COLOR_GRAY_LIGHT;
+
+  public Color                     COLOR_CELL_SELECTED;
+  public Color                     COLOR_CELL_DISABLED;
+  public Color                     COLOR_CELL_ENABLED;
 
   public Color                     COLOR_GANTT_BACKGROUND;
   public Color                     COLOR_GANTT_NONWORKING;
@@ -112,8 +120,15 @@ public class MainWindow extends Shell
     COLOR_WHITE = display.getSystemColor( SWT.COLOR_WHITE );
     COLOR_RED = display.getSystemColor( SWT.COLOR_RED );
     COLOR_YELLOW = display.getSystemColor( SWT.COLOR_YELLOW );
+    COLOR_BLUE = display.getSystemColor( SWT.COLOR_BLUE );
+    COLOR_GREEN = display.getSystemColor( SWT.COLOR_GREEN );
+    COLOR_CYAN = display.getSystemColor( SWT.COLOR_CYAN );
     COLOR_GRAY_DARK = display.getSystemColor( SWT.COLOR_GRAY );
+    COLOR_GRAY_MID = new Color( display, 227, 227, 227 );
     COLOR_GRAY_LIGHT = new Color( display, 240, 240, 240 );
+    COLOR_CELL_SELECTED = new Color( display, 51, 153, 255 );
+    COLOR_CELL_DISABLED = COLOR_GRAY_MID;
+    COLOR_CELL_ENABLED = COLOR_WHITE;
     COLOR_GANTT_BACKGROUND = COLOR_WHITE;
     COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
     COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
@@ -498,12 +513,32 @@ public class MainWindow extends Shell
 
     // add task menu items
     MenuItem actionIndent = new MenuItem( taskMenu, SWT.NONE );
+    actionIndent.setAccelerator( SWT.ALT + SWT.ARROW_RIGHT );
     actionIndent.setText( "Indent" );
-    actionIndent.setEnabled( false );
+    actionIndent.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        JPlanner.plan.tasks.indent( m_mainTabWidget.tasks().selectedRows() );
+        JPlanner.gui.updateTables();
+        JPlanner.gui.schedule();
+      }
+    } );
 
     MenuItem actionOutdent = new MenuItem( taskMenu, SWT.NONE );
+    actionOutdent.setAccelerator( SWT.ALT + SWT.ARROW_LEFT );
     actionOutdent.setText( "Outdent" );
-    actionOutdent.setEnabled( false );
+    actionOutdent.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        JPlanner.plan.tasks.outdent( m_mainTabWidget.tasks().selectedRows() );
+        JPlanner.gui.updateTables();
+        JPlanner.gui.schedule();
+      }
+    } );
   }
 
   /**************************************** addViewMenu ******************************************/

@@ -45,7 +45,8 @@ public class Task implements Comparable<Task>
   private String          m_comment;            // free text comment
 
   private int             m_indent;             // task indent level, zero for no indent
-  private int             m_summaryEnd;         // last sub-task id, or -1 for non-summaries
+  private int             m_summaryStart;       // index of this task's summary
+  private int             m_summaryEnd;         // if summary, index of summary end, otherwise -1 
   private GanttData       m_gantt;              // data for gantt bar display
 
   public static final int SECTION_TITLE    = 0;
@@ -134,6 +135,9 @@ public class Task implements Comparable<Task>
     m_resources = new TaskResources();
     m_type = new TaskType( TaskType.ASAP_FDUR );
     m_priority = 100;
+    m_indent = 0;
+    m_summaryStart = 0;
+    m_summaryEnd = -1;
   }
 
   /****************************************** toString *******************************************/
@@ -546,6 +550,31 @@ public class Task implements Comparable<Task>
   public int index()
   {
     return JPlanner.plan.index( this );
+  }
+
+  /******************************************* indent ********************************************/
+  public int indent()
+  {
+    return m_indent;
+  }
+
+  /****************************************** setIndent ******************************************/
+  public void setIndent( int indent )
+  {
+    m_indent = indent;
+  }
+
+  /************************************** isSectionEditable **************************************/
+  public boolean isSectionEditable( int section )
+  {
+    // return if section is enable for this task
+    if ( section == SECTION_TITLE )
+      return true;
+
+    if ( isNull() )
+      return false;
+
+    return m_type.isSectionEditable( section );
   }
 
 }
