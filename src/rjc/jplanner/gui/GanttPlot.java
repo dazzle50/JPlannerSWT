@@ -91,9 +91,12 @@ public class GanttPlot extends Composite
         if ( event instanceof RowResizeEvent )
           redraw();
 
-        // on table scroll redraw the plot
+        // on table scroll redraw the plot (and table to avoid lag)
         if ( event instanceof ScrollEvent )
+        {
           redraw();
+          table.redraw();
+        }
       }
     } );
   }

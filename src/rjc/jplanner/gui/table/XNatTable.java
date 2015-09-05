@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
+import org.eclipse.nebula.widgets.nattable.config.AbstractUiBindingConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.IConfiguration;
@@ -34,6 +35,7 @@ import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
 import org.eclipse.nebula.widgets.nattable.coordinate.Range;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
+import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.data.DefaultCornerDataProvider;
 import org.eclipse.nebula.widgets.nattable.grid.layer.ColumnHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.grid.layer.CornerLayer;
@@ -42,14 +44,21 @@ import org.eclipse.nebula.widgets.nattable.grid.layer.RowHeaderLayer;
 import org.eclipse.nebula.widgets.nattable.hideshow.RowHideShowLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
-import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
+import org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderLayerConfiguration;
+import org.eclipse.nebula.widgets.nattable.reorder.action.ColumnReorderDragMode;
+import org.eclipse.nebula.widgets.nattable.resize.action.AutoResizeColumnAction;
+import org.eclipse.nebula.widgets.nattable.resize.action.ColumnResizeCursorAction;
+import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEventMatcher;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
-import org.eclipse.nebula.widgets.nattable.style.CellStyleAttributes;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
-import org.eclipse.nebula.widgets.nattable.style.Style;
 import org.eclipse.nebula.widgets.nattable.style.theme.ModernNatTableThemeConfiguration;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.nebula.widgets.nattable.ui.action.AggregateDragMode;
+import org.eclipse.nebula.widgets.nattable.ui.action.CellDragMode;
+import org.eclipse.nebula.widgets.nattable.ui.action.ClearCursorAction;
+import org.eclipse.nebula.widgets.nattable.ui.action.NoOpMouseAction;
+import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
+import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -72,6 +81,7 @@ public class XNatTable extends NatTable
 {
   private static ModernNatTableThemeConfiguration m_theme;                // theme to use for all the tables
   private static IConfiguration                   m_labels;               // to support styling of individual cells
+  private static IConfiguration                   m_columnHeaderConfig;   // for column resizing and reordering
   private static KeyListener                      m_indentOutdentListener; // to support indenting / outdenting
 
   public enum TableType
@@ -79,10 +89,6 @@ public class XNatTable extends NatTable
     DAY, CALENDAR, RESOURCE, TASK
   }
 
-  public static final String LABEL_SHADE            = "Shade";
-  public static final String LABEL_ALIGN_LEFT       = "Left";
-  public static final String LABEL_ALIGN_RIGHT      = "Right";
-  public static final String LABEL_WRAP_TEXT        = "Wrap";
   public static final String LABEL_CELL_EDITABLE    = "Edit";
   public static final String LABEL_DAY_EDITOR       = "DayE";
   public static final String LABEL_CALENDAR_EDITOR  = "CalE";
@@ -119,48 +125,61 @@ public class XNatTable extends NatTable
         @Override
         public void configureRegistry( IConfigRegistry reg )
         {
-          // Style gray cell background colour
-          Style shade = new Style();
-          shade.setAttributeValue( CellStyleAttributes.BACKGROUND_COLOR, GUIHelper.COLOR_WIDGET_LIGHT_SHADOW );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, shade, DisplayMode.NORMAL, LABEL_SHADE );
-
-          // Style align left text horizontally
-          Style left = new Style();
-          left.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.LEFT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, left, DisplayMode.NORMAL, LABEL_ALIGN_LEFT );
-
-          // Style align right text horizontally
-          Style right = new Style();
-          right.setAttributeValue( CellStyleAttributes.HORIZONTAL_ALIGNMENT, HorizontalAlignmentEnum.RIGHT );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_STYLE, right, DisplayMode.NORMAL, LABEL_ALIGN_RIGHT );
-
-          // Cell config cell text word wraps
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TextPainter( true, true ),
-              DisplayMode.NORMAL, LABEL_WRAP_TEXT );
-
-          // Cell config task cell painter
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TasksCellPainter(), DisplayMode.NORMAL,
-              LABEL_TASK_PAINTER );
-
-          // Edit config cell is editable
+          // Editable
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
               DisplayMode.EDIT, LABEL_CELL_EDITABLE );
 
-          // Edit config use day cell editor
+          // Cell painters
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new DayCellPainter(), DisplayMode.NORMAL,
+              LABEL_DAY_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new CalendarCellPainter(),
+              DisplayMode.NORMAL, LABEL_CALENDAR_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new ResourceCellPainter(),
+              DisplayMode.NORMAL, LABEL_RESOURCE_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter(), DisplayMode.NORMAL,
+              LABEL_TASK_PAINTER );
+
+          // Cell editors
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
               LABEL_DAY_EDITOR );
-
-          // Edit config use calendar cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new CalendarCellEditor(), DisplayMode.EDIT,
               LABEL_CALENDAR_EDITOR );
-
-          // Edit config use resource cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new ResourceCellEditor(), DisplayMode.EDIT,
               LABEL_RESOURCE_EDITOR );
-
-          // Edit config use task cell editor
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new TaskCellEditor(), DisplayMode.EDIT,
               LABEL_TASK_EDITOR );
+        }
+      };
+
+    if ( m_columnHeaderConfig == null )
+      m_columnHeaderConfig = new DefaultColumnHeaderLayerConfiguration()
+      {
+        @Override
+        protected void addColumnHeaderUIBindings()
+        {
+          addConfiguration( new AbstractUiBindingConfiguration()
+          {
+            @Override
+            public void configureUiBindings( UiBindingRegistry uiBindingRegistry )
+            {
+              uiBindingRegistry.registerMouseDragMode( MouseEventMatcher.columnHeaderLeftClick( SWT.NONE ),
+                  new AggregateDragMode( new CellDragMode(), new ColumnReorderDragMode() ) );
+
+              // Mouse move - Show resize cursor
+              uiBindingRegistry.registerFirstMouseMoveBinding( new ColumnResizeEventMatcher( SWT.NONE,
+                  GridRegion.COLUMN_HEADER, 0 ), new ColumnResizeCursorAction() );
+              uiBindingRegistry.registerMouseMoveBinding( new MouseEventMatcher(), new ClearCursorAction() );
+
+              // Column resize
+              uiBindingRegistry.registerFirstMouseDragMode( new ColumnResizeEventMatcher( SWT.NONE,
+                  GridRegion.COLUMN_HEADER, 1 ), new XColumnResizeDragMode() );
+
+              uiBindingRegistry.registerDoubleClickBinding( new ColumnResizeEventMatcher( SWT.NONE,
+                  GridRegion.COLUMN_HEADER, 1 ), new AutoResizeColumnAction() );
+              uiBindingRegistry.registerSingleClickBinding( new ColumnResizeEventMatcher( SWT.NONE,
+                  GridRegion.COLUMN_HEADER, 1 ), new NoOpMouseAction() );
+            }
+          } );
         }
       };
 
@@ -259,7 +278,8 @@ public class XNatTable extends NatTable
     DataLayer chDataLayer = new DataLayer( ch );
     if ( chHeight > 0 )
       chDataLayer.setRowHeightByPosition( 0, chHeight );
-    ColumnHeaderLayer colHeader = new ColumnHeaderLayer( chDataLayer, viewport, selectionLayer );
+    ColumnHeaderLayer colHeader = new ColumnHeaderLayer( chDataLayer, viewport, selectionLayer, false );
+    colHeader.addConfiguration( m_columnHeaderConfig );
 
     // create row header layer stack
     DataLayer rhDataLayer = new DataLayer( rh, widths[1], 20 );

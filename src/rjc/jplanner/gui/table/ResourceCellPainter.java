@@ -20,67 +20,29 @@ package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Rectangle;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
+import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
-/************************** Responsible for painting a Task table cell ***************************/
+/************************ Responsible for painting a Resource table cell *************************/
 /*************************************************************************************************/
 
-public class TasksCellPainter extends XCellPainter
+public class ResourceCellPainter extends XCellPainter
 {
-  private static int INDENT_SIZE    = 14;
-  private static int INDENT_INITIAL = 14;
-
-  /**************************************** getTextBounds ****************************************/
-  @Override
-  protected Rectangle getTextBounds( ILayerCell cell, Rectangle bounds )
-  {
-    // adjust text bounds for task title indenting
-    Rectangle rect = super.getTextBounds( cell, bounds );
-
-    if ( cell.getColumnIndex() == Task.SECTION_TITLE )
-    {
-      int indent = JPlanner.plan.task( cell.getRowIndex() ).indent();
-      rect.x += INDENT_INITIAL + indent * INDENT_SIZE;
-      rect.width -= INDENT_INITIAL + indent * INDENT_SIZE;
-    }
-
-    return rect;
-  }
 
   /**************************************** getBackground ****************************************/
   @Override
   protected Color getBackground( ILayerCell cell )
   {
     // cell colour depends on if cell editable or not
-    Task task = JPlanner.plan.task( cell.getRowIndex() );
+    int col = cell.getColumnIndex();
+    Resource res = JPlanner.plan.resource( cell.getRowIndex() );
 
-    if ( task.isSectionEditable( cell.getColumnIndex() ) )
+    if ( col == Resource.SECTION_INITIALS || !res.isNull() )
       return JPlanner.gui.COLOR_CELL_ENABLED;
 
     return JPlanner.gui.COLOR_CELL_DISABLED;
-  }
-
-  /************************************** paintDecorations ***************************************/
-  @Override
-  protected void paintDecorations( GC gc, ILayerCell cell, Rectangle bounds )
-  {
-    // draw summary task expand-collapse marks
-    if ( cell.getColumnIndex() != Task.SECTION_TITLE )
-      return;
-
-    int indent = JPlanner.plan.task( cell.getRowIndex() ).indent();
-    int x = bounds.x + ( INDENT_INITIAL / 3 ) + indent * INDENT_SIZE;
-    int y = bounds.y + ( bounds.height / 2 );
-
-    gc.setForeground( JPlanner.gui.COLOR_GRAY_DARK );
-    gc.drawRectangle( x, y - 4, 8, 8 );
-    gc.drawLine( x + 2, y, x + 6, y );
-    gc.drawLine( x + 4, y - 2, x + 4, y + 2 );
   }
 
   /************************************** getTextAlignment ***************************************/
@@ -90,11 +52,7 @@ public class TasksCellPainter extends XCellPainter
     // text alignment depends on column
     int col = cell.getColumnIndex();
 
-    if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
-      return Alignment.RIGHT;
-
-    if ( col == Task.SECTION_TITLE || col == Task.SECTION_PRED || col == Task.SECTION_RES
-        || col == Task.SECTION_COMMENT )
+    if ( col == Resource.SECTION_COMMENT )
       return Alignment.LEFT;
 
     return Alignment.MIDDLE;

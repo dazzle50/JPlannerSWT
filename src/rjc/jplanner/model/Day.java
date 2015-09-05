@@ -442,6 +442,10 @@ public class Day
 
   public Time workForward( int from, double work )
   {
+    // return null to indicate need to go to next day if more than day's work being requested
+    if ( work > m_work )
+      return null;
+
     // work forwards specified number of equivalent work days
     int ms = (int) ( work * m_workMS / m_work );
 
@@ -456,6 +460,7 @@ public class Day
       ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
     }
 
+    // return null to indicate need to go to next day
     return null;
   }
 
@@ -472,6 +477,10 @@ public class Day
 
   public Time workBackward( int from, double work )
   {
+    // return null to indicate need to go to previous day if more than day's work being requested
+    if ( work > m_work )
+      return null;
+
     // work backwards specified number of equivalent work days
     int ms = (int) ( work * m_workMS / m_work );
 
@@ -488,6 +497,7 @@ public class Day
       ms -= period.m_end.milliseconds() - period.m_start.milliseconds();
     }
 
+    // return null to indicate need to go to previous day
     return null;
   }
 

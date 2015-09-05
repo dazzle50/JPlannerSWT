@@ -36,17 +36,14 @@ public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
     // add config labels to style cell
     Calendar cal = JPlanner.plan.calendar( col );
 
+    labels.addLabel( XNatTable.LABEL_CALENDAR_PAINTER );
+
     // all cells editable except shaded unused normal cells
     if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
     {
       labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
       labels.addLabel( XNatTable.LABEL_CALENDAR_EDITOR );
     }
-    else
-      labels.addLabel( XNatTable.LABEL_SHADE );
-
-    // all cells left align
-    labels.addLabel( XNatTable.LABEL_ALIGN_LEFT );
   }
 
 }

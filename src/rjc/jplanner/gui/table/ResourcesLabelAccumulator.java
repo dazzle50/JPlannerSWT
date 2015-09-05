@@ -36,26 +36,14 @@ public class ResourcesLabelAccumulator implements IConfigLabelAccumulator
     // add config labels to style cell
     Resource res = JPlanner.plan.resource( row );
 
+    labels.addLabel( XNatTable.LABEL_RESOURCE_PAINTER );
+
     // all cells editable unless resource is null
-    if ( res.isNull() )
-    {
-      if ( col == Resource.SECTION_INITIALS )
-      {
-        labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-        labels.addLabel( XNatTable.LABEL_RESOURCE_EDITOR );
-      }
-      else
-        labels.addLabel( XNatTable.LABEL_SHADE );
-    }
-    else
+    if ( col == Resource.SECTION_INITIALS || !res.isNull() )
     {
       labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
       labels.addLabel( XNatTable.LABEL_RESOURCE_EDITOR );
     }
-
-    // left align comment
-    if ( col == Resource.SECTION_COMMENT )
-      labels.addLabel( XNatTable.LABEL_ALIGN_LEFT );
   }
 
 }

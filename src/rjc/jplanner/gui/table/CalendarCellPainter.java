@@ -18,32 +18,31 @@
 
 package rjc.jplanner.gui.table;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
+import org.eclipse.swt.graphics.Color;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
+import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/************************ Responsible for painting a Calendar table cell *************************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class CalendarCellPainter extends XCellPainter
 {
+
+  /**************************************** getBackground ****************************************/
   @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  protected Color getBackground( ILayerCell cell )
   {
-    // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    // cell colour depends on if cell editable or not
+    int row = cell.getRowIndex();
+    Calendar cal = JPlanner.plan.calendar( cell.getColumnIndex() );
 
-    labels.addLabel( XNatTable.LABEL_DAY_PAINTER );
+    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
+      return JPlanner.gui.COLOR_CELL_ENABLED;
 
-    // all cells editable except shaded unused start/end cells
-    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
-    {
-      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-      labels.addLabel( XNatTable.LABEL_DAY_EDITOR );
-    }
+    return JPlanner.gui.COLOR_CELL_DISABLED;
   }
 
 }

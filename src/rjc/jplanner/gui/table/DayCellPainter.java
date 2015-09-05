@@ -18,32 +18,44 @@
 
 package rjc.jplanner.gui.table;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
+import org.eclipse.swt.graphics.Color;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/************************ Responsible for painting a Day-type table cell *************************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class DayCellPainter extends XCellPainter
 {
+
+  /**************************************** getBackground ****************************************/
   @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  protected Color getBackground( ILayerCell cell )
   {
-    // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    // cell colour depends on if cell editable or not
+    int col = cell.getColumnIndex();
+    Day day = JPlanner.plan.day( cell.getRowIndex() );
 
-    labels.addLabel( XNatTable.LABEL_DAY_PAINTER );
-
-    // all cells editable except shaded unused start/end cells
     if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
-    {
-      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-      labels.addLabel( XNatTable.LABEL_DAY_EDITOR );
-    }
+      return JPlanner.gui.COLOR_CELL_ENABLED;
+
+    return JPlanner.gui.COLOR_CELL_DISABLED;
+  }
+
+  /************************************** getTextAlignment ***************************************/
+  @Override
+  protected Alignment getTextAlignment( ILayerCell cell )
+  {
+    // text alignment depends on column
+    int col = cell.getColumnIndex();
+
+    if ( col == Day.SECTION_NAME )
+      return Alignment.LEFT;
+
+    return Alignment.MIDDLE;
   }
 
 }

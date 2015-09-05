@@ -40,9 +40,10 @@ public class XCellPainter implements ICellPainter
   // struct that contains one line of text to be drawn in cell
   public class TextLine
   {
-    public String txt;
-    public int    x;
-    public int    y;
+    public String  txt;
+    public int     x;
+    public int     y;
+    public boolean ellipsis = false;
   }
 
   private static String ELLIPSIS     = "...";
@@ -73,6 +74,7 @@ public class XCellPainter implements ICellPainter
       gc.setForeground( JPlanner.gui.COLOR_WHITE );
     else
       gc.setForeground( JPlanner.gui.COLOR_BLACK );
+
     for ( TextLine line : lines )
       gc.drawString( line.txt, line.x, line.y, true );
 
@@ -144,6 +146,7 @@ public class XCellPainter implements ICellPainter
           line.txt = text.substring( 0, cut ) + ELLIPSIS;
           line.x = x + alignX;
           line.y = y;
+          line.ellipsis = true;
           text = null;
         }
         else
@@ -191,6 +194,7 @@ public class XCellPainter implements ICellPainter
             line.txt = text.substring( 0, cut ) + ELLIPSIS;
             line.x = x + alignX;
             line.y = y;
+            line.ellipsis = true;
 
             try
             {
@@ -261,18 +265,94 @@ public class XCellPainter implements ICellPainter
   @Override
   public int getPreferredHeight( ILayerCell cell, GC gc, IConfigRegistry configRegistry )
   {
-    // TODO Auto-generated method stub
-    JPlanner.trace( "XCellPainter - getPreferredHeight()" );
-    return 0;
+    // determine smallest height that avoids or minimises ellipsis
+    Rectangle bounds = cell.getBounds();
+    bounds.width -= 1; // to make same as painting bounds
+    bounds.height -= 1; // to make same as painting bounds
+    Rectangle rect = getTextBounds( cell, bounds );
+    int padding = bounds.height - rect.height;
+    String text = (String) cell.getDataValue();
+    if ( text == null )
+      return padding;
+
+    int minHeight = gc.stringExtent( ELLIPSIS ).y;
+    int maxHeight = 999;
+
+    rect.height = maxHeight;
+    ArrayList<TextLine> lines = getTextLines( gc, text, rect, Alignment.LEFT );
+    int maxChars = countNonWhitespace( lines );
+    int charCount;
+
+    // binary chop to find minimum height that shows max characters
+    while ( maxHeight - minHeight > 1 )
+    {
+      rect.height = ( minHeight + maxHeight ) / 2;
+      lines = getTextLines( gc, text, rect, Alignment.LEFT );
+      charCount = countNonWhitespace( lines );
+
+      if ( charCount < maxChars )
+        minHeight = rect.height;
+      else
+        maxHeight = rect.height;
+    }
+
+    // return minimum height adjusted for padding
+    return maxHeight + padding;
+  }
+
+  /************************************ countNonWhitespace ***************************************/
+  private int countNonWhitespace( ArrayList<TextLine> lines )
+  {
+    // count number of non-whitespace characters in the lines
+    int count = 0;
+    for ( TextLine line : lines )
+    {
+      for ( int i = 0; i < line.txt.length(); i++ )
+        if ( !Character.isWhitespace( line.txt.charAt( i ) ) )
+          count++;
+
+      if ( line.ellipsis )
+        count -= ELLIPSIS.length();
+    }
+
+    return count;
   }
 
   /************************************* getPreferredWidth ***************************************/
   @Override
   public int getPreferredWidth( ILayerCell cell, GC gc, IConfigRegistry configRegistry )
   {
-    // TODO Auto-generated method stub
-    JPlanner.trace( "XCellPainter - getPreferredWidth()" );
-    return 0;
-  }
+    // determine smallest width that avoids ellipsis
+    Rectangle bounds = cell.getBounds();
+    bounds.width -= 1; // to make same as painting bounds
+    bounds.height -= 1; // to make same as painting bounds
+    Rectangle rect = getTextBounds( cell, bounds );
+    int padding = bounds.width - rect.width;
+    String text = (String) cell.getDataValue();
+    if ( text == null )
+      return padding;
 
+    int minWidth = gc.stringExtent( ELLIPSIS ).x;
+    int maxWidth = gc.stringExtent( text ).x;
+
+    // binary chop to find minimum width with no ellipsis
+    while ( maxWidth - minWidth > 1 )
+    {
+      rect.width = ( minWidth + maxWidth + 1 ) / 2;
+      ArrayList<TextLine> lines = getTextLines( gc, text, rect, Alignment.LEFT );
+
+      boolean noEllipsis = true;
+      for ( TextLine line : lines )
+        if ( line.ellipsis )
+          noEllipsis = false;
+
+      if ( noEllipsis )
+        maxWidth = rect.width;
+      else
+        minWidth = rect.width;
+    }
+
+    // return minimum width adjusted for padding
+    return maxWidth + padding;
+  }
 }
