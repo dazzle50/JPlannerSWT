@@ -21,6 +21,7 @@ package rjc.jplanner.gui;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
 import org.eclipse.nebula.widgets.nattable.layer.event.ILayerEvent;
 import org.eclipse.nebula.widgets.nattable.resize.event.RowResizeEvent;
+import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.nebula.widgets.nattable.viewport.event.ScrollEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -84,6 +85,8 @@ public class GanttPlot extends Composite
     // add listener for table scrolling and row height changes
     m_table.viewport.addLayerListener( new ILayerListener()
     {
+      int m_previousY = 0; // used to prevent redraws if y not changed
+
       @Override
       public void handleLayerEvent( ILayerEvent event )
       {
@@ -94,8 +97,14 @@ public class GanttPlot extends Composite
         // on table scroll redraw the plot (and table to avoid lag)
         if ( event instanceof ScrollEvent )
         {
-          redraw();
-          table.redraw();
+          ViewportLayer view = m_table.viewport;
+          int newY = view.getStartYOfRowPosition( view.getRowPositionByIndex( 0 ) );
+          if ( newY != m_previousY )
+          {
+            redraw();
+            m_table.redraw();
+            m_previousY = newY;
+          }
         }
       }
     } );

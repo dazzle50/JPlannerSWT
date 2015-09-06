@@ -73,7 +73,11 @@ public class TaskCellPainter extends XCellPainter
     if ( cell.getColumnIndex() != Task.SECTION_TITLE )
       return;
 
-    int indent = JPlanner.plan.task( cell.getRowIndex() ).indent();
+    Task task = JPlanner.plan.task( cell.getRowIndex() );
+    if ( !task.isSummary() )
+      return;
+
+    int indent = task.indent();
     int x = bounds.x + ( INDENT_INITIAL / 3 ) + indent * INDENT_SIZE;
     int y = bounds.y + ( bounds.height / 2 );
 

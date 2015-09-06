@@ -92,6 +92,8 @@ public class MainWindow extends Shell
   public Color                     COLOR_CELL_SELECTED;
   public Color                     COLOR_CELL_DISABLED;
   public Color                     COLOR_CELL_ENABLED;
+  public Color                     COLOR_TEXT_NORMAL;
+  public Color                     COLOR_TEXT_SELECTED;
 
   public Color                     COLOR_GANTT_BACKGROUND;
   public Color                     COLOR_GANTT_NONWORKING;
@@ -129,6 +131,8 @@ public class MainWindow extends Shell
     COLOR_CELL_SELECTED = new Color( display, 51, 153, 255 );
     COLOR_CELL_DISABLED = COLOR_GRAY_MID;
     COLOR_CELL_ENABLED = COLOR_WHITE;
+    COLOR_TEXT_NORMAL = COLOR_BLACK;
+    COLOR_TEXT_SELECTED = COLOR_WHITE;
     COLOR_GANTT_BACKGROUND = COLOR_WHITE;
     COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
     COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
@@ -316,8 +320,8 @@ public class MainWindow extends Shell
     JPlanner.plan.schedule();
 
     // update gui
-    JPlanner.gui.properties().updateFromPlan();
-    m_tabWidgets.forEach( tabs -> tabs.tasks().update() );
+    properties().updateFromPlan();
+    m_tabWidgets.forEach( tabs -> tabs.tasks().redraw() );
     m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
   }
 
@@ -520,9 +524,8 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        JPlanner.plan.tasks.indent( m_mainTabWidget.tasks().selectedRows() );
-        JPlanner.gui.updateTables();
-        JPlanner.gui.schedule();
+        if ( JPlanner.plan.tasks.indent( m_mainTabWidget.tasks().selectedRows() ) )
+          JPlanner.gui.schedule();
       }
     } );
 
@@ -534,9 +537,8 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        JPlanner.plan.tasks.outdent( m_mainTabWidget.tasks().selectedRows() );
-        JPlanner.gui.updateTables();
-        JPlanner.gui.schedule();
+        if ( JPlanner.plan.tasks.outdent( m_mainTabWidget.tasks().selectedRows() ) )
+          JPlanner.gui.schedule();
       }
     } );
   }

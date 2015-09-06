@@ -45,10 +45,15 @@ import org.eclipse.nebula.widgets.nattable.hideshow.RowHideShowLayer;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderLayerConfiguration;
+import org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderLayerConfiguration;
 import org.eclipse.nebula.widgets.nattable.reorder.action.ColumnReorderDragMode;
+import org.eclipse.nebula.widgets.nattable.reorder.action.RowReorderDragMode;
 import org.eclipse.nebula.widgets.nattable.resize.action.AutoResizeColumnAction;
+import org.eclipse.nebula.widgets.nattable.resize.action.AutoResizeRowAction;
 import org.eclipse.nebula.widgets.nattable.resize.action.ColumnResizeCursorAction;
+import org.eclipse.nebula.widgets.nattable.resize.action.RowResizeCursorAction;
 import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEventMatcher;
+import org.eclipse.nebula.widgets.nattable.resize.event.RowResizeEventMatcher;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
 import org.eclipse.nebula.widgets.nattable.style.HorizontalAlignmentEnum;
@@ -82,6 +87,7 @@ public class XNatTable extends NatTable
   private static ModernNatTableThemeConfiguration m_theme;                // theme to use for all the tables
   private static IConfiguration                   m_labels;               // to support styling of individual cells
   private static IConfiguration                   m_columnHeaderConfig;   // for column resizing and reordering
+  private static IConfiguration                   m_rowHeaderConfig;      // for row resizing and reordering
   private static KeyListener                      m_indentOutdentListener; // to support indenting / outdenting
 
   public enum TableType
@@ -109,8 +115,61 @@ public class XNatTable extends NatTable
   {
     // call super constructor with autoconfig off
     super( parent, false );
+    checkStatics();
 
-    // check private variables are initialised
+    // depending on table type configure differently
+    switch ( type )
+    {
+      case DAY:
+        // create table for day-types
+        IDataProvider body = new DaysBody();
+        IDataProvider colh = new DaysColumnHeader( body );
+        IDataProvider rowh = new DaysRowHeader( body );
+        IConfigLabelAccumulator label = new DaysLabelAccumulator();
+        int[] widthD = { 60, 25, 150 };
+        configTable( body, colh, rowh, label, widthD, -1 );
+        break;
+
+      case CALENDAR:
+        // create table for calendars
+        body = new CalendarsBody();
+        colh = new CalendarsColumnHeader( body );
+        rowh = new CalendarsRowHeader( body );
+        label = new CalendarsLabelAccumulator();
+        int[] widthC = { 140, 75 };
+        configTable( body, colh, rowh, label, widthC, -1 );
+        break;
+
+      case RESOURCE:
+        // create table for resources
+        body = new ResourcesBody();
+        colh = new ResourcesColumnHeader( body );
+        rowh = new ResourcesRowHeader( body );
+        label = new ResourcesLabelAccumulator();
+        int[] widthR = { 100, 25, 50 };
+        configTable( body, colh, rowh, label, widthR, -1 );
+        break;
+
+      case TASK:
+        // create table for tasks
+        body = new TasksBody();
+        colh = new TasksColumnHeader( body );
+        rowh = new TasksRowHeader( body );
+        label = new TasksLabelAccumulator();
+        int[] widthT = { 110, 25, 200, 60, 140, 140, 60, 110, 110, 110, 60, 140, 60, 200 };
+        configTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
+        addKeyListener( m_indentOutdentListener );
+        break;
+
+      default:
+        throw new IllegalArgumentException( "type " + type );
+    }
+  }
+
+  /*************************************** checkStatics ******************************************/
+  private void checkStatics()
+  {
+    // check static variables have been initialised
     if ( m_theme == null )
     {
       m_theme = new ModernNatTableThemeConfiguration();
@@ -183,6 +242,38 @@ public class XNatTable extends NatTable
         }
       };
 
+    if ( m_rowHeaderConfig == null )
+      m_rowHeaderConfig = new DefaultRowHeaderLayerConfiguration()
+      {
+        @Override
+        protected void addRowHeaderUIBindings()
+        {
+          addConfiguration( new AbstractUiBindingConfiguration()
+          {
+            @Override
+            public void configureUiBindings( UiBindingRegistry uiBindingRegistry )
+            {
+              uiBindingRegistry.registerMouseDragMode( MouseEventMatcher.rowHeaderLeftClick( SWT.NONE ),
+                  new AggregateDragMode( new CellDragMode(), new RowReorderDragMode() ) );
+
+              // Mouse move - Show resize cursor
+              uiBindingRegistry.registerFirstMouseMoveBinding( new RowResizeEventMatcher( SWT.NONE, 0 ),
+                  new RowResizeCursorAction() );
+              uiBindingRegistry.registerMouseMoveBinding( new MouseEventMatcher(), new ClearCursorAction() );
+
+              // Row resize
+              uiBindingRegistry.registerFirstMouseDragMode( new RowResizeEventMatcher( SWT.NONE, 1 ),
+                  new XRowResizeDragMode() );
+
+              uiBindingRegistry.registerDoubleClickBinding( new RowResizeEventMatcher( SWT.NONE, 1 ),
+                  new AutoResizeRowAction() );
+              uiBindingRegistry.registerSingleClickBinding( new RowResizeEventMatcher( SWT.NONE, 1 ),
+                  new NoOpMouseAction() );
+            }
+          } );
+        }
+      };
+
     if ( m_indentOutdentListener == null )
       m_indentOutdentListener = new KeyAdapter()
       {
@@ -193,70 +284,19 @@ public class XNatTable extends NatTable
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_RIGHT )
           {
             JPlanner.trace( "==================> INDENT" );
-            JPlanner.plan.tasks.indent( selectedRows() );
-            JPlanner.gui.updateTables();
-            JPlanner.gui.schedule();
+            if ( JPlanner.plan.tasks.indent( selectedRows() ) )
+              JPlanner.gui.schedule();
           }
 
           // detect outdent
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_LEFT )
           {
             JPlanner.trace( "==================> OUTDENT" );
-            JPlanner.plan.tasks.outdent( selectedRows() );
-            JPlanner.gui.updateTables();
-            JPlanner.gui.schedule();
+            if ( JPlanner.plan.tasks.outdent( selectedRows() ) )
+              JPlanner.gui.schedule();
           }
         }
       };
-
-    // depending on table type configure differently
-    switch ( type )
-    {
-      case DAY:
-        // create table for day-types
-        IDataProvider body = new DaysBody();
-        IDataProvider colh = new DaysColumnHeader( body );
-        IDataProvider rowh = new DaysRowHeader( body );
-        IConfigLabelAccumulator label = new DaysLabelAccumulator();
-        int[] widthD = { 60, 25, 150 };
-        configTable( body, colh, rowh, label, widthD, -1 );
-        break;
-
-      case CALENDAR:
-        // create table for calendars
-        body = new CalendarsBody();
-        colh = new CalendarsColumnHeader( body );
-        rowh = new CalendarsRowHeader( body );
-        label = new CalendarsLabelAccumulator();
-        int[] widthC = { 140, 75 };
-        configTable( body, colh, rowh, label, widthC, -1 );
-        break;
-
-      case RESOURCE:
-        // create table for resources
-        body = new ResourcesBody();
-        colh = new ResourcesColumnHeader( body );
-        rowh = new ResourcesRowHeader( body );
-        label = new ResourcesLabelAccumulator();
-        int[] widthR = { 100, 25, 50 };
-        configTable( body, colh, rowh, label, widthR, -1 );
-        break;
-
-      case TASK:
-        // create table for tasks
-        body = new TasksBody();
-        colh = new TasksColumnHeader( body );
-        rowh = new TasksRowHeader( body );
-        label = new TasksLabelAccumulator();
-        int[] widthT = { 110, 25, 200, 60, 130, 130, 60 };
-        configTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
-        addKeyListener( m_indentOutdentListener );
-        break;
-
-      default:
-        throw new IllegalArgumentException( "type " + type );
-    }
-
   }
 
   /**************************************** configTable ******************************************/
@@ -283,7 +323,8 @@ public class XNatTable extends NatTable
 
     // create row header layer stack
     DataLayer rhDataLayer = new DataLayer( rh, widths[1], 20 );
-    RowHeaderLayer rowHeader = new RowHeaderLayer( rhDataLayer, viewport, selectionLayer );
+    RowHeaderLayer rowHeader = new RowHeaderLayer( rhDataLayer, viewport, selectionLayer, false );
+    rowHeader.addConfiguration( m_rowHeaderConfig );
 
     // create corner later stack
     DataLayer cDataLayer = new DataLayer( new DefaultCornerDataProvider( ch, rh ) );

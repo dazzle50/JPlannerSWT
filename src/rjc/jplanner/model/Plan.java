@@ -466,6 +466,11 @@ public class Plan
 
     m_filename = filename;
     m_fileLocation = fileloc;
+
+    // setup special task 0
+    Task task = JPlanner.plan.task( 0 );
+    task.setData( Task.SECTION_TITLE, "PROJECT" );
+    task.setIndent( -1 );
   }
 
   /***************************************** loadXmlPlan *****************************************/

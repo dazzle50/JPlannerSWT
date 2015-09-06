@@ -66,15 +66,14 @@ public class Task implements Comparable<Task>
   /**************************************** constructor ******************************************/
   public Task()
   {
-    // initialise private variables
-    m_predecessors = new Predecessors();
-    m_gantt = new GanttData();
+    // do nothing
   }
 
   /**************************************** constructor ******************************************/
   public Task( XMLStreamReader xsr ) throws XMLStreamException
   {
     this();
+    initialise();
     // read XML task attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
@@ -134,6 +133,8 @@ public class Task implements Comparable<Task>
     m_predecessors = new Predecessors( "" );
     m_resources = new TaskResources();
     m_type = new TaskType( TaskType.ASAP_FDUR );
+    m_predecessors = new Predecessors();
+    m_gantt = new GanttData();
     m_priority = 100;
     m_indent = 0;
     m_summaryStart = 0;
@@ -145,7 +146,8 @@ public class Task implements Comparable<Task>
   {
     // return display string for given section
     if ( section == SECTION_TITLE )
-      return m_title;
+      return m_title + " " + m_indent + " " + m_summaryStart + " " + m_summaryEnd;
+    //return m_title;
 
     // if task is null return blank for all other sections
     if ( isNull() )
@@ -388,15 +390,25 @@ public class Task implements Comparable<Task>
   /***************************************** isSummary *******************************************/
   public boolean isSummary()
   {
-    // TODO Auto-generated method stub
-    return false;
+    return m_summaryEnd > 0;
   }
 
   /***************************************** summaryEnd ******************************************/
   public int summaryEnd()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    return m_summaryEnd;
+  }
+
+  /**************************************** setSummaryEnd ****************************************/
+  public void setSummaryEnd( int index )
+  {
+    m_summaryEnd = index;
+  }
+
+  /*************************************** setSummaryStart ***************************************/
+  public void setSummaryStart( int index )
+  {
+    m_summaryStart = index;
   }
 
   /****************************************** schedule *******************************************/

@@ -20,11 +20,14 @@ package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -46,8 +49,10 @@ public class XCellPainter implements ICellPainter
     public boolean ellipsis = false;
   }
 
-  private static String ELLIPSIS     = "...";
-  private static int    CELL_PADDING = 5;
+  private static String ELLIPSIS     = "..."; // ellipsis to show text has been truncated
+  private static int    CELL_PADDING = 5;    // cell padding for text left & right edges
+
+  private Font          m_font;              // original graphics-context font 
 
   public enum Alignment
   {
@@ -65,21 +70,44 @@ public class XCellPainter implements ICellPainter
       gc.setBackground( getBackground( cell ) );
     gc.fillRectangle( bounds );
 
-    // paint cell text
+    // prepare to paint cell text
+    setFont( cell, gc );
     String text = (String) cell.getDataValue();
     Rectangle rect = getTextBounds( cell, bounds );
-    ArrayList<TextLine> lines = getTextLines( gc, text, rect, getTextAlignment( cell ) );
 
     if ( cell.getDisplayMode() == DisplayMode.SELECT )
-      gc.setForeground( JPlanner.gui.COLOR_WHITE );
+      gc.setForeground( JPlanner.gui.COLOR_TEXT_SELECTED );
     else
-      gc.setForeground( JPlanner.gui.COLOR_BLACK );
+      gc.setForeground( JPlanner.gui.COLOR_TEXT_NORMAL );
 
+    // break text down into individual lines
+    ArrayList<TextLine> lines = getTextLines( gc, text, rect, getTextAlignment( cell ) );
+
+    // paint cell text
     for ( TextLine line : lines )
       gc.drawString( line.txt, line.x, line.y, true );
+    disposeFont( gc );
 
     // paint decorations
     paintDecorations( gc, cell, bounds );
+  }
+
+  /****************************************** setFont ********************************************/
+  private void setFont( ILayerCell cell, GC gc )
+  {
+    // update graphics-context with font with desired style
+    int style = getTextStyle( cell );
+    m_font = gc.getFont();
+    Font newfont = FontDescriptor.createFrom( m_font ).setStyle( style ).createFont( gc.getDevice() );
+    gc.setFont( newfont );
+  }
+
+  /***************************************** disposeFont *****************************************/
+  private void disposeFont( GC gc )
+  {
+    // dispose of limited font resources
+    gc.getFont().dispose();
+    gc.setFont( m_font );
   }
 
   /**************************************** getTextLines *****************************************/
@@ -224,6 +252,13 @@ public class XCellPainter implements ICellPainter
     return lines;
   }
 
+  /**************************************** getTextStyle *****************************************/
+  protected int getTextStyle( ILayerCell cell )
+  {
+    // return bitwise combination of SWT.NORMAL, SWT.ITALIC and SWT.BOLD
+    return SWT.NORMAL;
+  }
+
   /************************************** getTextAlignment ***************************************/
   protected Alignment getTextAlignment( ILayerCell cell )
   {
@@ -266,6 +301,7 @@ public class XCellPainter implements ICellPainter
   public int getPreferredHeight( ILayerCell cell, GC gc, IConfigRegistry configRegistry )
   {
     // determine smallest height that avoids or minimises ellipsis
+    setFont( cell, gc );
     Rectangle bounds = cell.getBounds();
     bounds.width -= 1; // to make same as painting bounds
     bounds.height -= 1; // to make same as painting bounds
@@ -297,6 +333,7 @@ public class XCellPainter implements ICellPainter
     }
 
     // return minimum height adjusted for padding
+    disposeFont( gc );
     return maxHeight + padding;
   }
 
@@ -323,6 +360,7 @@ public class XCellPainter implements ICellPainter
   public int getPreferredWidth( ILayerCell cell, GC gc, IConfigRegistry configRegistry )
   {
     // determine smallest width that avoids ellipsis
+    setFont( cell, gc );
     Rectangle bounds = cell.getBounds();
     bounds.width -= 1; // to make same as painting bounds
     bounds.height -= 1; // to make same as painting bounds
@@ -353,6 +391,7 @@ public class XCellPainter implements ICellPainter
     }
 
     // return minimum width adjusted for padding
+    disposeFont( gc );
     return maxWidth + padding;
   }
 }

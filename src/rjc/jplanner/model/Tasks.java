@@ -20,6 +20,7 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -44,6 +45,11 @@ public class Tasks extends ArrayList<Task>
     clear();
     for ( int count = 0; count <= 20; count++ )
       add( new Task() );
+
+    // setup special task 0
+    Task task = get( 0 );
+    task.setData( Task.SECTION_TITLE, "PROJECT" );
+    task.setIndent( -1 );
   }
 
   /******************************************* loadXML *******************************************/
@@ -72,7 +78,6 @@ public class Tasks extends ArrayList<Task>
             JPlanner.trace( "tasks.loadXml - unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
-
     }
   }
 
@@ -133,18 +138,107 @@ public class Tasks extends ArrayList<Task>
   }
 
   /******************************************* indent ********************************************/
-  public void indent( Set<Integer> rows )
+  public boolean indent( Set<Integer> rows )
   {
-    // TODO Auto-generated method stub
+    // remove any rows from set that can't be indented
+    Set<Integer> temp = new HashSet<Integer>();
+    rows.remove( 0 ); // hidden task 0
+    rows.remove( 1 ); // can't indent task 1
     for ( int row : rows )
     {
       Task task = get( row );
-      task.setIndent( task.indent() + 1 );
+      if ( task.isNull() ) // exclude null tasks
+      {
+        temp.add( row );
+        continue;
+      }
+
+      int above = row - 1;
+      while ( get( above ).isNull() )
+        above--;
+      if ( task.indent() > get( above ).indent() ) // excluded tasks already indented compared with task above
+        temp.add( row );
+    }
+    rows.removeAll( temp );
+
+    // add summary task's subtasks
+    temp.clear();
+    for ( int row : rows )
+    {
+      int summaryEnd = get( row ).summaryEnd();
+      if ( summaryEnd > row )
+        for ( int i = row + 1; i <= summaryEnd; i++ )
+          if ( !get( i ).isNull() )
+            temp.add( i );
+    }
+    rows.addAll( temp );
+
+    if ( rows.size() > 0 )
+    {
+      // increment indent of each row in set by one
+      for ( int row : rows )
+      {
+        Task task = get( row );
+        task.setIndent( task.indent() + 1 );
+      }
+
+      // update task summary end & summary start
+      updateSummaryMarkers();
+
+      return true;
+    }
+
+    // no rows to indent so return false
+    return false;
+  }
+
+  /************************************ updateSummaryMarkers *************************************/
+  public void updateSummaryMarkers()
+  {
+    // for each task ensure summaryEnd and SummaryStart set correctly
+    for ( int row = 1; row < size(); row++ )
+    {
+      Task task = get( row );
+      if ( task.isNull() )
+        continue;
+
+      int indent = task.indent();
+
+      // check if summary, and if summary set summary end
+      Task other;
+      int end = -1;
+      int check = row;
+      while ( ++check < size() )
+      {
+        other = get( check );
+        if ( other.isNull() )
+          continue;
+
+        if ( other.indent() <= indent )
+          break;
+        else
+          end = check;
+      }
+      task.setSummaryEnd( end );
+
+      // look for summary of this task
+      for ( int start = row - 1; start >= 0; start-- )
+      {
+        other = get( start );
+        if ( other.isNull() )
+          continue;
+
+        if ( other.indent() < indent )
+        {
+          task.setSummaryStart( start );
+          break;
+        }
+      }
     }
   }
 
   /******************************************* outdent *******************************************/
-  public void outdent( Set<Integer> rows )
+  public boolean outdent( Set<Integer> rows )
   {
     // TODO Auto-generated method stub
     for ( int row : rows )
@@ -152,6 +246,8 @@ public class Tasks extends ArrayList<Task>
       Task task = get( row );
       task.setIndent( task.indent() - 1 );
     }
+
+    return true;
   }
 
 }
