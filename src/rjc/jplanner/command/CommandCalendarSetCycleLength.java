@@ -18,35 +18,62 @@
 
 package rjc.jplanner.command;
 
+import java.util.ArrayList;
+
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/************************* UndoCommand for updating calendar exceptions **************************/
+/************************ UndoCommand for updating calendar cycle length *************************/
 /*************************************************************************************************/
 
-public class CommandSetCalendarExceptions implements IUndoCommand
+public class CommandCalendarSetCycleLength implements IUndoCommand
 {
+  private int            m_calID;     // calendar number in plan
+  private ArrayList<Day> m_newNormals; // new list of normal-cycle-days after command
+  private ArrayList<Day> m_oldNormals; // old list of normal-cycle-days before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetCalendarExceptions( int calID, Object newValue, Object oldValue )
+  public CommandCalendarSetCycleLength( int calID, Object newValue, Object oldValue )
   {
-    // TODO Auto-generated constructor stub
+    // initialise private variables
+    m_calID = calID;
+    m_oldNormals = new ArrayList<Day>( JPlanner.plan.calendar( calID ).normals() );
+    m_newNormals = new ArrayList<Day>( JPlanner.plan.calendar( calID ).normals() );
+
+    int newNum = Integer.parseInt( (String) newValue );
+    int oldNum = Integer.parseInt( (String) oldValue );
+
+    if ( newNum > oldNum )
+    {
+      // need to add new normal-cycle-days
+      Day day = JPlanner.plan.day( 0 );
+      for ( int count = oldNum; count < newNum; count++ )
+        m_newNormals.add( day );
+    }
+    else
+    {
+      // need to reduce number of normal-cycle-days
+      for ( int count = oldNum - 1; count >= newNum; count-- )
+        m_newNormals.remove( count );
+    }
   }
 
   /******************************************* redo **********************************************/
   @Override
   public void redo()
   {
-    // TODO Auto-generated method stub
-
+    // action command
+    JPlanner.plan.calendar( m_calID ).setData( Calendar.SECTION_CYCLE, m_newNormals );
   }
 
   /******************************************* undo **********************************************/
   @Override
   public void undo()
   {
-    // TODO Auto-generated method stub
-
+    // revert command
+    JPlanner.plan.calendar( m_calID ).setData( Calendar.SECTION_CYCLE, m_oldNormals );
   }
 
   /****************************************** update *********************************************/
@@ -64,8 +91,8 @@ public class CommandSetCalendarExceptions implements IUndoCommand
   @Override
   public String text()
   {
-    // TODO Auto-generated method stub
-    return "Exceptions TBD";
+    // text description of command
+    return "Calendar " + m_calID + " Cycle = " + m_newNormals.size();
   }
 
 }

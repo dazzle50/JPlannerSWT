@@ -21,9 +21,9 @@ package rjc.jplanner.gui.table;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandSetCalendarCycleLength;
-import rjc.jplanner.command.CommandSetCalendarExceptions;
-import rjc.jplanner.command.CommandSetCalendarValue;
+import rjc.jplanner.command.CommandCalendarSetCycleLength;
+import rjc.jplanner.command.CommandCalendarSetExceptions;
+import rjc.jplanner.command.CommandCalendarSetValue;
 import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
@@ -73,11 +73,11 @@ public class CalendarsBody implements IDataProvider
 
     // special command for setting exceptions & cycle-length, otherwise generic
     if ( row == Calendar.SECTION_EXCEPTIONS )
-      JPlanner.plan.undostack().push( new CommandSetCalendarExceptions( col, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandCalendarSetExceptions( col, newValue, oldValue ) );
     else if ( row == Calendar.SECTION_CYCLE )
-      JPlanner.plan.undostack().push( new CommandSetCalendarCycleLength( col, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandCalendarSetCycleLength( col, newValue, oldValue ) );
     else
-      JPlanner.plan.undostack().push( new CommandSetCalendarValue( col, row, newValue, oldValue ) );
+      JPlanner.plan.undostack().push( new CommandCalendarSetValue( col, row, newValue, oldValue ) );
   }
 
 }

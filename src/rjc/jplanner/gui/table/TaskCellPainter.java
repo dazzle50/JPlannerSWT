@@ -19,6 +19,7 @@
 package rjc.jplanner.gui.table;
 
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -104,4 +105,15 @@ public class TaskCellPainter extends XCellPainter
     return Alignment.MIDDLE;
   }
 
+  /**************************************** getTextStyle *****************************************/
+  @Override
+  protected int getTextStyle( ILayerCell cell )
+  {
+    // text style depends if summary or not
+    Task task = JPlanner.plan.task( cell.getRowIndex() );
+    if ( task.isSummary() )
+      return SWT.BOLD;
+
+    return SWT.NORMAL;
+  }
 }

@@ -19,24 +19,28 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/************* UndoCommand for updating calendars (except cycle-length & exceptions) *************/
+/****************** UndoCommand for updating day-types (except num of periods) *******************/
 /*************************************************************************************************/
 
-public class CommandSetCalendarValue implements IUndoCommand
+public class CommandDaySetValue implements IUndoCommand
 {
-  private int    m_calID;   // calendar number in plan
+  private int    m_dayID;   // day number in plan
   private int    m_section; // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetCalendarValue( int calID, int section, Object newValue, Object oldValue )
+  public CommandDaySetValue( int dayID, int section, Object newValue, Object oldValue )
   {
+    // check not being used for updating number of work periods
+    if ( section == Day.SECTION_PERIODS )
+      throw new UnsupportedOperationException( "Number of work-periods" );
+
     // initialise private variables
-    m_calID = calID;
+    m_dayID = dayID;
     m_section = section;
     m_newValue = newValue;
     m_oldValue = oldValue;
@@ -47,7 +51,7 @@ public class CommandSetCalendarValue implements IUndoCommand
   public void redo()
   {
     // action command
-    JPlanner.plan.calendar( m_calID ).setData( m_section, m_newValue );
+    JPlanner.plan.day( m_dayID ).setData( m_section, m_newValue );
   }
 
   /******************************************* undo **********************************************/
@@ -55,19 +59,18 @@ public class CommandSetCalendarValue implements IUndoCommand
   public void undo()
   {
     // revert command
-    JPlanner.plan.calendar( m_calID ).setData( m_section, m_oldValue );
+    JPlanner.plan.day( m_dayID ).setData( m_section, m_oldValue );
   }
 
   /****************************************** update *********************************************/
   @Override
   public void update()
   {
-    // update calendars tables and properties in case name displayed there
-    JPlanner.gui.properties().updateFromPlan();
+    // update gui
     JPlanner.gui.updateTables();
 
     // update schedule
-    if ( m_section != Calendar.SECTION_NAME )
+    if ( m_section != Day.SECTION_NAME )
       JPlanner.gui.schedule();
   }
 
@@ -76,7 +79,7 @@ public class CommandSetCalendarValue implements IUndoCommand
   public String text()
   {
     // command description
-    return "Day " + ( m_calID + 1 ) + " " + Calendar.sectionName( m_section ) + " = " + m_newValue;
+    return "Day " + ( m_dayID + 1 ) + " " + Day.sectionName( m_section ) + " = " + m_newValue;
   }
 
 }

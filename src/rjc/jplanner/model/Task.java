@@ -146,8 +146,7 @@ public class Task implements Comparable<Task>
   {
     // return display string for given section
     if ( section == SECTION_TITLE )
-      return m_title + " " + m_indent + " " + m_summaryStart + " " + m_summaryEnd;
-    //return m_title;
+      return m_title;
 
     // if task is null return blank for all other sections
     if ( isNull() )

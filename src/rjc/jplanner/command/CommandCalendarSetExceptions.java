@@ -19,70 +19,53 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/******************************** UndoCommand for updating tasks *********************************/
+/************************* UndoCommand for updating calendar exceptions **************************/
 /*************************************************************************************************/
 
-public class CommandSetTaskValue implements IUndoCommand
+public class CommandCalendarSetExceptions implements IUndoCommand
 {
-  private int    m_taskID;  // task number in plan
-  private int    m_section; // section number
-  private Object m_newValue; // new value after command
-  private Object m_oldValue; // old value before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetTaskValue( int taskID, int section, Object newValue, Object oldValue )
+  public CommandCalendarSetExceptions( int calID, Object newValue, Object oldValue )
   {
-    // initialise private variables
-    m_taskID = taskID;
-    m_section = section;
-    m_newValue = newValue;
-    m_oldValue = oldValue;
+    // TODO Auto-generated constructor stub
   }
 
   /******************************************* redo **********************************************/
   @Override
   public void redo()
   {
-    // action command
-    JPlanner.plan.task( m_taskID ).setData( m_section, m_newValue );
+    // TODO Auto-generated method stub
+
   }
 
   /******************************************* undo **********************************************/
   @Override
   public void undo()
   {
-    // revert command
-    JPlanner.plan.task( m_taskID ).setData( m_section, m_oldValue );
+    // TODO Auto-generated method stub
+
   }
 
   /****************************************** update *********************************************/
   @Override
   public void update()
   {
-    // update tasks tables
+    // update plan properties on gui
     JPlanner.gui.updateTables();
 
-    // if title and old value was null, update properties so it shows new count of tasks
-    if ( m_section == Task.SECTION_TITLE && m_oldValue == null )
-    {
-      JPlanner.gui.properties().updateFromPlan();
-      JPlanner.gui.schedule();
-    }
-
-    // update schedule for other changes
-    if ( m_section != Task.SECTION_TITLE && m_section != Task.SECTION_COMMENT )
-      JPlanner.gui.schedule();
+    // update schedule
+    JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/
   @Override
   public String text()
   {
-    // command description
-    return "Task " + ( m_taskID + 1 ) + " " + Task.sectionName( m_section ) + " = " + m_newValue;
+    // TODO Auto-generated method stub
+    return "Exceptions TBD";
   }
 
 }

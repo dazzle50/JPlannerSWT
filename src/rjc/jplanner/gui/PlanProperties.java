@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandSetPlanProperties;
+import rjc.jplanner.command.CommandPlanSetProperties;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
@@ -356,7 +356,7 @@ public class PlanProperties extends Composite
       return;
 
     // update plan via undo-stack
-    JPlanner.plan.undostack().push( new CommandSetPlanProperties( title, start, cal, DTformat, Dformat ) );
+    JPlanner.plan.undostack().push( new CommandPlanSetProperties( title, start, cal, DTformat, Dformat ) );
   }
 
 }

@@ -29,14 +29,14 @@ import rjc.jplanner.model.Time;
 /****************** UndoCommand for updating day-types number of work periods ********************/
 /*************************************************************************************************/
 
-public class CommandSetDayNumPeriods implements IUndoCommand
+public class CommandDaySetNumPeriods implements IUndoCommand
 {
   private int                      m_dayID;     // day number in plan
   private ArrayList<DayWorkPeriod> m_newPeriods; // new list of work-periods after command
   private ArrayList<DayWorkPeriod> m_oldPeriods; // old list of work-periods before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetDayNumPeriods( int dayID, Object newValue, Object oldValue )
+  public CommandDaySetNumPeriods( int dayID, Object newValue, Object oldValue )
   {
     // initialise private variables
     m_dayID = dayID;

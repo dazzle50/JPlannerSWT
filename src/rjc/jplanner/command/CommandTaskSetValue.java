@@ -19,28 +19,24 @@
 package rjc.jplanner.command;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/****************** UndoCommand for updating day-types (except num of periods) *******************/
+/******************************** UndoCommand for updating tasks *********************************/
 /*************************************************************************************************/
 
-public class CommandSetDayValue implements IUndoCommand
+public class CommandTaskSetValue implements IUndoCommand
 {
-  private int    m_dayID;   // day number in plan
+  private int    m_taskID;  // task number in plan
   private int    m_section; // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 
   /**************************************** constructor ******************************************/
-  public CommandSetDayValue( int dayID, int section, Object newValue, Object oldValue )
+  public CommandTaskSetValue( int taskID, int section, Object newValue, Object oldValue )
   {
-    // check not being used for updating number of work periods
-    if ( section == Day.SECTION_PERIODS )
-      throw new UnsupportedOperationException( "Number of work-periods" );
-
     // initialise private variables
-    m_dayID = dayID;
+    m_taskID = taskID;
     m_section = section;
     m_newValue = newValue;
     m_oldValue = oldValue;
@@ -51,7 +47,7 @@ public class CommandSetDayValue implements IUndoCommand
   public void redo()
   {
     // action command
-    JPlanner.plan.day( m_dayID ).setData( m_section, m_newValue );
+    JPlanner.plan.task( m_taskID ).setData( m_section, m_newValue );
   }
 
   /******************************************* undo **********************************************/
@@ -59,18 +55,25 @@ public class CommandSetDayValue implements IUndoCommand
   public void undo()
   {
     // revert command
-    JPlanner.plan.day( m_dayID ).setData( m_section, m_oldValue );
+    JPlanner.plan.task( m_taskID ).setData( m_section, m_oldValue );
   }
 
   /****************************************** update *********************************************/
   @Override
   public void update()
   {
-    // update gui
+    // update tasks tables
     JPlanner.gui.updateTables();
 
-    // update schedule
-    if ( m_section != Day.SECTION_NAME )
+    // if title and old value was null, update properties so it shows new count of tasks
+    if ( m_section == Task.SECTION_TITLE && m_oldValue == null )
+    {
+      JPlanner.gui.properties().updateFromPlan();
+      JPlanner.gui.schedule();
+    }
+
+    // update schedule for other changes
+    if ( m_section != Task.SECTION_TITLE && m_section != Task.SECTION_COMMENT )
       JPlanner.gui.schedule();
   }
 
@@ -79,7 +82,7 @@ public class CommandSetDayValue implements IUndoCommand
   public String text()
   {
     // command description
-    return "Day " + ( m_dayID + 1 ) + " " + Day.sectionName( m_section ) + " = " + m_newValue;
+    return "Task " + ( m_taskID + 1 ) + " " + Task.sectionName( m_section ) + " = " + m_newValue;
   }
 
 }

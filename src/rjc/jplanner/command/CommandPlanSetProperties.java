@@ -26,7 +26,7 @@ import rjc.jplanner.model.DateTime;
 /*************************** UndoCommand for updating plan properties ****************************/
 /*************************************************************************************************/
 
-public class CommandSetPlanProperties implements IUndoCommand
+public class CommandPlanSetProperties implements IUndoCommand
 {
   private String   m_oldTitle;
   private DateTime m_oldStart;
@@ -41,7 +41,7 @@ public class CommandSetPlanProperties implements IUndoCommand
   private String   m_newDformat;
 
   /**************************************** constructor ******************************************/
-  public CommandSetPlanProperties( String title, DateTime start, Calendar cal, String DTformat, String Dformat )
+  public CommandPlanSetProperties( String title, DateTime start, Calendar cal, String DTformat, String Dformat )
   {
     // initialise private variables
     m_oldTitle = JPlanner.plan.title();

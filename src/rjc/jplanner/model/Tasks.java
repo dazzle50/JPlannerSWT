@@ -137,10 +137,10 @@ public class Tasks extends ArrayList<Task>
       scheduleList.get( index ).schedule();
   }
 
-  /******************************************* indent ********************************************/
-  public boolean indent( Set<Integer> rows )
+  /****************************************** canIndent ******************************************/
+  public Set<Integer> canIndent( Set<Integer> rows )
   {
-    // remove any rows from set that can't be indented
+    // return the subset of rows that can be indented
     Set<Integer> temp = new HashSet<Integer>();
     rows.remove( 0 ); // hidden task 0
     rows.remove( 1 ); // can't indent task 1
@@ -161,8 +161,38 @@ public class Tasks extends ArrayList<Task>
     }
     rows.removeAll( temp );
 
-    // add summary task's subtasks
-    temp.clear();
+    return rows;
+  }
+
+  /***************************************** canOutdent ******************************************/
+  public Set<Integer> canOutdent( Set<Integer> rows )
+  {
+    // return the subset of rows that can be outdented
+    Set<Integer> temp = new HashSet<Integer>();
+    rows.remove( 0 ); // hidden task 0
+    rows.remove( 1 ); // can't outdent task 1
+    for ( int row : rows )
+    {
+      Task task = get( row );
+      if ( task.isNull() ) // exclude null tasks
+      {
+        temp.add( row );
+        continue;
+      }
+
+      if ( task.indent() == 0 ) // excluded tasks with no indent
+        temp.add( row );
+    }
+    rows.removeAll( temp );
+
+    return rows;
+  }
+
+  /******************************************* indent ********************************************/
+  public void indent( Set<Integer> rows )
+  {
+    // add summary task's subtasks, assume tasks that can't be indented already removed
+    Set<Integer> temp = new HashSet<Integer>();
     for ( int row : rows )
     {
       int summaryEnd = get( row ).summaryEnd();
@@ -173,23 +203,41 @@ public class Tasks extends ArrayList<Task>
     }
     rows.addAll( temp );
 
-    if ( rows.size() > 0 )
+    // increment indent of each row in set by one
+    for ( int row : rows )
     {
-      // increment indent of each row in set by one
-      for ( int row : rows )
-      {
-        Task task = get( row );
-        task.setIndent( task.indent() + 1 );
-      }
-
-      // update task summary end & summary start
-      updateSummaryMarkers();
-
-      return true;
+      Task task = get( row );
+      task.setIndent( task.indent() + 1 );
     }
 
-    // no rows to indent so return false
-    return false;
+    // update task summary end & summary start
+    updateSummaryMarkers();
+  }
+
+  /******************************************* outdent *******************************************/
+  public void outdent( Set<Integer> rows )
+  {
+    // add summary task's subtasks, assume tasks that can't be outdented already removed
+    Set<Integer> temp = new HashSet<Integer>();
+    for ( int row : rows )
+    {
+      int summaryEnd = get( row ).summaryEnd();
+      if ( summaryEnd > row )
+        for ( int i = row + 1; i <= summaryEnd; i++ )
+          if ( !get( i ).isNull() )
+            temp.add( i );
+    }
+    rows.addAll( temp );
+
+    // decrement indent of each row in set by one
+    for ( int row : rows )
+    {
+      Task task = get( row );
+      task.setIndent( task.indent() - 1 );
+    }
+
+    // update task summary end & summary start
+    updateSummaryMarkers();
   }
 
   /************************************ updateSummaryMarkers *************************************/
@@ -235,19 +283,6 @@ public class Tasks extends ArrayList<Task>
         }
       }
     }
-  }
-
-  /******************************************* outdent *******************************************/
-  public boolean outdent( Set<Integer> rows )
-  {
-    // TODO Auto-generated method stub
-    for ( int row : rows )
-    {
-      Task task = get( row );
-      task.setIndent( task.indent() - 1 );
-    }
-
-    return true;
   }
 
 }

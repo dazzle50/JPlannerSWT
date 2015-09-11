@@ -73,6 +73,8 @@ import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
+import rjc.jplanner.command.CommandTaskIndent;
+import rjc.jplanner.command.CommandTaskOutdent;
 import rjc.jplanner.gui.editor.CalendarCellEditor;
 import rjc.jplanner.gui.editor.DayCellEditor;
 import rjc.jplanner.gui.editor.ResourceCellEditor;
@@ -283,17 +285,17 @@ public class XNatTable extends NatTable
           // detect indent
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_RIGHT )
           {
-            JPlanner.trace( "==================> INDENT" );
-            if ( JPlanner.plan.tasks.indent( selectedRows() ) )
-              JPlanner.gui.schedule();
+            Set<Integer> rows = JPlanner.plan.tasks.canIndent( selectedRows() );
+            if ( !rows.isEmpty() )
+              JPlanner.plan.undostack().push( new CommandTaskIndent( rows ) );
           }
 
           // detect outdent
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_LEFT )
           {
-            JPlanner.trace( "==================> OUTDENT" );
-            if ( JPlanner.plan.tasks.outdent( selectedRows() ) )
-              JPlanner.gui.schedule();
+            Set<Integer> rows = JPlanner.plan.tasks.canOutdent( selectedRows() );
+            if ( !rows.isEmpty() )
+              JPlanner.plan.undostack().push( new CommandTaskOutdent( rows ) );
           }
         }
       };

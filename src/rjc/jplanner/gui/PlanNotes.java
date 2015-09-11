@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandSetPlanNotes;
+import rjc.jplanner.command.CommandPlanSetNotes;
 
 /*************************************************************************************************/
 /**************************** Widget display & editing of plan notes *****************************/
@@ -71,6 +71,6 @@ public class PlanNotes extends Composite
     if ( JPlanner.plan.notes().equals( m_notesText.getText() ) )
       return;
 
-    JPlanner.plan.undostack().push( new CommandSetPlanNotes( m_notesText.getText() ) );
+    JPlanner.plan.undostack().push( new CommandPlanSetNotes( m_notesText.getText() ) );
   }
 }

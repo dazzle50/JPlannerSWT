@@ -16,55 +16,57 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.command;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import java.util.Set;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandTaskSetValue;
-import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/**************************** Body data provider for tasks NatTable ******************************/
+/******************************* UndoCommand for indenting tasks *********************************/
 /*************************************************************************************************/
 
-public class TasksBody implements IDataProvider
+public class CommandTaskIndent implements IUndoCommand
 {
+  Set<Integer> m_rows; // rows to be outdented
 
-  /************************************** getColumnCount *****************************************/
-  @Override
-  public int getColumnCount()
+  /**************************************** constructor ******************************************/
+  public CommandTaskIndent( Set<Integer> rows )
   {
-    // table row count is constant
-    return Task.SECTION_MAX + 1;
+    // initialise private variables
+    m_rows = rows;
   }
 
-  /*************************************** getDataValue ******************************************/
+  /******************************************* redo **********************************************/
   @Override
-  public Object getDataValue( int col, int row )
+  public void redo()
   {
-    // return appropriate value for table cell
-    return JPlanner.plan.task( row ).toString( col );
+    // action command
+    JPlanner.plan.tasks.indent( m_rows );
   }
 
-  /**************************************** getRowCount ******************************************/
+  /******************************************* undo **********************************************/
   @Override
-  public int getRowCount()
+  public void undo()
   {
-    // return number of tasks in plan
-    return JPlanner.plan.tasksCount();
+    // revert command
+    JPlanner.plan.tasks.outdent( m_rows );
   }
 
-  /*************************************** setDataValue ******************************************/
+  /****************************************** update *********************************************/
   @Override
-  public void setDataValue( int col, int row, Object newValue )
+  public void update()
   {
-    // if new value equals old value, exit with no command
-    Object oldValue = getDataValue( col, row );
-    if ( newValue.equals( oldValue ) )
-      return;
+    // re-schedule plan (which in turn will update gui)
+    JPlanner.gui.schedule();
+  }
 
-    JPlanner.plan.undostack().push( new CommandTaskSetValue( row, col, newValue, oldValue ) );
+  /******************************************* text **********************************************/
+  @Override
+  public String text()
+  {
+    // command description
+    return "Indent";
   }
 
 }

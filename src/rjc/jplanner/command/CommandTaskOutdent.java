@@ -18,23 +18,23 @@
 
 package rjc.jplanner.command;
 
+import java.util.Set;
+
 import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
-/****************************** UndoCommand for updating plan notes ******************************/
+/******************************* UndoCommand for outdenting tasks ********************************/
 /*************************************************************************************************/
 
-public class CommandSetPlanNotes implements IUndoCommand
+public class CommandTaskOutdent implements IUndoCommand
 {
-  private String m_oldNotes;
-  private String m_newNotes;
+  Set<Integer> m_rows; // rows to be outdented
 
   /**************************************** constructor ******************************************/
-  public CommandSetPlanNotes( String newNotes )
+  public CommandTaskOutdent( Set<Integer> rows )
   {
     // initialise private variables
-    m_oldNotes = JPlanner.plan.notes();
-    m_newNotes = newNotes;
+    m_rows = rows;
   }
 
   /******************************************* redo **********************************************/
@@ -42,7 +42,7 @@ public class CommandSetPlanNotes implements IUndoCommand
   public void redo()
   {
     // action command
-    JPlanner.plan.setNotes( m_newNotes );
+    JPlanner.plan.tasks.outdent( m_rows );
   }
 
   /******************************************* undo **********************************************/
@@ -50,15 +50,15 @@ public class CommandSetPlanNotes implements IUndoCommand
   public void undo()
   {
     // revert command
-    JPlanner.plan.setNotes( m_oldNotes );
+    JPlanner.plan.tasks.indent( m_rows );
   }
 
   /****************************************** update *********************************************/
   @Override
   public void update()
   {
-    // update plan notes on gui
-    JPlanner.gui.notes().updateFromPlan();
+    // re-schedule plan (which in turn will update gui)
+    JPlanner.gui.schedule();
   }
 
   /******************************************* text **********************************************/
@@ -66,7 +66,7 @@ public class CommandSetPlanNotes implements IUndoCommand
   public String text()
   {
     // command description
-    return "Plan notes";
+    return "Outdent";
   }
 
 }

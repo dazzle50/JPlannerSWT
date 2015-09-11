@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -55,6 +56,8 @@ import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
+import rjc.jplanner.command.CommandTaskIndent;
+import rjc.jplanner.command.CommandTaskOutdent;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
@@ -524,8 +527,10 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        if ( JPlanner.plan.tasks.indent( m_mainTabWidget.tasks().selectedRows() ) )
-          JPlanner.gui.schedule();
+        Set<Integer> rows = m_mainTabWidget.tasks().selectedRows();
+        rows = JPlanner.plan.tasks.canIndent( rows );
+        if ( !rows.isEmpty() )
+          JPlanner.plan.undostack().push( new CommandTaskIndent( rows ) );
       }
     } );
 
@@ -537,8 +542,10 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        if ( JPlanner.plan.tasks.outdent( m_mainTabWidget.tasks().selectedRows() ) )
-          JPlanner.gui.schedule();
+        Set<Integer> rows = m_mainTabWidget.tasks().selectedRows();
+        rows = JPlanner.plan.tasks.canOutdent( rows );
+        if ( !rows.isEmpty() )
+          JPlanner.plan.undostack().push( new CommandTaskOutdent( rows ) );
       }
     } );
   }
