@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.XCombo;
 import rjc.jplanner.model.Task;
 import rjc.jplanner.model.TaskType;
 import rjc.jplanner.model.TimeSpan;
@@ -40,6 +41,12 @@ public class TaskCellEditor extends XAbstractCellEditor
     // create editor based on column
     if ( col == Task.SECTION_TYPE )
     {
+      if ( row == 1 )
+      {
+        XCombo combo = new XCombo( parent, SWT.NONE );
+        return combo;
+      }
+
       Combo combo = new Combo( parent, SWT.READ_ONLY );
       combo.add( TaskType.ASAP_FDUR );
       combo.add( TaskType.ASAP_FWORK );

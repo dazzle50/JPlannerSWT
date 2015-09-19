@@ -101,6 +101,15 @@ public class PlanProperties extends Composite
     m_calCombo = new XComboCalendars( this, SWT.READ_ONLY );
     m_calCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
+    /**************************************/
+    // for testing of XCombo only
+    Label xLabel = new Label( this, SWT.NONE );
+    xLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
+    xLabel.setText( "XCombo" );
+    XCombo xCombo = new XCombo( this, SWT.BORDER );
+    xCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
+    /**************************************/
+
     Label DTformatLabel = new Label( this, SWT.NONE );
     DTformatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
     DTformatLabel.setText( "Date-time format" );

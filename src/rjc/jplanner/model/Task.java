@@ -303,6 +303,7 @@ public class Task implements Comparable<Task>
 
     if ( !isNull() )
     {
+      xsw.writeAttribute( XmlLabels.XML_INDENT, Integer.toString( m_indent ) );
       xsw.writeAttribute( XmlLabels.XML_TITLE, m_title );
       xsw.writeAttribute( XmlLabels.XML_DURATION, m_duration.toString() );
       xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );

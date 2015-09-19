@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -97,6 +98,8 @@ public class MainWindow extends Shell
   public Color                     COLOR_CELL_ENABLED;
   public Color                     COLOR_TEXT_NORMAL;
   public Color                     COLOR_TEXT_SELECTED;
+  public Color                     COLOR_BORDER_NORMAL;
+  public Color                     COLOR_BORDER_SELECTED;
 
   public Color                     COLOR_GANTT_BACKGROUND;
   public Color                     COLOR_GANTT_NONWORKING;
@@ -131,11 +134,13 @@ public class MainWindow extends Shell
     COLOR_GRAY_DARK = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_GRAY_MID = new Color( display, 227, 227, 227 );
     COLOR_GRAY_LIGHT = new Color( display, 240, 240, 240 );
-    COLOR_CELL_SELECTED = new Color( display, 51, 153, 255 );
+    COLOR_CELL_SELECTED = display.getSystemColor( SWT.COLOR_LIST_SELECTION );
     COLOR_CELL_DISABLED = COLOR_GRAY_MID;
-    COLOR_CELL_ENABLED = COLOR_WHITE;
-    COLOR_TEXT_NORMAL = COLOR_BLACK;
-    COLOR_TEXT_SELECTED = COLOR_WHITE;
+    COLOR_CELL_ENABLED = display.getSystemColor( SWT.COLOR_LIST_BACKGROUND );
+    COLOR_TEXT_NORMAL = display.getSystemColor( SWT.COLOR_LIST_FOREGROUND );
+    COLOR_TEXT_SELECTED = display.getSystemColor( SWT.COLOR_LIST_SELECTION_TEXT );
+    COLOR_BORDER_NORMAL = display.getSystemColor( SWT.COLOR_WIDGET_BORDER );
+    COLOR_BORDER_SELECTED = COLOR_CELL_SELECTED;
     COLOR_GANTT_BACKGROUND = COLOR_WHITE;
     COLOR_GANTT_NONWORKING = COLOR_GRAY_LIGHT;
     COLOR_GANTT_DIVIDER = COLOR_GRAY_DARK;
@@ -589,7 +594,7 @@ public class MainWindow extends Shell
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        newWindow();
+        newWindow().getShell().open();
       }
     } );
 
@@ -638,7 +643,6 @@ public class MainWindow extends Shell
       }
     } );
 
-    newWindow.open();
     return newTabWidget;
   }
 
@@ -1042,9 +1046,10 @@ public class MainWindow extends Shell
                   break;
               }
 
-            // set window bounding rectangle and selected tab
-            tabs.getShell().setBounds( rect );
+            // set selected tab and window bounding rectangle 
             tabs.setSelection( tab );
+            tabs.getShell().setBounds( checkShellBounds( rect ) );
+            tabs.getShell().open();
             break;
 
           case XmlLabels.XML_TASKS_GANTT_TAB:
@@ -1065,6 +1070,79 @@ public class MainWindow extends Shell
         }
     }
 
+  }
+
+  /*************************************** checkShellBounds ***************************************/
+  private Rectangle checkShellBounds( Rectangle rect )
+  {
+    // check rectangle fits fully on a monitor
+    Monitor[] monitors = getDisplay().getMonitors();
+
+    // if top-left corner on monitor, use that monitor
+    for ( int i = 0; i < monitors.length; i++ )
+    {
+      Rectangle monitor = monitors[i].getClientArea();
+      if ( monitor.contains( rect.x, rect.y ) )
+        return fitToArea( rect, monitor );
+    }
+
+    // otherwise determine which monitor nearest (using Manhattan distance)
+    int distance = Integer.MAX_VALUE;
+    int nearest = -1;
+    for ( int i = 0; i < monitors.length; i++ )
+    {
+      Rectangle monitor = monitors[i].getClientArea();
+      int monitorDistance = Math.abs( rect.x - monitor.x ) + Math.abs( rect.y - monitor.y );
+
+      if ( monitorDistance < distance )
+      {
+        nearest = i;
+        distance = monitorDistance;
+      }
+    }
+
+    return fitToArea( rect, monitors[nearest].getClientArea() );
+  }
+
+  /****************************************** fitToArea ******************************************/
+  private Rectangle fitToArea( Rectangle rect, Rectangle area )
+  {
+    // check x
+    if ( rect.x < area.x )
+      rect.x = area.x;
+
+    // check y
+    if ( rect.y < area.y )
+      rect.y = area.y;
+
+    // check width
+    int excess = ( rect.x + rect.width ) - ( area.x + area.width );
+    if ( excess > 0 )
+    {
+      if ( excess > rect.x - area.x )
+      {
+        rect.x = area.x;
+        rect.width = area.width;
+      }
+      else
+        rect.x -= excess;
+    }
+
+    // check height
+    excess = ( rect.y + rect.height ) - ( area.y + area.height );
+    if ( excess > 0 )
+    {
+      if ( excess > rect.y - area.y )
+      {
+        rect.y = area.y;
+        rect.height = area.height;
+      }
+      else
+        rect.y -= excess;
+    }
+
+    // return adjusted rectangle
+    return rect;
   }
 
 }

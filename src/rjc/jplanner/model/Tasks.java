@@ -62,7 +62,10 @@ public class Tasks extends ArrayList<Task>
 
       // if reached end of task data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_TASK_DATA ) )
+      {
+        updateSummaryMarkers();
         return;
+      }
 
       // if element start, load the contents
       if ( xsr.isStartElement() )
