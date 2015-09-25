@@ -16,7 +16,7 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.editor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -24,6 +24,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.List;
@@ -37,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 public class XComboList extends Shell
 {
   /**************************************** constructor ******************************************/
-  public XComboList( XCombo parent )
+  public XComboList( XCombo parent, String[] items )
   {
     // create shell to display the drop down pick list
     super( parent.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP );
@@ -47,7 +48,7 @@ public class XComboList extends Shell
     List list = new List( this, SWT.BORDER | SWT.V_SCROLL );
 
     // populate list and set selection
-    parent.addItems( list );
+    list.setItems( items );
     list.setSelection( parent.getSelection() );
 
     // locate just below XCombo parent
@@ -68,6 +69,13 @@ public class XComboList extends Shell
       @Override
       public void handleEvent( Event event )
       {
+        int x = getDisplay().getCursorLocation().x;
+        int y = getDisplay().getCursorLocation().y;
+        Point mouse = parent.toControl( x, y );
+        Rectangle rect = parent.getBounds();
+        if ( mouse.x <= rect.width && mouse.y <= rect.height )
+          parent.focusOutViaParent = true;
+
         XComboList.this.dispose();
       }
     } );
@@ -104,7 +112,7 @@ public class XComboList extends Shell
         if ( event.character == SWT.ESC )
           XComboList.this.dispose();
 
-        if ( event.character == SWT.CR )
+        if ( event.character == SWT.CR || event.keyCode == SWT.F4 )
         {
           parent.setSelection( list.getSelectionIndex() );
           XComboList.this.dispose();

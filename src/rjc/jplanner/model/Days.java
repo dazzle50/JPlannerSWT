@@ -98,4 +98,16 @@ public class Days extends ArrayList<Day>
     xsw.writeEndElement(); // XML_DAY_DATA
   }
 
+  /******************************************* fromName ******************************************/
+  public Day fromName( String name )
+  {
+    // return day-type with matching name
+    for ( Day day : this )
+      if ( day.name().equals( name ) )
+        return day;
+
+    // no day-type found with matching name, so return null
+    return null;
+  }
+
 }

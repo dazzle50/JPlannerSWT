@@ -204,6 +204,9 @@ public class Resource
     else if ( section == SECTION_COMMENT )
       m_comment = (String) newValue;
 
+    else if ( section == SECTION_CALENDAR )
+      m_calendar = JPlanner.plan.calendars.fromName( (String) newValue );
+
     // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!
 
     else

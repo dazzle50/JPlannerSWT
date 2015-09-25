@@ -23,7 +23,6 @@ import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer.MoveDirectio
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -119,6 +118,9 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     if ( m_editor instanceof TextEditor )
       return ( (TextEditor) m_editor ).getPrimeEditor();
 
+    if ( m_editor instanceof XCombo )
+      return ( (XCombo) m_editor ).getPrimeEditor();
+
     // other editors are simple
     return m_editor;
   }
@@ -127,8 +129,8 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public Object getEditorValue()
   {
-    if ( m_editor instanceof Combo )
-      return ( (Combo) m_editor ).getText();
+    if ( m_editor instanceof XCombo )
+      return ( (XCombo) m_editor ).getPrimeEditor().getText();
 
     if ( m_editor instanceof TimeEditor )
       return ( (TimeEditor) m_editor ).getPrimeEditor().getText();
@@ -165,8 +167,8 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
     if ( m_editor instanceof SpinEditor )
       ( (SpinEditor) m_editor ).setText( str );
 
-    if ( m_editor instanceof Combo )
-      ( (Combo) m_editor ).setText( str );
+    if ( m_editor instanceof XCombo )
+      ( (XCombo) m_editor ).setText( str );
   }
 
   /*************************************** activateCell ******************************************/

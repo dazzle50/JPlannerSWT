@@ -292,7 +292,7 @@ public class Calendar
       m_exceptions = (HashMap<Date, Day>) newValue;
 
     else if ( section >= SECTION_NORMAL1 )
-      m_normal.set( section - SECTION_NORMAL1, (Day) newValue );
+      m_normal.set( section - SECTION_NORMAL1, JPlanner.plan.daytypes.fromName( (String) newValue ) );
 
     else
       throw new IllegalArgumentException( "Section=" + section );

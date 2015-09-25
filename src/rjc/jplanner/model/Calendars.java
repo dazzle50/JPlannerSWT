@@ -82,4 +82,16 @@ public class Calendars extends ArrayList<Calendar>
     xsw.writeEndElement(); // XML_CAL_DATA
   }
 
+  /******************************************* fromName ******************************************/
+  public Calendar fromName( String name )
+  {
+    // return calendar with matching name
+    for ( Calendar cal : this )
+      if ( cal.name().equals( name ) )
+        return cal;
+
+    // no calendar found with matching name, so return null
+    return null;
+  }
+
 }

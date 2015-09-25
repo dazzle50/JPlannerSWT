@@ -16,11 +16,15 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.editor;
+
+import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
@@ -29,7 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
@@ -40,9 +43,11 @@ import rjc.jplanner.JPlanner;
 
 public class XCombo extends Composite
 {
-  private int  m_selection;
-  private Text m_text;
-  private List m_list;
+  private String[] m_items;
+  private int      m_selection;
+  private Text     m_text;
+
+  public boolean   focusOutViaParent = false;
 
   /**************************************** constructor ******************************************/
   public XCombo( Composite parent, int style )
@@ -124,8 +129,13 @@ public class XCombo extends Composite
       @Override
       public void mouseDown( MouseEvent event )
       {
-        XComboList list = new XComboList( XCombo.this );
-        list.open();
+        if ( focusOutViaParent )
+          focusOutViaParent = false;
+        else
+        {
+          XComboList list = new XComboList( XCombo.this, m_items );
+          list.open();
+        }
       }
     };
 
@@ -133,8 +143,86 @@ public class XCombo extends Composite
     m_text.addMouseListener( listener );
     button.addMouseListener( listener );
 
-    // TODO HANDLE arrow keys + other keys
-    // TODO HANDLE toggle drop down list on clicking text/button
+    // add key press listener for arrow keys
+    m_text.addKeyListener( new KeyAdapter()
+    {
+      @Override
+      public void keyPressed( KeyEvent event )
+      {
+        // if arrow-up or arrow-left move to next item
+        if ( event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_LEFT )
+        {
+          event.doit = false;
+          m_selection++;
+          if ( m_selection >= m_items.length )
+            m_selection = 0;
+          setSelection( m_selection );
+          return;
+        }
+
+        // if arrow-down or arrow-right move to previous item
+        if ( event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_RIGHT )
+        {
+          event.doit = false;
+          m_selection--;
+          if ( m_selection < 0 )
+            m_selection = m_items.length - 1;
+          setSelection( m_selection );
+          return;
+        }
+
+        // if F4 open combo drop-down list
+        if ( event.keyCode == SWT.F4 )
+        {
+          XComboList list = new XComboList( XCombo.this, m_items );
+          list.open();
+          return;
+        }
+
+        // otherwise move to next selection where key-pressed matches item first character
+        nextSelection( event.character );
+      }
+    } );
+
+  }
+
+  /****************************************** setItems *******************************************/
+  public void setItems( String[] items )
+  {
+    // set drop down list items
+    m_items = items;
+  }
+
+  /******************************************* setText *******************************************/
+  public void setText( String text )
+  {
+    // set selection based on given text
+    int select = Arrays.asList( m_items ).indexOf( text );
+    if ( select >= 0 )
+      setSelection( select );
+    else
+      nextSelection( text.charAt( 0 ) );
+  }
+
+  /*************************************** nextSelection *****************************************/
+  public void nextSelection( char key )
+  {
+    // move to next selection where key matches item first character (case-insensitive)
+    key = Character.toLowerCase( key );
+    int select = getSelection();
+    for ( int count = 0; count <= m_items.length; count++ )
+    {
+      select++;
+      if ( select >= m_items.length )
+        select = 0;
+
+      char firstChar = Character.toLowerCase( m_items[select].charAt( 0 ) );
+      if ( key == firstChar )
+      {
+        setSelection( select );
+        break;
+      }
+    }
   }
 
   /**************************************** setSelection *****************************************/
@@ -142,7 +230,8 @@ public class XCombo extends Composite
   {
     // set selection index and update text
     m_selection = selection;
-    m_text.setText( m_list.getItem( selection ) );
+    m_text.setText( m_items[selection] );
+    m_text.setSelection( 0, 0 );
   }
 
   /**************************************** getSelection *****************************************/
@@ -152,11 +241,11 @@ public class XCombo extends Composite
     return m_selection;
   }
 
-  /****************************************** addItems *******************************************/
-  public void addItems( List list )
+  /*************************************** getPrimeEditor ****************************************/
+  public Text getPrimeEditor()
   {
-    // override this method to add desired drop down list items
-    m_list = list;
+    // return SWT editor actually used to accept key presses
+    return m_text;
   }
 
 }

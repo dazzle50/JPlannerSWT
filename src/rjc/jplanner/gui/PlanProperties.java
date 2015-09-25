@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.CommandPlanSetProperties;
+import rjc.jplanner.gui.editor.XComboCalendar;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
@@ -42,21 +43,21 @@ import rjc.jplanner.model.DateTime;
 
 public class PlanProperties extends Composite
 {
-  private Text            m_titleText;
-  private DateTimeEditor  m_startDT;
-  private Text            m_earliestText;
-  private Text            m_endText;
-  private XComboCalendars m_calCombo;
-  private Text            m_DTformatText;
-  private Text            m_DformatText;
-  private Text            m_filenameText;
-  private Text            m_filelocText;
-  private Text            m_savedbyText;
-  private Text            m_savedwhenText;
-  private Label           m_tasksNum;
-  private Label           m_resourcesNum;
-  private Label           m_calendarsNum;
-  private Label           m_daysNum;
+  private Text           m_titleText;
+  private DateTimeEditor m_startDT;
+  private Text           m_earliestText;
+  private Text           m_endText;
+  private XComboCalendar m_calCombo;
+  private Text           m_DTformatText;
+  private Text           m_DformatText;
+  private Text           m_filenameText;
+  private Text           m_filelocText;
+  private Text           m_savedbyText;
+  private Text           m_savedwhenText;
+  private Label          m_tasksNum;
+  private Label          m_resourcesNum;
+  private Label          m_calendarsNum;
+  private Label          m_daysNum;
 
   /**************************************** constructor ******************************************/
   public PlanProperties( Composite parent, int style )
@@ -98,17 +99,8 @@ public class PlanProperties extends Composite
     calLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
     calLabel.setText( "Default Calendar" );
 
-    m_calCombo = new XComboCalendars( this, SWT.READ_ONLY );
+    m_calCombo = new XComboCalendar( this, SWT.BORDER );
     m_calCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-
-    /**************************************/
-    // for testing of XCombo only
-    Label xLabel = new Label( this, SWT.NONE );
-    xLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
-    xLabel.setText( "XCombo" );
-    XCombo xCombo = new XCombo( this, SWT.BORDER );
-    xCombo.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-    /**************************************/
 
     Label DTformatLabel = new Label( this, SWT.NONE );
     DTformatLabel.setLayoutData( new GridData( SWT.RIGHT, SWT.CENTER, false, false, 1, 1 ) );
@@ -320,8 +312,7 @@ public class PlanProperties extends Composite
     // update the gui property widgets with values from plan
     m_titleText.setText( JPlanner.plan.title() );
     m_startDT.setDateTime( JPlanner.plan.start() );
-    m_calCombo.setCalendarItems();
-    m_calCombo.setText( JPlanner.plan.calendar().name() );
+    m_calCombo.setSelection( JPlanner.plan.calendar().index() );
     m_filenameText.setText( JPlanner.plan.filename() );
     m_filelocText.setText( JPlanner.plan.fileLocation() );
     m_savedbyText.setText( JPlanner.plan.savedBy() );
@@ -329,6 +320,35 @@ public class PlanProperties extends Composite
     // to prevent unnecessary triggering of verify listener, only set if different
     if ( !m_DTformatText.getText().equals( JPlanner.plan.datetimeFormat() ) )
       m_DTformatText.setText( JPlanner.plan.datetimeFormat() );
+    else
+    {
+      try
+      {
+        m_earliestText.setText( JPlanner.plan.earliest().toString( JPlanner.plan.datetimeFormat() ) );
+      }
+      catch ( Exception exception )
+      {
+        m_earliestText.setText( "" );
+      }
+
+      try
+      {
+        m_endText.setText( JPlanner.plan.end().toString( JPlanner.plan.datetimeFormat() ) );
+      }
+      catch ( Exception exception )
+      {
+        m_endText.setText( "" );
+      }
+
+      try
+      {
+        m_savedwhenText.setText( JPlanner.plan.savedWhen().toString( JPlanner.plan.datetimeFormat() ) );
+      }
+      catch ( Exception exception )
+      {
+        m_savedwhenText.setText( "" );
+      }
+    }
 
     if ( !m_DformatText.getText().equals( JPlanner.plan.dateFormat() ) )
       m_DformatText.setText( JPlanner.plan.dateFormat() );
@@ -346,7 +366,7 @@ public class PlanProperties extends Composite
     // get values from gui editors
     String title = m_titleText.getText();
     DateTime start = new DateTime( m_startDT.milliseconds() );
-    Calendar cal = JPlanner.plan.calendar( m_calCombo.getSelectionIndex() );
+    Calendar cal = JPlanner.plan.calendar( m_calCombo.getSelection() );
     String DTformat = m_DTformatText.getText();
     String Dformat = m_DformatText.getText();
 

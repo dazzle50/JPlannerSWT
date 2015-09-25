@@ -16,50 +16,25 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.editor;
 
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
-import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.TaskType;
 
 /*************************************************************************************************/
-/**************** Extended version of Combo auto populated with list of calendars ****************/
+/********************** Extended version of XCombo with list of task types ***********************/
 /*************************************************************************************************/
 
-public class XComboCalendars extends Combo
+public class XComboTaskType extends XCombo
 {
 
   /**************************************** constructor ******************************************/
-  public XComboCalendars( Composite parent, int style )
+  public XComboTaskType( Composite parent, int style )
   {
+    // create XCombo for plan task types
     super( parent, style );
 
-    // set drop-down list items to calendar names
-    setCalendarItems();
+    setItems( TaskType.list() );
   }
-
-  /************************************** setCalendarItems ***************************************/
-  public void setCalendarItems()
-  {
-    // ensure drop-down list items are up to date
-    int current = indexOf( getText() );
-    removeAll();
-    int num = JPlanner.plan.calendarsCount();
-    for ( int i = 0; i < num; i++ )
-      add( JPlanner.plan.calendar( i ).name() );
-
-    // if current text wasn't valid then default to plan default calendar
-    if ( current == -1 )
-      setText( JPlanner.plan.calendar().name() );
-    else
-      setText( getItem( current ) );
-  }
-
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
 }

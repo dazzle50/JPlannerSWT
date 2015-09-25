@@ -18,27 +18,27 @@
 
 package rjc.jplanner.gui.editor;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Composite;
 
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.JPlanner;
 
 /*************************************************************************************************/
-/******************************** Editor for calendar table cells ********************************/
+/*********************** Extended version of XCombo with list of calendars ***********************/
 /*************************************************************************************************/
 
-public class CalendarCellEditor extends XAbstractCellEditor
+public class XComboCalendar extends XCombo
 {
-  /**************************************** createEditor *****************************************/
-  @Override
-  public Control createEditor( int row, int col )
+
+  /**************************************** constructor ******************************************/
+  public XComboCalendar( Composite parent, int style )
   {
-    // create editor based on row
-    if ( row >= Calendar.SECTION_NORMAL1 )
-      return new XComboDay( parent, SWT.NONE );
+    // create XCombo for plan calendars
+    super( parent, style );
 
-    // TODO - use Text editor until find/write something better
-    return new TextEditor( parent );
+    int num = JPlanner.plan.calendarsCount();
+    String[] items = new String[num];
+    for ( int i = 0; i < num; i++ )
+      items[i] = JPlanner.plan.calendar( i ).name();
+    setItems( items );
   }
-
 }
