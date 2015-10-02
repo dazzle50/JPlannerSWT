@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 public class XComboList extends Shell
 {
   /**************************************** constructor ******************************************/
-  public XComboList( XCombo parent, String[] items )
+  public XComboList( XCombo parent, String[] items, int border )
   {
     // create shell to display the drop down pick list
     super( parent.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP );
@@ -52,7 +52,7 @@ public class XComboList extends Shell
     list.setSelection( parent.getSelection() );
 
     // locate just below XCombo parent
-    setLocation( parent.toDisplay( new Point( 0, parent.getSize().y - 1 ) ) );
+    setLocation( parent.toDisplay( new Point( border - 1, parent.getSize().y - border ) ) );
 
     // set size ensuring height fits on monitor
     int item = list.getItemHeight();
@@ -60,7 +60,7 @@ public class XComboList extends Shell
     int height = list.getItemCount() * item + 4;
     if ( getLocation().y + height > maxY )
       height = ( ( maxY - getLocation().y ) / item ) * item + 4;
-    setSize( parent.getSize().x, height );
+    setSize( parent.getSize().x - 2 * ( border - 1 ), height );
 
     // ensure list has focus, and when focus lost, list is closed
     list.forceFocus();

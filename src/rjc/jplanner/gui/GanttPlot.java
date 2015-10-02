@@ -52,9 +52,11 @@ public class GanttPlot extends Composite
   public static boolean ganttStretch;
 
   /**************************************** constructor ******************************************/
-  public GanttPlot( Composite parent )
+  public GanttPlot( Gantt parent )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
+
+    setMenu( parent.contextMenu() );
 
     addPaintListener( new PaintListener()
     {
@@ -122,25 +124,9 @@ public class GanttPlot extends Composite
     m_millisecondsPP = mspp;
   }
 
-  /********************************************** x **********************************************/
-  private int x( Date date )
-  {
-    return (int) ( ( date.epochday() * DateTime.MILLISECONDS_IN_DAY - m_start.milliseconds() ) / m_millisecondsPP );
-  }
-
-  /****************************************** datetime *******************************************/
-  private DateTime datetime( int x )
-  {
-    return m_start.plusMilliseconds( x * m_millisecondsPP );
-  }
-
   /************************************* shadeNonWorkingDays *************************************/
   private void shadeNonWorkingDays( PaintEvent event )
   {
-    // exit immediately if less than one pixel per 24H
-    if ( DateTime.MILLISECONDS_IN_DAY / m_millisecondsPP < 1 )
-      return;
-
     // shade the non-working days based on the plan default calendar
     int x = event.x;
     int y = event.y;
@@ -155,35 +141,35 @@ public class GanttPlot extends Composite
     // calculate start-date and end-date etc
     Calendar calendar = JPlanner.plan.calendar();
     Date date = datetime( x - 1 ).date();
-    Date dateEnd = datetime( x + w ).date();
-    int xs = -1;
-    int xe = 0;
+    int endEpoch = datetime( x + w ).date().epochday();
+    int startShadeEpoch;
 
     // for each date check if working and shade accordingly
     gc.setBackground( JPlanner.gui.COLOR_GANTT_NONWORKING );
     do
     {
-      if ( xs < 0 && !calendar.isWorking( date ) )
+      // find start of non-working period
+      if ( !calendar.isWorking( date ) )
       {
-        xs = x( date ) + 1;
-        if ( xs < 0 )
-          xs = 0;
+        startShadeEpoch = date.epochday();
+
+        // find end of non-working period
+        do
+          date.increment();
+        while ( date.epochday() <= endEpoch && !calendar.isWorking( date ) );
+
+        // if width at least 1 pixel shade non-working period
+        long width = ( date.epochday() - startShadeEpoch ) * DateTime.MILLISECONDS_IN_DAY / m_millisecondsPP;
+        if ( width > 0L )
+        {
+          long xe = x( new DateTime( date.epochday() * DateTime.MILLISECONDS_IN_DAY ) );
+          gc.fillRectangle( (int) ( xe - width ), y, (int) width, h );
+        }
       }
 
-      if ( xs >= 0 && calendar.isWorking( date ) )
-      {
-        xe = x( date );
-        gc.fillRectangle( xs, y, xe - xs + 1, h );
-        xs = -1;
-      }
-
-      date = date.plusDays( 1 );
+      date.increment();
     }
-    while ( date.epochday() <= dateEnd.epochday() );
-
-    // shade any remaining non-working days
-    if ( xs >= 0 )
-      gc.fillRectangle( xs, y, this.getSize().x, h );
+    while ( date.epochday() <= endEpoch );
   }
 
   /****************************************** drawTasks ******************************************/
@@ -235,6 +221,12 @@ public class GanttPlot extends Composite
   {
     // TODO Auto-generated method stub
 
+  }
+
+  /****************************************** datetime *******************************************/
+  private DateTime datetime( int x )
+  {
+    return m_start.plusMilliseconds( x * m_millisecondsPP );
   }
 
   /********************************************** x **********************************************/

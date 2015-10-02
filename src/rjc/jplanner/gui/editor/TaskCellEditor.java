@@ -37,7 +37,11 @@ public class TaskCellEditor extends XAbstractCellEditor
   {
     // create editor based on column
     if ( col == Task.SECTION_TYPE )
-      return new XComboTaskType( parent, SWT.NONE );
+    {
+      XComboTaskType combo = new XComboTaskType( parent, SWT.NONE );
+      combo.setText( JPlanner.plan.task( row ).toString( col ) );
+      return combo;
+    }
 
     if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
     {

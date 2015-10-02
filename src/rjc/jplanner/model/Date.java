@@ -124,6 +124,12 @@ public class Date
     return ld.getDayOfMonth();
   }
 
+  /***************************************** increment *******************************************/
+  public void increment()
+  {
+    m_epochday++;
+  }
+
   /****************************************** plusDays *******************************************/
   public Date plusDays( int days )
   {

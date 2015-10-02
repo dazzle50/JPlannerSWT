@@ -327,6 +327,8 @@ public class Task implements Comparable<Task>
   public void savePredecessorToXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write task predecessor data to XML stream
+    if ( m_predecessors == null )
+      return;
     String preds = m_predecessors.toString();
 
     if ( preds.length() > 0 )

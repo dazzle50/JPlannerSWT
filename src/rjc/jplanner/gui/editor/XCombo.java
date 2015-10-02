@@ -46,6 +46,7 @@ public class XCombo extends Composite
   private String[] m_items;
   private int      m_selection;
   private Text     m_text;
+  private int      m_border;
 
   public boolean   focusOutViaParent = false;
 
@@ -56,14 +57,14 @@ public class XCombo extends Composite
     super( parent, SWT.NONE );
 
     // check if border wanted
-    int border = 0;
+    m_border = 0;
     if ( ( style & SWT.BORDER ) > 0 )
-      border = 1;
+      m_border = 1;
 
     // layout to implement outer border
     FillLayout outerBorder = new FillLayout();
-    outerBorder.marginHeight = border;
-    outerBorder.marginWidth = border;
+    outerBorder.marginHeight = m_border;
+    outerBorder.marginWidth = m_border;
     setBackground( JPlanner.gui.COLOR_BORDER_NORMAL );
     setLayout( outerBorder );
 
@@ -74,13 +75,13 @@ public class XCombo extends Composite
     GridLayout gridLayout = new GridLayout( 2, false );
     gridLayout.verticalSpacing = 0;
     gridLayout.horizontalSpacing = 0;
-    gridLayout.marginHeight = border;
-    gridLayout.marginWidth = border;
+    gridLayout.marginHeight = m_border;
+    gridLayout.marginWidth = m_border;
     innerComposite.setLayout( gridLayout );
     innerComposite.setBackground( JPlanner.gui.COLOR_WHITE );
 
     // text widget to display current selection text
-    m_text = new Text( innerComposite, SWT.READ_ONLY );
+    m_text = new Text( innerComposite, SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED );
     m_text.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, true, 1, 1 ) );
     m_text.setBackground( JPlanner.gui.COLOR_WHITE );
     m_text.setCursor( getDisplay().getSystemCursor( SWT.CURSOR_ARROW ) );
@@ -133,7 +134,7 @@ public class XCombo extends Composite
           focusOutViaParent = false;
         else
         {
-          XComboList list = new XComboList( XCombo.this, m_items );
+          XComboList list = new XComboList( XCombo.this, m_items, m_border );
           list.open();
         }
       }
@@ -149,10 +150,9 @@ public class XCombo extends Composite
       @Override
       public void keyPressed( KeyEvent event )
       {
-        // if arrow-up or arrow-left move to next item
-        if ( event.keyCode == SWT.ARROW_UP || event.keyCode == SWT.ARROW_LEFT )
+        // if arrow-up (when borderless) or arrow-left move to next item
+        if ( ( m_border > 0 && event.keyCode == SWT.ARROW_UP ) || event.keyCode == SWT.ARROW_LEFT )
         {
-          event.doit = false;
           m_selection++;
           if ( m_selection >= m_items.length )
             m_selection = 0;
@@ -160,10 +160,9 @@ public class XCombo extends Composite
           return;
         }
 
-        // if arrow-down or arrow-right move to previous item
-        if ( event.keyCode == SWT.ARROW_DOWN || event.keyCode == SWT.ARROW_RIGHT )
+        // if arrow-down (when borderless) or arrow-right move to previous item
+        if ( ( m_border > 0 && event.keyCode == SWT.ARROW_DOWN ) || event.keyCode == SWT.ARROW_RIGHT )
         {
-          event.doit = false;
           m_selection--;
           if ( m_selection < 0 )
             m_selection = m_items.length - 1;
@@ -174,13 +173,17 @@ public class XCombo extends Composite
         // if F4 open combo drop-down list
         if ( event.keyCode == SWT.F4 )
         {
-          XComboList list = new XComboList( XCombo.this, m_items );
+          XComboList list = new XComboList( XCombo.this, m_items, m_border );
           list.open();
           return;
         }
 
         // otherwise move to next selection where key-pressed matches item first character
         nextSelection( event.character );
+
+        // stop anything else happening expect ctrl+C (copy to clipboard)
+        if ( event.character != 3 )
+          event.doit = false;
       }
     } );
 

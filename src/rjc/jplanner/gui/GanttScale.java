@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
-import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
 
@@ -46,18 +45,20 @@ public class GanttScale extends Composite
   private String   m_format;
 
   /**************************************** constructor ******************************************/
-  public GanttScale( Composite parent )
+  public GanttScale( Gantt parent )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
     setDragDetect( false );
 
+    setMenu( parent.contextMenu() );
+
     addPaintListener( new PaintListener()
     {
       @Override
-      public void paintControl( PaintEvent e )
+      public void paintControl( PaintEvent event )
       {
         // update the gantt plot for the specified paint-event
-        drawScale( e );
+        drawScale( event );
       }
     } );
 
@@ -74,12 +75,6 @@ public class GanttScale extends Composite
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
-  }
-
-  /********************************************** x **********************************************/
-  private int x( Date date )
-  {
-    return (int) ( ( date.epochday() * DateTime.MILLISECONDS_IN_DAY - m_start.milliseconds() ) / m_millisecondsPP );
   }
 
   /********************************************** x **********************************************/

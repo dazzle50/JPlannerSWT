@@ -21,6 +21,7 @@ package rjc.jplanner.gui.editor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
+import rjc.jplanner.JPlanner;
 import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
@@ -35,7 +36,11 @@ public class CalendarCellEditor extends XAbstractCellEditor
   {
     // create editor based on row
     if ( row >= Calendar.SECTION_NORMAL1 )
-      return new XComboDay( parent, SWT.NONE );
+    {
+      XComboDay combo = new XComboDay( parent, SWT.NONE );
+      combo.setText( JPlanner.plan.calendar( col ).toString( row ) );
+      return combo;
+    }
 
     // TODO - use Text editor until find/write something better
     return new TextEditor( parent );

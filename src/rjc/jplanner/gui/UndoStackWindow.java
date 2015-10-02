@@ -21,6 +21,8 @@ package rjc.jplanner.gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -72,26 +74,18 @@ public class UndoStackWindow extends Shell
       @Override
       public void handleEvent( Event event )
       {
-        int index = m_list.getSelectionIndex();
+        executeUndoRedo( m_list.getSelectionIndex() );
+      }
+    } );
 
-        if ( index > JPlanner.plan.undostack().index() )
-        {
-          int num = index - JPlanner.plan.undostack().index();
-          for ( int i = 1; i <= num; i++ )
-            JPlanner.plan.undostack().redo();
-
-          return;
-        }
-
-        if ( index < JPlanner.plan.undostack().index() )
-        {
-          int num = JPlanner.plan.undostack().index() - index;
-          for ( int i = 1; i <= num; i++ )
-            JPlanner.plan.undostack().undo();
-
-          return;
-        }
-
+    // if user holding down mouse button1, execute redo or undo commands as appropriate
+    m_list.addMouseMoveListener( new MouseMoveListener()
+    {
+      @Override
+      public void mouseMove( MouseEvent event )
+      {
+        if ( ( event.stateMask & SWT.BUTTON1 ) != 0 )
+          executeUndoRedo( m_list.getSelectionIndex() );
       }
     } );
 
@@ -101,6 +95,30 @@ public class UndoStackWindow extends Shell
   protected void checkSubclass()
   {
     // Disable the check that prevents subclassing of SWT components
+  }
+
+  /*************************************** updateSelection ***************************************/
+  protected void executeUndoRedo( int index )
+  {
+    // execute undo-stack redo commands as necessary to get to index
+    if ( index > JPlanner.plan.undostack().index() )
+    {
+      int num = index - JPlanner.plan.undostack().index();
+      for ( int i = 1; i <= num; i++ )
+        JPlanner.plan.undostack().redo();
+
+      return;
+    }
+
+    // execute undo-stack undo commands as necessary to get to index
+    if ( index < JPlanner.plan.undostack().index() )
+    {
+      int num = JPlanner.plan.undostack().index() - index;
+      for ( int i = 1; i <= num; i++ )
+        JPlanner.plan.undostack().undo();
+
+      return;
+    }
   }
 
   /******************************************* setList *******************************************/

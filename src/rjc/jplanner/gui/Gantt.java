@@ -23,10 +23,14 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
@@ -176,6 +180,155 @@ public class Gantt extends Composite
   {
     // cause gantt plot to be redrawn
     m_plot.redraw();
+  }
+
+  /*************************************** contextMenu *******************************************/
+  public Menu contextMenu()
+  {
+    // build and return gantt content menu
+    Menu contextMenu = new Menu( this );
+
+    MenuItem zoomIn = new MenuItem( contextMenu, SWT.NONE );
+    zoomIn.setText( "Zoom in" );
+    zoomIn.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        setMsPP( (long) ( m_millisecondsPP / 1.414 ) );
+        updateAll();
+      }
+    } );
+
+    MenuItem zoomOut = new MenuItem( contextMenu, SWT.NONE );
+    zoomOut.setText( "Zoom out" );
+    zoomOut.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        setMsPP( (long) ( m_millisecondsPP * 1.414 ) );
+        updateAll();
+      }
+    } );
+
+    MenuItem zoomFit = new MenuItem( contextMenu, SWT.NONE );
+    zoomFit.setText( "Zoom fit" );
+    zoomFit.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        DateTime start = JPlanner.plan.stretch( JPlanner.plan.earliest(), GanttPlot.ganttStretch );
+        DateTime end = JPlanner.plan.stretch( JPlanner.plan.end(), GanttPlot.ganttStretch );
+        int width = Gantt.this.getParent().getClientArea().width;
+
+        if ( start == null || end == null )
+        {
+          setEnd( new DateTime( m_start.milliseconds() + m_millisecondsPP * width ) );
+          updateAll();
+          return;
+        }
+
+        long margin = 1L + ( end.milliseconds() - start.milliseconds() ) / 16L;
+        setStart( new DateTime( start.milliseconds() - margin ) );
+        setEnd( new DateTime( end.milliseconds() + margin ) );
+        setMsPP( ( m_end.milliseconds() - m_start.milliseconds() ) / width );
+        updateAll();
+      }
+    } );
+
+    new MenuItem( contextMenu, SWT.SEPARATOR );
+
+    MenuItem upperScale = new MenuItem( contextMenu, SWT.CASCADE );
+    upperScale.setText( "Upper scale" );
+    upperScale.setMenu( scaleMenu( contextMenu, m_upperScale ) );
+
+    MenuItem lowerScale = new MenuItem( contextMenu, SWT.CASCADE );
+    lowerScale.setText( "Lower scale" );
+    lowerScale.setMenu( scaleMenu( contextMenu, m_lowerScale ) );
+
+    MenuItem nonWD = new MenuItem( contextMenu, SWT.NONE );
+    nonWD.setText( "Non-working days" );
+
+    MenuItem current = new MenuItem( contextMenu, SWT.NONE );
+    current.setText( "Current date" );
+
+    MenuItem upperSM = new MenuItem( contextMenu, SWT.NONE );
+    upperSM.setText( "Upper scale mark" );
+
+    MenuItem lowerSM = new MenuItem( contextMenu, SWT.NONE );
+    lowerSM.setText( "Lower scale mark" );
+
+    return contextMenu;
+  }
+
+  /***************************************** scaleMenu *******************************************/
+  private Menu scaleMenu( Menu parent, GanttScale scale )
+  {
+    // build and return scale interval menu
+    Menu scaleMenu = new Menu( parent );
+
+    MenuItem year = new MenuItem( scaleMenu, SWT.CHECK );
+    year.setText( "Year" );
+    year.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.YEAR, "YYYY" );
+        scale.redraw();
+      }
+    } );
+
+    MenuItem halfYear = new MenuItem( scaleMenu, SWT.CHECK );
+    halfYear.setText( "Half Year" );
+    halfYear.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.HALFYEAR, "YYYY HN" );
+        scale.redraw();
+      }
+    } );
+
+    MenuItem quarterYear = new MenuItem( scaleMenu, SWT.CHECK );
+    quarterYear.setText( "Quarter Year" );
+    quarterYear.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.QUARTERYEAR, "YYYY QN" );
+        scale.redraw();
+      }
+    } );
+
+    MenuItem month = new MenuItem( scaleMenu, SWT.CHECK );
+    month.setText( "Month" );
+    month.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.MONTH, "MMM-YYYY" );
+        scale.redraw();
+      }
+    } );
+
+    MenuItem week = new MenuItem( scaleMenu, SWT.CHECK );
+    week.setText( "Week" );
+
+    MenuItem day = new MenuItem( scaleMenu, SWT.CHECK );
+    day.setText( "Day" );
+
+    new MenuItem( scaleMenu, SWT.SEPARATOR );
+
+    MenuItem format = new MenuItem( scaleMenu, SWT.CHECK );
+    format.setText( "Label format" );
+
+    return scaleMenu;
   }
 
 }
