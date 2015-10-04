@@ -47,18 +47,18 @@ import rjc.jplanner.JPlanner;
 
 public class SpinEditor extends Composite
 {
-  private Text      m_prime;        // control which accepts the key presses etc
-  private int       m_height;       // height of editor
-  private int       m_minWidth;     // minimum width of editor, can be larger
+  private Text      m_prime;         // control which accepts the key presses etc
+  private int       m_height;        // height of editor
+  private int       m_minWidth;      // minimum width of editor, can be larger
 
-  protected String  m_prefix;       // prefix shown before value
-  protected String  m_suffix;       // suffix shown after value
-  protected double  m_value;        // numerical value being shown
-  protected double  m_step;         // small step for example on arrow-up or arrow-down
-  protected double  m_page;         // large step for example on page-up or page-down
-  protected double  m_min;          // min valid value
-  protected double  m_max;          // max valid value
-  protected int     m_minDigits;    // minimum number of digits, padded with zeros on left
+  protected String  m_prefix;        // prefix shown before value
+  protected String  m_suffix;        // suffix shown after value
+  protected double  m_value;         // numerical value being shown
+  protected double  m_step;          // small step for example on arrow-up or arrow-down
+  protected double  m_page;          // large step for example on page-up or page-down
+  protected double  m_min;           // min valid value
+  protected double  m_max;           // max valid value
+  protected int     m_minDigits;     // minimum number of digits, padded with zeros on left
   protected int     m_decimalPlaces; // number of decimal places, padded with zeros on right
   protected boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
 

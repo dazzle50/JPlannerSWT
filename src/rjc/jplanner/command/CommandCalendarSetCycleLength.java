@@ -30,7 +30,7 @@ import rjc.jplanner.model.Day;
 
 public class CommandCalendarSetCycleLength implements IUndoCommand
 {
-  private int            m_calID;     // calendar number in plan
+  private int            m_calID;      // calendar number in plan
   private ArrayList<Day> m_newNormals; // new list of normal-cycle-days after command
   private ArrayList<Day> m_oldNormals; // old list of normal-cycle-days before command
 

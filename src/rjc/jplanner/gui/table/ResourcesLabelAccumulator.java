@@ -30,6 +30,8 @@ import rjc.jplanner.model.Resource;
 
 public class ResourcesLabelAccumulator implements IConfigLabelAccumulator
 {
+
+  /*********************************** accumulateConfigLabels ************************************/
   @Override
   public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {

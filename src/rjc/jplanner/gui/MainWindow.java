@@ -35,8 +35,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -55,6 +55,8 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
+
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.CommandTaskIndent;
@@ -62,8 +64,6 @@ import rjc.jplanner.command.CommandTaskOutdent;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.Plan;
-
-import com.sun.xml.internal.txw2.output.IndentingXMLStreamWriter;
 
 /*************************************************************************************************/
 /******************************* Main JPlanner application window ********************************/
@@ -74,7 +74,7 @@ public class MainWindow extends Shell
   private MainTabWidget            m_mainTabWidget;       // MainTabWidget associated with MainWindow
   private ArrayList<MainTabWidget> m_tabWidgets;          // list of MainTabWidgets including one in MainWindow
   private Text                     m_statusBar;
-  private MenuListener             m_menuListener;
+  private MenuAdapter              m_menuListener;
   private MenuItem                 m_menuTask;
 
   public UndoStackWindow           undoWindow;            // window to show plan undo-stack
@@ -153,7 +153,7 @@ public class MainWindow extends Shell
     TRANSFORM = new Transform( display );
 
     // prepare listener to for when menus shown
-    m_menuListener = new MenuListener()
+    m_menuListener = new MenuAdapter()
     {
       @Override
       public void menuShown( MenuEvent e )
@@ -168,11 +168,6 @@ public class MainWindow extends Shell
         // if any table cell editing in progress, end it
         if ( XAbstractCellEditor.cellEditorInProgress != null )
           XAbstractCellEditor.cellEditorInProgress.endEditing();
-      }
-
-      @Override
-      public void menuHidden( MenuEvent e )
-      {
       }
     };
 

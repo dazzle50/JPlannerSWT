@@ -58,7 +58,7 @@ public class GanttScale extends Composite
       public void paintControl( PaintEvent event )
       {
         // update the gantt plot for the specified paint-event
-        drawScale( event );
+        drawScale( event, true );
       }
     } );
 
@@ -90,7 +90,7 @@ public class GanttScale extends Composite
   }
 
   /****************************************** drawScale ******************************************/
-  private void drawScale( PaintEvent event )
+  private void drawScale( PaintEvent event, boolean drawLabels )
   {
     // draw the lines and labels to show the scale
     int x = event.x;
@@ -105,6 +105,11 @@ public class GanttScale extends Composite
     gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
     gc.drawLine( x, this.getSize().y - 1, x + w, this.getSize().y - 1 );
 
+    // intervals so small don't draw interval lines or labels
+    DateTime dt = new DateTime( 0 ).trunc( m_interval );
+    if ( ( x( dt.plusInterval( m_interval ) ) - x( dt ) ) < 2 )
+      return;
+
     // calculate the start & end of first internal
     DateTime dts = datetime( x ).trunc( m_interval );
     int xs = x( dts );
@@ -114,7 +119,8 @@ public class GanttScale extends Composite
     // draw internal line and label
     gc.drawLine( xs, y, xs, y + h );
     gc.setForeground( JPlanner.gui.COLOR_BLACK );
-    drawLabel( gc, dts.toString( m_format ), xs, xe );
+    if ( drawLabels )
+      drawLabel( gc, dts.toString( m_format ), xs, xe );
 
     // move through subsequent internals until end of paint area
     while ( xe < x + w )
@@ -127,13 +133,18 @@ public class GanttScale extends Composite
       gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
       gc.drawLine( xs, y, xs, y + h );
       gc.setForeground( JPlanner.gui.COLOR_BLACK );
-      drawLabel( gc, dts.toString( m_format ), xs, xe );
+      if ( drawLabels && !drawLabel( gc, dts.toString( m_format ), xs, xe ) )
+      {
+        // scaling means label not legible so redraw whole gantt-scale without labels
+        drawScale( event, false );
+        return;
+      }
     }
 
   }
 
   /****************************************** drawLabel ******************************************/
-  private void drawLabel( GC gc, String label, int xs, int xe )
+  private boolean drawLabel( GC gc, String label, int xs, int xe )
   {
     // draw the label between xs & xe scaling smaller if necessary
     Point labelSize = gc.stringExtent( label );
@@ -144,10 +155,17 @@ public class GanttScale extends Composite
     {
       // scaling on x-axis needed to fit label
       float scale = ( xe - xs - 2.0f ) / labelSize.x;
+
+      // if scaling too small means text won't be legible
+      if ( scale < 0.35 )
+        return false;
+
+      // draw label with required scaling
       JPlanner.gui.TRANSFORM.scale( scale, 1.0f );
       gc.setTransform( JPlanner.gui.TRANSFORM );
       gc.drawString( label, (int) ( ( xs + 2 ) / scale ), yOffset, true );
 
+      // reset scaling ready for next interval
       JPlanner.gui.TRANSFORM.identity();
       gc.setTransform( JPlanner.gui.TRANSFORM );
     }
@@ -157,6 +175,8 @@ public class GanttScale extends Composite
       gc.drawString( label, xs + xOffset, yOffset, true );
     }
 
+    // return true to indicate text is legible
+    return true;
   }
 
   /****************************************** setConfig ******************************************/

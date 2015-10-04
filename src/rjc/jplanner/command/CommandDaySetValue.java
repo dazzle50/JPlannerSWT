@@ -27,8 +27,8 @@ import rjc.jplanner.model.Day;
 
 public class CommandDaySetValue implements IUndoCommand
 {
-  private int    m_dayID;   // day number in plan
-  private int    m_section; // section number
+  private int    m_dayID;    // day number in plan
+  private int    m_section;  // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 

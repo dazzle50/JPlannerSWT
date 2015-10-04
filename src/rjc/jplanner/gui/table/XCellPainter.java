@@ -50,9 +50,9 @@ public class XCellPainter implements ICellPainter
   }
 
   private static String ELLIPSIS     = "..."; // ellipsis to show text has been truncated
-  private static int    CELL_PADDING = 5;    // cell padding for text left & right edges
+  private static int    CELL_PADDING = 5;     // cell padding for text left & right edges
 
-  private Font          m_font;              // original graphics-context font 
+  private Font          m_font;               // original graphics-context font 
 
   public enum Alignment
   {
@@ -270,7 +270,8 @@ public class XCellPainter implements ICellPainter
   protected Rectangle getTextBounds( ILayerCell cell, Rectangle bounds )
   {
     // return bounds with default padding
-    return new Rectangle( bounds.x + CELL_PADDING, bounds.y, bounds.width - CELL_PADDING - CELL_PADDING, bounds.height );
+    return new Rectangle( bounds.x + CELL_PADDING, bounds.y, bounds.width - CELL_PADDING - CELL_PADDING,
+        bounds.height );
   }
 
   /**************************************** getBackground ****************************************/

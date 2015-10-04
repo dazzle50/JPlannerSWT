@@ -38,7 +38,7 @@ import rjc.jplanner.model.Plan;
 public class JPlanner
 {
   public static Plan       plan; // globally accessible plan
-  public static MainWindow gui; // globally accessible main-window
+  public static MainWindow gui;  // globally accessible main-window
 
   /******************************************** main *********************************************/
   public static void main( String[] args )

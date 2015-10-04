@@ -62,7 +62,7 @@ public class TextEditor extends Composite
     m_prime.setSelection( 0 );
 
     // right-hand edge, one-pixel width vertical line
-    Composite edge = new Composite( this, SWT.NONE )
+    Composite edge = new Composite( this, SWT.NONE)
     {
       @Override
       public Point computeSize( int wHint, int hHint, boolean changed )

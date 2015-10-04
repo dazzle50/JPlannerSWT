@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class GanttData
 {
   public DateTime            start; // start time of gantt task
-  public ArrayList<DateTime> end;  // list of changes until end
+  public ArrayList<DateTime> end;   // list of changes until end
   public ArrayList<Double>   value; // list of value change (-ve means summary)
 
   /***************************************** constructor *****************************************/

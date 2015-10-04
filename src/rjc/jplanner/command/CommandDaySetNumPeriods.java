@@ -31,7 +31,7 @@ import rjc.jplanner.model.Time;
 
 public class CommandDaySetNumPeriods implements IUndoCommand
 {
-  private int                      m_dayID;     // day number in plan
+  private int                      m_dayID;      // day number in plan
   private ArrayList<DayWorkPeriod> m_newPeriods; // new list of work-periods after command
   private ArrayList<DayWorkPeriod> m_oldPeriods; // old list of work-periods before command
 

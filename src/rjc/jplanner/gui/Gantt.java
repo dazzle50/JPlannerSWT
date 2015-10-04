@@ -23,6 +23,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
+import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.DateTime.Interval;
@@ -188,6 +191,18 @@ public class Gantt extends Composite
     // build and return gantt content menu
     Menu contextMenu = new Menu( this );
 
+    contextMenu.addMenuListener( new MenuAdapter()
+    {
+      @Override
+      public void menuShown( MenuEvent event )
+      {
+        // if any table cell editing in progress, end it
+        if ( XAbstractCellEditor.cellEditorInProgress != null )
+          XAbstractCellEditor.cellEditorInProgress.endEditing();
+      }
+    } );
+
+    // zoom in -------------------------------
     MenuItem zoomIn = new MenuItem( contextMenu, SWT.NONE );
     zoomIn.setText( "Zoom in" );
     zoomIn.addSelectionListener( new SelectionAdapter()
@@ -200,6 +215,7 @@ public class Gantt extends Composite
       }
     } );
 
+    // zoom out -------------------------------
     MenuItem zoomOut = new MenuItem( contextMenu, SWT.NONE );
     zoomOut.setText( "Zoom out" );
     zoomOut.addSelectionListener( new SelectionAdapter()
@@ -212,6 +228,7 @@ public class Gantt extends Composite
       }
     } );
 
+    // zoom fit -------------------------------
     MenuItem zoomFit = new MenuItem( contextMenu, SWT.NONE );
     zoomFit.setText( "Zoom fit" );
     zoomFit.addSelectionListener( new SelectionAdapter()
@@ -240,25 +257,35 @@ public class Gantt extends Composite
 
     new MenuItem( contextMenu, SWT.SEPARATOR );
 
+    // upper scale -------------------------------
     MenuItem upperScale = new MenuItem( contextMenu, SWT.CASCADE );
     upperScale.setText( "Upper scale" );
     upperScale.setMenu( scaleMenu( contextMenu, m_upperScale ) );
 
+    // lower scale -------------------------------
     MenuItem lowerScale = new MenuItem( contextMenu, SWT.CASCADE );
     lowerScale.setText( "Lower scale" );
     lowerScale.setMenu( scaleMenu( contextMenu, m_lowerScale ) );
 
-    MenuItem nonWD = new MenuItem( contextMenu, SWT.NONE );
+    // non working days -------------------------------
+    MenuItem nonWD = new MenuItem( contextMenu, SWT.CHECK );
     nonWD.setText( "Non-working days" );
+    nonWD.setEnabled( false );
 
-    MenuItem current = new MenuItem( contextMenu, SWT.NONE );
+    // current date -------------------------------
+    MenuItem current = new MenuItem( contextMenu, SWT.CHECK );
     current.setText( "Current date" );
+    current.setEnabled( false );
 
-    MenuItem upperSM = new MenuItem( contextMenu, SWT.NONE );
+    // upper scale mark -------------------------------
+    MenuItem upperSM = new MenuItem( contextMenu, SWT.CHECK );
     upperSM.setText( "Upper scale mark" );
+    upperSM.setEnabled( false );
 
-    MenuItem lowerSM = new MenuItem( contextMenu, SWT.NONE );
+    // lower scale mark -------------------------------
+    MenuItem lowerSM = new MenuItem( contextMenu, SWT.CHECK );
     lowerSM.setText( "Lower scale mark" );
+    lowerSM.setEnabled( false );
 
     return contextMenu;
   }
@@ -269,64 +296,90 @@ public class Gantt extends Composite
     // build and return scale interval menu
     Menu scaleMenu = new Menu( parent );
 
-    MenuItem year = new MenuItem( scaleMenu, SWT.CHECK );
+    // year -------------------------------
+    MenuItem year = new MenuItem( scaleMenu, SWT.RADIO );
     year.setText( "Year" );
     year.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.YEAR, "YYYY" );
+        scale.setInterval( Interval.YEAR, "yyyy" );
         scale.redraw();
       }
     } );
 
-    MenuItem halfYear = new MenuItem( scaleMenu, SWT.CHECK );
+    // half year -------------------------------
+    MenuItem halfYear = new MenuItem( scaleMenu, SWT.RADIO );
     halfYear.setText( "Half Year" );
     halfYear.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.HALFYEAR, "YYYY HN" );
+        scale.setInterval( Interval.HALFYEAR, "uuuu 'B'" );
         scale.redraw();
       }
     } );
 
-    MenuItem quarterYear = new MenuItem( scaleMenu, SWT.CHECK );
+    // quarter year -------------------------------
+    MenuItem quarterYear = new MenuItem( scaleMenu, SWT.RADIO );
     quarterYear.setText( "Quarter Year" );
     quarterYear.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.QUARTERYEAR, "YYYY QN" );
+        scale.setInterval( Interval.QUARTERYEAR, "uuuu QQQ" );
         scale.redraw();
       }
     } );
 
-    MenuItem month = new MenuItem( scaleMenu, SWT.CHECK );
+    // month -------------------------------
+    MenuItem month = new MenuItem( scaleMenu, SWT.RADIO );
     month.setText( "Month" );
     month.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.MONTH, "MMM-YYYY" );
+        scale.setInterval( Interval.MONTH, "MMM-uuuu" );
         scale.redraw();
       }
     } );
 
-    MenuItem week = new MenuItem( scaleMenu, SWT.CHECK );
+    // week -------------------------------
+    MenuItem week = new MenuItem( scaleMenu, SWT.RADIO );
     week.setText( "Week" );
+    week.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.WEEK, "dd" );
+        scale.redraw();
+      }
+    } );
 
-    MenuItem day = new MenuItem( scaleMenu, SWT.CHECK );
+    // day -------------------------------
+    MenuItem day = new MenuItem( scaleMenu, SWT.RADIO );
     day.setText( "Day" );
+    day.addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        scale.setInterval( Interval.DAY, "EEEEE" );
+        scale.redraw();
+      }
+    } );
 
     new MenuItem( scaleMenu, SWT.SEPARATOR );
 
-    MenuItem format = new MenuItem( scaleMenu, SWT.CHECK );
+    // label format -------------------------------
+    MenuItem format = new MenuItem( scaleMenu, SWT.RADIO );
     format.setText( "Label format" );
+    format.setEnabled( false );
 
     return scaleMenu;
   }

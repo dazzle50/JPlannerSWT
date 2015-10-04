@@ -27,8 +27,8 @@ import rjc.jplanner.model.Calendar;
 
 public class CommandCalendarSetValue implements IUndoCommand
 {
-  private int    m_calID;   // calendar number in plan
-  private int    m_section; // section number
+  private int    m_calID;    // calendar number in plan
+  private int    m_section;  // section number
   private Object m_newValue; // new value after command
   private Object m_oldValue; // old value before command
 

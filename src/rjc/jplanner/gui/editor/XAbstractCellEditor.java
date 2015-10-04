@@ -36,7 +36,7 @@ import rjc.jplanner.JPlanner;
 
 public abstract class XAbstractCellEditor extends AbstractCellEditor
 {
-  private Control                   m_editor;            // editor for cell
+  private Control                   m_editor;             // editor for cell
 
   public static XAbstractCellEditor cellEditorInProgress; // in progress cell editor, or null
 

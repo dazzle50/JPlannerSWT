@@ -33,11 +33,11 @@ import rjc.jplanner.XmlLabels;
 
 public class Day
 {
-  private String                   m_name;   // name of day type
-  private double                   m_work;   // equivalent days worked (typically 1.0 or 0.0)
+  private String                   m_name;    // name of day type
+  private double                   m_work;    // equivalent days worked (typically 1.0 or 0.0)
   private ArrayList<DayWorkPeriod> m_periods; // list of work periods
 
-  private int                      m_workMS; // pre-calculated number of worked milliseconds in day-type
+  private int                      m_workMS;  // pre-calculated number of worked milliseconds in day-type
 
   public enum DefaultDayTypes
   {

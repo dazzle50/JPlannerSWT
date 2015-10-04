@@ -36,10 +36,10 @@ import rjc.jplanner.model.Day.DefaultDayTypes;
 
 public class Calendar
 {
-  private String             m_name;       // name of calendar
+  private String             m_name;        // name of calendar
   private Date               m_cycleAnchor; // anchor date of calendar cycle
-  private ArrayList<Day>     m_normal;     // normal basic cycle days
-  private HashMap<Date, Day> m_exceptions; // exceptions override normal days
+  private ArrayList<Day>     m_normal;      // normal basic cycle days
+  private HashMap<Date, Day> m_exceptions;  // exceptions override normal days
 
   public enum DefaultCalendarTypes
   {

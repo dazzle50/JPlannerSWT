@@ -38,23 +38,23 @@ import rjc.jplanner.command.UndoStack;
 
 public class Plan
 {
-  private String    m_title;         // plan title as set in properties
-  private DateTime  m_start;         // plan start date-time as set in properties
-  private Calendar  m_calendar;      // plan's default calendar
+  private String    m_title;          // plan title as set in properties
+  private DateTime  m_start;          // plan start date-time as set in properties
+  private Calendar  m_calendar;       // plan's default calendar
   private String    m_datetimeFormat; // format to display date-times
-  private String    m_dateFormat;    // format to display dates
-  private String    m_filename;      // filename when saved or loaded
-  private String    m_fileLocation;  // file location
-  private String    m_savedBy;       // who saved last
-  private DateTime  m_savedWhen;     // when was last saved
-  private String    m_notes;         // plan notes as on plan tab
+  private String    m_dateFormat;     // format to display dates
+  private String    m_filename;       // filename when saved or loaded
+  private String    m_fileLocation;   // file location
+  private String    m_savedBy;        // who saved last
+  private DateTime  m_savedWhen;      // when was last saved
+  private String    m_notes;          // plan notes as on plan tab
 
-  private UndoStack m_undostack;     // undo stack for plan editing
+  private UndoStack m_undostack;      // undo stack for plan editing
 
-  public Tasks      tasks;           // list of plan tasks
-  public Resources  resources;       // list of plan resources
-  public Calendars  calendars;       // list of plan calendars
-  public Days       daytypes;        // list of plan day types
+  public Tasks      tasks;            // list of plan tasks
+  public Resources  resources;        // list of plan resources
+  public Calendars  calendars;        // list of plan calendars
+  public Days       daytypes;         // list of plan day types
 
   /**************************************** constructor ******************************************/
   public Plan()

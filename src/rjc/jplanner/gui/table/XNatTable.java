@@ -86,10 +86,10 @@ import rjc.jplanner.gui.editor.TaskCellEditor;
 
 public class XNatTable extends NatTable
 {
-  private static ModernNatTableThemeConfiguration m_theme;                // theme to use for all the tables
-  private static IConfiguration                   m_labels;               // to support styling of individual cells
-  private static IConfiguration                   m_columnHeaderConfig;   // for column resizing and reordering
-  private static IConfiguration                   m_rowHeaderConfig;      // for row resizing and reordering
+  private static ModernNatTableThemeConfiguration m_theme;                 // theme to use for all the tables
+  private static IConfiguration                   m_labels;                // to support styling of individual cells
+  private static IConfiguration                   m_columnHeaderConfig;    // for column resizing and reordering
+  private static IConfiguration                   m_rowHeaderConfig;       // for row resizing and reordering
   private static KeyListener                      m_indentOutdentListener; // to support indenting / outdenting
 
   public enum TableType
@@ -193,10 +193,10 @@ public class XNatTable extends NatTable
           // Cell painters
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new DayCellPainter(), DisplayMode.NORMAL,
               LABEL_DAY_PAINTER );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new CalendarCellPainter(),
-              DisplayMode.NORMAL, LABEL_CALENDAR_PAINTER );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new ResourceCellPainter(),
-              DisplayMode.NORMAL, LABEL_RESOURCE_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new CalendarCellPainter(), DisplayMode.NORMAL,
+              LABEL_CALENDAR_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new ResourceCellPainter(), DisplayMode.NORMAL,
+              LABEL_RESOURCE_PAINTER );
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter(), DisplayMode.NORMAL,
               LABEL_TASK_PAINTER );
 
@@ -227,18 +227,19 @@ public class XNatTable extends NatTable
                   new AggregateDragMode( new CellDragMode(), new ColumnReorderDragMode() ) );
 
               // Mouse move - Show resize cursor
-              uiBindingRegistry.registerFirstMouseMoveBinding( new ColumnResizeEventMatcher( SWT.NONE,
-                  GridRegion.COLUMN_HEADER, 0 ), new ColumnResizeCursorAction() );
+              uiBindingRegistry.registerFirstMouseMoveBinding(
+                  new ColumnResizeEventMatcher( SWT.NONE, GridRegion.COLUMN_HEADER, 0 ),
+                  new ColumnResizeCursorAction() );
               uiBindingRegistry.registerMouseMoveBinding( new MouseEventMatcher(), new ClearCursorAction() );
 
               // Column resize
-              uiBindingRegistry.registerFirstMouseDragMode( new ColumnResizeEventMatcher( SWT.NONE,
-                  GridRegion.COLUMN_HEADER, 1 ), new XColumnResizeDragMode() );
+              uiBindingRegistry.registerFirstMouseDragMode(
+                  new ColumnResizeEventMatcher( SWT.NONE, GridRegion.COLUMN_HEADER, 1 ), new XColumnResizeDragMode() );
 
-              uiBindingRegistry.registerDoubleClickBinding( new ColumnResizeEventMatcher( SWT.NONE,
-                  GridRegion.COLUMN_HEADER, 1 ), new AutoResizeColumnAction() );
-              uiBindingRegistry.registerSingleClickBinding( new ColumnResizeEventMatcher( SWT.NONE,
-                  GridRegion.COLUMN_HEADER, 1 ), new NoOpMouseAction() );
+              uiBindingRegistry.registerDoubleClickBinding(
+                  new ColumnResizeEventMatcher( SWT.NONE, GridRegion.COLUMN_HEADER, 1 ), new AutoResizeColumnAction() );
+              uiBindingRegistry.registerSingleClickBinding(
+                  new ColumnResizeEventMatcher( SWT.NONE, GridRegion.COLUMN_HEADER, 1 ), new NoOpMouseAction() );
             }
           } );
         }

@@ -22,7 +22,6 @@ import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
 import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
 /*********************** Label Accumulator for styling of individual cells ***********************/
@@ -30,6 +29,8 @@ import rjc.jplanner.model.Task;
 
 public class TasksLabelAccumulator implements IConfigLabelAccumulator
 {
+
+  /*********************************** accumulateConfigLabels ************************************/
   @Override
   public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
