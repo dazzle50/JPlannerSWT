@@ -28,7 +28,7 @@ public class XmlLabels
   public static final String ENCODING            = "UTF-8";
 
   // 'JPlanner' labels
-  public static final String FORMAT              = "2015-08";
+  public static final String FORMAT              = "2015-09";
   public static final String XML_JPLANNER        = "JPlanner";
   public static final String XML_FORMAT          = "format";
   public static final String XML_SAVEUSER        = "saved-by";
@@ -101,6 +101,7 @@ public class XmlLabels
   public static final String XML_ROW             = "row";
   public static final String XML_WIDTH           = "width";
   public static final String XML_HEIGHT          = "height";
+  public static final String XML_GANTT           = "gantt";
   public static final String XML_UPPER_SCALE     = "upper-scale";
   public static final String XML_LOWER_SCALE     = "lower-scale";
   public static final String XML_INTERVAL        = "interval";

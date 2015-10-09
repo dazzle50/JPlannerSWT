@@ -19,6 +19,7 @@
 package rjc.jplanner.gui;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
@@ -72,17 +73,15 @@ public class Gantt extends Composite
 
     m_upperScale = new GanttScale( this );
     m_upperScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-    m_upperScale.setInterval( Interval.MONTH, "MMM-YYYY" );
 
     m_lowerScale = new GanttScale( this );
     m_lowerScale.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
-    m_lowerScale.setInterval( Interval.WEEK, "dd" );
 
     m_plot = new GanttPlot( this );
     m_plot.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
     m_plot.setTable( table );
 
-    // set default gantt start, end, and milliseconds-per-pixel
+    // set default gantt parameters
     setDefault();
   }
 
@@ -103,6 +102,7 @@ public class Gantt extends Composite
   public void writeXML( XMLStreamWriter xsw ) throws XMLStreamException
   {
     // write gantt display data to XML stream
+    xsw.writeStartElement( XmlLabels.XML_GANTT );
     xsw.writeAttribute( XmlLabels.XML_START, m_start.toString() );
     xsw.writeAttribute( XmlLabels.XML_END, m_end.toString() );
     xsw.writeAttribute( XmlLabels.XML_MSPP, Long.toString( m_millisecondsPP ) );
@@ -119,15 +119,70 @@ public class Gantt extends Composite
     xsw.writeStartElement( XmlLabels.XML_LOWER_SCALE );
     m_lowerScale.writeXML( xsw );
     xsw.writeEndElement(); // XML_LOWER_SCALE
+
+    // close gantt element
+    xsw.writeEndElement(); // XML_GANTT
+  }
+
+  /******************************************* loadXML *******************************************/
+  public void loadXML( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // adopt gantt display data from XML stream, starting with the attributes
+    setDefault();
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
+        case XmlLabels.XML_START:
+          setStart( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_END:
+          setEnd( new DateTime( xsr.getAttributeValue( i ) ) );
+          break;
+        case XmlLabels.XML_MSPP:
+          setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
+          break;
+        default:
+          JPlanner.trace( "Gantt.loadXML - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
+      }
+
+    // read XML gantt data
+    while ( xsr.hasNext() )
+    {
+      xsr.next();
+
+      // if reached end of gantt data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_GANTT ) )
+        return;
+
+      // 
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case XmlLabels.XML_UPPER_SCALE:
+            m_upperScale.loadXML( xsr );
+            break;
+          case XmlLabels.XML_LOWER_SCALE:
+            m_lowerScale.loadXML( xsr );
+            break;
+          default:
+            JPlanner.trace( "Gantt.loadXML - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
+    }
+
   }
 
   /***************************************** setDefault ******************************************/
   public void setDefault()
   {
-    // set gantt to default start/end/milliseconds-per-pixel and trigger redraw
+    // set gantt to default parameters and trigger redraw
     setStart( new DateTime( JPlanner.plan.start().milliseconds() - 300000000L ) );
     setEnd( m_start.plusDays( 100 ) );
     setMsPP( 3600 * 6000 );
+    m_upperScale.setInterval( Interval.MONTH, "MMM-YYYY" );
+    m_lowerScale.setInterval( Interval.WEEK, "dd" );
+
     updateAll();
   }
 
@@ -317,7 +372,7 @@ public class Gantt extends Composite
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.HALFYEAR, "uuuu 'B'" );
+        scale.setInterval( Interval.HALFYEAR, "uuuu BB" );
         scale.redraw();
       }
     } );

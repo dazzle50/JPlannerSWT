@@ -22,6 +22,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang.StringUtils;
+
+import rjc.jplanner.JPlanner;
+
 /*************************************************************************************************/
 /********************************* Date-time (with no timezone) **********************************/
 /*************************************************************************************************/
@@ -38,6 +42,10 @@ public class DateTime
   {
     YEAR, HALFYEAR, QUARTERYEAR, MONTH, WEEK, DAY
   }
+
+  private static final char   QUOTE = '\'';
+  private static final char   CHARB = 'B';
+  private static final String CODE  = "#@B!";
 
   /***************************************** constructor *****************************************/
   public DateTime( long ms )
@@ -83,11 +91,99 @@ public class DateTime
   /****************************************** toString *******************************************/
   public String toString( String format )
   {
+    JPlanner.trace( "DateTime.toString   " + this + "    <" + format + ">" );
+
     // convert to string in specified format
     LocalDateTime ldt = LocalDateTime.ofEpochSecond( m_milliseconds / 1000L, (int) ( m_milliseconds % 1000 * 1000000 ),
         ZoneOffset.UTC );
 
-    return ldt.format( DateTimeFormatter.ofPattern( format ) );
+    // to support half-of-year using Bs, quote any unquoted Bs in format
+    StringBuilder newFormat = new StringBuilder();
+    boolean inQuote = false;
+    boolean inB = false;
+    char here;
+    for ( int i = 0; i < format.length(); i++ )
+    {
+      here = format.charAt( i );
+
+      // are we in quoted text?
+      if ( here == QUOTE )
+        inQuote = !inQuote;
+
+      // replace unquoted Bs with special code
+      if ( inB && here == CHARB )
+      {
+        newFormat.append( CODE );
+        continue;
+      }
+
+      // come to end of unquoted Bs
+      if ( inB && here != CHARB )
+      {
+        newFormat.append( QUOTE );
+        inB = false;
+        inQuote = false;
+      }
+
+      // start of unquoted Bs, start quote with special code
+      if ( !inQuote && here == CHARB )
+      {
+        // avoid creating double quotes
+        if ( newFormat.length() > 0 && newFormat.charAt( newFormat.length() - 1 ) == QUOTE )
+        {
+          newFormat.deleteCharAt( newFormat.length() - 1 );
+          newFormat.append( CODE );
+        }
+        else
+          newFormat.append( "'" + CODE );
+        inQuote = true;
+        inB = true;
+      }
+      else
+      {
+        newFormat.append( here );
+      }
+    }
+
+    // close quote if quote still open
+    if ( inQuote )
+      newFormat.append( QUOTE );
+
+    JPlanner.trace( "FORMAT AFTER   <" + newFormat + ">" );
+    String str = ldt.format( DateTimeFormatter.ofPattern( newFormat.toString() ) );
+
+    // no special code so can return string immediately
+    if ( !str.contains( CODE ) )
+      return str;
+
+    // determine half-of-year
+    String yearHalf;
+    if ( month() < 7 )
+      yearHalf = "1";
+    else
+      yearHalf = "2";
+
+    // four or more Bs is not allowed
+    String Bs = StringUtils.repeat( CODE, 4 );
+    if ( str.contains( Bs ) )
+      throw new IllegalArgumentException( "Too many pattern letters: B" );
+
+    // replace three Bs
+    Bs = StringUtils.repeat( CODE, 3 );
+    if ( yearHalf.equals( "1" ) )
+      str = str.replace( Bs, yearHalf + "st half" );
+    else
+      str = str.replace( Bs, yearHalf + "nd half" );
+
+    // replace two Bs
+    Bs = StringUtils.repeat( CODE, 2 );
+    str = str.replace( Bs, "H" + yearHalf );
+
+    // replace one Bs
+    Bs = StringUtils.repeat( CODE, 1 );
+    str = str.replace( Bs, yearHalf );
+
+    return str;
   }
 
   /******************************************** date *********************************************/
@@ -125,6 +221,7 @@ public class DateTime
   /******************************************** month ********************************************/
   public int month()
   {
+    // return month of year as number 1 to 12
     return date().month();
   }
 

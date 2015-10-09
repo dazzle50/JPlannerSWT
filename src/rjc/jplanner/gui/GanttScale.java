@@ -19,6 +19,7 @@
 package rjc.jplanner.gui;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.swt.SWT;
@@ -205,6 +206,25 @@ public class GanttScale extends Composite
     // write gantt-scale display data to XML stream
     xsw.writeAttribute( XmlLabels.XML_INTERVAL, m_interval.toString() );
     xsw.writeAttribute( XmlLabels.XML_FORMAT, m_format );
+  }
+
+  /******************************************* loadXML *******************************************/
+  public void loadXML( XMLStreamReader xsr )
+  {
+    // adopt gantt-scale display data from XML stream
+    for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+      switch ( xsr.getAttributeLocalName( i ) )
+      {
+        case XmlLabels.XML_INTERVAL:
+          m_interval = Interval.valueOf( xsr.getAttributeValue( i ) );
+          break;
+        case XmlLabels.XML_FORMAT:
+          m_format = xsr.getAttributeValue( i );
+          break;
+        default:
+          JPlanner.trace( "GanttScale.loadXML - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          break;
+      }
   }
 
 }

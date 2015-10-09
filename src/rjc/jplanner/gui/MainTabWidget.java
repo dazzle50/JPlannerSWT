@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.TabItem;
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.gui.table.XNatTable;
-import rjc.jplanner.model.DateTime;
 
 /*************************************************************************************************/
 /*************** Widget showing the Plan/Tasks&Gantt/Resources/Calendars/Days tabs ***************/
@@ -234,47 +233,59 @@ public class MainTabWidget extends TabFolder
     return true;
   }
 
-  /******************************** loadXmlTasksGantt *********************************/
-  public void loadXmlTasksGantt( XMLStreamReader xsr )
+  /************************************** loadXmlTasksGantt **************************************/
+  public void loadXmlTasksGantt( XMLStreamReader xsr ) throws XMLStreamException
   {
-    // read XML attributes
+    // adopt tasks-gantt tab data from XML stream, starting with the attributes
     for ( int i = 0; i < xsr.getAttributeCount(); i++ )
       switch ( xsr.getAttributeLocalName( i ) )
       {
         case XmlLabels.XML_SPLITTER:
           setTasksGanttSplitter( Integer.parseInt( xsr.getAttributeValue( i ) ) );
           break;
-        case XmlLabels.XML_START:
-          m_gantt.setStart( new DateTime( xsr.getAttributeValue( i ) ) );
-          break;
-        case XmlLabels.XML_END:
-          m_gantt.setEnd( new DateTime( xsr.getAttributeValue( i ) ) );
-          break;
-        case XmlLabels.XML_MSPP:
-          m_gantt.setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
-          break;
-
         default:
           JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
+
+    // read tasks-gantt tab XML elements
+    while ( xsr.hasNext() )
+    {
+      xsr.next();
+
+      // if reached end of tab data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_TASKS_GANTT_TAB ) )
+        return;
+
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case XmlLabels.XML_GANTT:
+            m_gantt.loadXML( xsr );
+            break;
+          default:
+            JPlanner.trace( "MainTabWidget.loadXmlTasksGantt - unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
+    }
+
   }
 
-  /******************************** loadXmlResources **********************************/
+  /************************************** loadXmlResources ***************************************/
   public void loadXmlResources( XMLStreamReader xsr )
   {
     // TODO Auto-generated method stub
 
   }
 
-  /******************************** loadXmlCalendars **********************************/
+  /************************************** loadXmlCalendars ***************************************/
   public void loadXmlCalendars( XMLStreamReader xsr )
   {
     // TODO Auto-generated method stub
 
   }
 
-  /********************************* loadXmlDayTypes **********************************/
+  /*************************************** loadXmlDayTypes ***************************************/
   public void loadXmlDayTypes( XMLStreamReader xsr )
   {
     // TODO Auto-generated method stub

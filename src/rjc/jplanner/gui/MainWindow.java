@@ -1020,6 +1020,8 @@ public class MainWindow extends Shell
             for ( int i = 0; i < xsr.getAttributeCount(); i++ )
               switch ( xsr.getAttributeLocalName( i ) )
               {
+                case XmlLabels.XML_WINDOW:
+                  break;
                 case XmlLabels.XML_X:
                   rect.x = Integer.parseInt( xsr.getAttributeValue( i ) );
                   break;
@@ -1037,7 +1039,8 @@ public class MainWindow extends Shell
                   break;
 
                 default:
-                  JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+                  JPlanner.trace(
+                      "MainWindow.loadDisplayData - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
                   break;
               }
 
@@ -1060,7 +1063,7 @@ public class MainWindow extends Shell
             tabs.loadXmlDayTypes( xsr );
             break;
           default:
-            JPlanner.trace( "MainWindow.loadXmlDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "MainWindow.loadDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
     }
