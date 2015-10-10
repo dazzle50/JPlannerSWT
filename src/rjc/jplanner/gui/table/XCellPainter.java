@@ -292,8 +292,7 @@ public class XCellPainter implements ICellPainter
   public ICellPainter getCellPainterAt( int x, int y, ILayerCell cell, GC gc, Rectangle adjustedCellBounds,
       IConfigRegistry configRegistry )
   {
-    // TODO Auto-generated method stub
-    JPlanner.trace( "XCellPainter - getCellPainterAt()" );
+    // only implemented to satisfy ICellPainter interface - never used
     return null;
   }
 

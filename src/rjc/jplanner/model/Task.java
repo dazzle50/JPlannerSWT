@@ -117,7 +117,7 @@ public class Task implements Comparable<Task>
           m_indent = Integer.parseInt( xsr.getAttributeValue( i ) );
           break;
         default:
-          JPlanner.trace( "Task - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
   }

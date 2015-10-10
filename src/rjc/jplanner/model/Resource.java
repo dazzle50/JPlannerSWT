@@ -112,7 +112,7 @@ public class Resource
           m_comment = xsr.getAttributeValue( i );
           break;
         default:
-          JPlanner.trace( "Resource - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
   }

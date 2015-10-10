@@ -121,7 +121,7 @@ public class Day
           m_work = Double.parseDouble( xsr.getAttributeValue( i ) );
           break;
         default:
-          JPlanner.trace( "Day - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -156,7 +156,7 @@ public class Day
               end = time.milliseconds() / 3600_000.0;
               break;
             default:
-              JPlanner.trace( "Day period - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+              JPlanner.trace( "Period - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
               break;
           }
 

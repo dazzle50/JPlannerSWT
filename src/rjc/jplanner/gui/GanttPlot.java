@@ -56,8 +56,6 @@ public class GanttPlot extends Composite
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
 
-    setMenu( parent.contextMenu() );
-
     addPaintListener( new PaintListener()
     {
       @Override

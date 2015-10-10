@@ -57,7 +57,7 @@ public class Gantt extends Composite
   private GanttPlot  m_plot;
 
   /**************************************** constructor ******************************************/
-  public Gantt( Composite parent, XNatTable table )
+  public Gantt( ScrolledComposite parent, XNatTable table )
   {
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
 
@@ -80,6 +80,12 @@ public class Gantt extends Composite
     m_plot = new GanttPlot( this );
     m_plot.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
     m_plot.setTable( table );
+
+    // set context menu
+    Menu menu = contextMenu();
+    m_upperScale.setMenu( menu );
+    m_lowerScale.setMenu( menu );
+    m_plot.setMenu( menu );
 
     // set default gantt parameters
     setDefault();
@@ -142,7 +148,7 @@ public class Gantt extends Composite
           setMsPP( Long.parseLong( xsr.getAttributeValue( i ) ) );
           break;
         default:
-          JPlanner.trace( "Gantt.loadXML - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -166,7 +172,7 @@ public class Gantt extends Composite
             m_lowerScale.loadXML( xsr );
             break;
           default:
-            JPlanner.trace( "Gantt.loadXML - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
     }
@@ -240,12 +246,26 @@ public class Gantt extends Composite
     m_plot.redraw();
   }
 
+  /******************************************** zoom *********************************************/
+  private void zoom( double factor, int mid )
+  {
+    // calculate offset from origin to zoom mid-point
+    ScrolledComposite sc = (ScrolledComposite) getParent();
+    int offset = mid - sc.getOrigin().x;
+
+    // zoom
+    setMsPP( (long) ( m_millisecondsPP * factor ) );
+    updateAll();
+
+    // update origin to keep zoom mid-point stationary
+    sc.setOrigin( (int) ( mid / factor - offset ), sc.getOrigin().y );
+  }
+
   /*************************************** contextMenu *******************************************/
   public Menu contextMenu()
   {
     // build and return gantt content menu
     Menu contextMenu = new Menu( this );
-
     contextMenu.addMenuListener( new MenuAdapter()
     {
       @Override
@@ -265,8 +285,9 @@ public class Gantt extends Composite
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        setMsPP( (long) ( m_millisecondsPP / 1.414 ) );
-        updateAll();
+        // zoom around x-position of mouse pointer
+        int x = Gantt.this.toControl( getDisplay().getCursorLocation() ).x;
+        zoom( 1.0 / 1.414, x );
       }
     } );
 
@@ -278,8 +299,9 @@ public class Gantt extends Composite
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        setMsPP( (long) ( m_millisecondsPP * 1.414 ) );
-        updateAll();
+        // zoom around x-position of mouse pointer
+        int x = Gantt.this.toControl( getDisplay().getCursorLocation() ).x;
+        zoom( 1.414, x );
       }
     } );
 
@@ -291,6 +313,7 @@ public class Gantt extends Composite
       @Override
       public void widgetSelected( SelectionEvent event )
       {
+        // zoom to ensure whole plan from start to end is visible within gantt width
         DateTime start = JPlanner.plan.stretch( JPlanner.plan.earliest(), GanttPlot.ganttStretch );
         DateTime end = JPlanner.plan.stretch( JPlanner.plan.end(), GanttPlot.ganttStretch );
         int width = Gantt.this.getParent().getClientArea().width;
@@ -352,91 +375,144 @@ public class Gantt extends Composite
     Menu scaleMenu = new Menu( parent );
 
     // year -------------------------------
-    MenuItem year = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem year = new MenuItem( scaleMenu, SWT.CASCADE );
     year.setText( "Year" );
-    year.addSelectionListener( new SelectionAdapter()
-    {
-      @Override
-      public void widgetSelected( SelectionEvent event )
-      {
-        scale.setInterval( Interval.YEAR, "yyyy" );
-        scale.redraw();
-      }
-    } );
+    year.setMenu( yearMenu( scaleMenu, scale ) );
 
     // half year -------------------------------
-    MenuItem halfYear = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem halfYear = new MenuItem( scaleMenu, SWT.CASCADE );
     halfYear.setText( "Half Year" );
-    halfYear.addSelectionListener( new SelectionAdapter()
-    {
-      @Override
-      public void widgetSelected( SelectionEvent event )
-      {
-        scale.setInterval( Interval.HALFYEAR, "uuuu BB" );
-        scale.redraw();
-      }
-    } );
+    halfYear.setMenu( halfYearMenu( scaleMenu, scale ) );
 
     // quarter year -------------------------------
-    MenuItem quarterYear = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem quarterYear = new MenuItem( scaleMenu, SWT.CASCADE );
     quarterYear.setText( "Quarter Year" );
-    quarterYear.addSelectionListener( new SelectionAdapter()
-    {
-      @Override
-      public void widgetSelected( SelectionEvent event )
-      {
-        scale.setInterval( Interval.QUARTERYEAR, "uuuu QQQ" );
-        scale.redraw();
-      }
-    } );
+    quarterYear.setMenu( quarterYearMenu( scaleMenu, scale ) );
 
     // month -------------------------------
-    MenuItem month = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem month = new MenuItem( scaleMenu, SWT.CASCADE );
     month.setText( "Month" );
-    month.addSelectionListener( new SelectionAdapter()
-    {
-      @Override
-      public void widgetSelected( SelectionEvent event )
-      {
-        scale.setInterval( Interval.MONTH, "MMM-uuuu" );
-        scale.redraw();
-      }
-    } );
+    month.setMenu( monthMenu( scaleMenu, scale ) );
 
     // week -------------------------------
-    MenuItem week = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem week = new MenuItem( scaleMenu, SWT.CASCADE );
     week.setText( "Week" );
-    week.addSelectionListener( new SelectionAdapter()
-    {
-      @Override
-      public void widgetSelected( SelectionEvent event )
-      {
-        scale.setInterval( Interval.WEEK, "dd" );
-        scale.redraw();
-      }
-    } );
+    week.setMenu( weekMenu( scaleMenu, scale ) );
 
     // day -------------------------------
-    MenuItem day = new MenuItem( scaleMenu, SWT.RADIO );
+    MenuItem day = new MenuItem( scaleMenu, SWT.CASCADE );
     day.setText( "Day" );
-    day.addSelectionListener( new SelectionAdapter()
+    day.setMenu( dayMenu( scaleMenu, scale ) );
+
+    return scaleMenu;
+  }
+
+  /***************************************** menuItem ********************************************/
+  private void menuItem( Menu menu, GanttScale scale, Interval interval, String format )
+  {
+    // build menu item for given interval and format
+    MenuItem item = new MenuItem( menu, SWT.RADIO );
+    item.setText( DateTime.now().toString( format ) + "\t(" + format + ")" );
+    item.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        scale.setInterval( Interval.DAY, "EEEEE" );
+        scale.setInterval( interval, format );
         scale.redraw();
       }
     } );
+  }
 
-    new MenuItem( scaleMenu, SWT.SEPARATOR );
-
-    // label format -------------------------------
-    MenuItem format = new MenuItem( scaleMenu, SWT.RADIO );
-    format.setText( "Label format" );
+  /************************************** menuItemFormat *****************************************/
+  private void menuItemFormat( Menu menu, GanttScale scale )
+  {
+    // build menu item for user defined format
+    new MenuItem( menu, SWT.SEPARATOR );
+    MenuItem format = new MenuItem( menu, SWT.RADIO );
+    format.setText( "Format..." );
     format.setEnabled( false );
+  }
 
-    return scaleMenu;
+  /***************************************** yearMenu ********************************************/
+  private Menu yearMenu( Menu parent, GanttScale scale )
+  {
+    // build and return year menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.YEAR, "yy" );
+    menuItem( menu, scale, Interval.YEAR, "yyyy" );
+    menuItemFormat( menu, scale );
+
+    return menu;
+  }
+
+  /*************************************** halfYearMenu ******************************************/
+  private Menu halfYearMenu( Menu parent, GanttScale scale )
+  {
+    // build and return year-half menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.HALFYEAR, "BB" );
+    menuItem( menu, scale, Interval.HALFYEAR, "yyyy BB" );
+    menuItemFormat( menu, scale );
+
+    return menu;
+  }
+
+  /************************************* quarterYearMenu *****************************************/
+  private Menu quarterYearMenu( Menu parent, GanttScale scale )
+  {
+    // build and return year-quarter menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.QUARTERYEAR, "QQQ" );
+    menuItem( menu, scale, Interval.QUARTERYEAR, "yyyy QQQ" );
+    menuItemFormat( menu, scale );
+
+    return menu;
+  }
+
+  /**************************************** monthMenu ********************************************/
+  private Menu monthMenu( Menu parent, GanttScale scale )
+  {
+    // build and return month menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.MONTH, "MM" );
+    menuItem( menu, scale, Interval.MONTH, "MMM" );
+    menuItem( menu, scale, Interval.MONTH, "MMMM" );
+    menuItem( menu, scale, Interval.MONTH, "MMMMM" );
+    menuItem( menu, scale, Interval.MONTH, "MMM-yy" );
+    menuItem( menu, scale, Interval.MONTH, "MMM-yyyy" );
+    menuItemFormat( menu, scale );
+
+    return menu;
+  }
+
+  /***************************************** weekMenu ********************************************/
+  private Menu weekMenu( Menu parent, GanttScale scale )
+  {
+    // build and return week menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.WEEK, "'W'w" );
+    menuItem( menu, scale, Interval.WEEK, "dd" );
+    menuItem( menu, scale, Interval.WEEK, "dd-MMM" );
+    menuItemFormat( menu, scale );
+
+    return menu;
+  }
+
+  /***************************************** dayMenu *********************************************/
+  private Menu dayMenu( Menu parent, GanttScale scale )
+  {
+    // build and return day menu
+    Menu menu = new Menu( parent );
+    menuItem( menu, scale, Interval.DAY, "eee" );
+    menuItem( menu, scale, Interval.DAY, "eeee" );
+    menuItem( menu, scale, Interval.DAY, "eeeee" );
+    menuItem( menu, scale, Interval.DAY, "dd" );
+    menuItem( menu, scale, Interval.DAY, "dd-MMM" );
+    menuItem( menu, scale, Interval.DAY, "dd/MM/yy" );
+    menuItemFormat( menu, scale );
+
+    return menu;
   }
 
 }

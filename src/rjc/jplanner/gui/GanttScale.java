@@ -51,14 +51,12 @@ public class GanttScale extends Composite
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
     setDragDetect( false );
 
-    setMenu( parent.contextMenu() );
-
     addPaintListener( new PaintListener()
     {
       @Override
       public void paintControl( PaintEvent event )
       {
-        // update the gantt plot for the specified paint-event
+        // update the gantt scale for the specified paint-event
         drawScale( event, true );
       }
     } );
@@ -222,7 +220,7 @@ public class GanttScale extends Composite
           m_format = xsr.getAttributeValue( i );
           break;
         default:
-          JPlanner.trace( "GanttScale.loadXML - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
   }

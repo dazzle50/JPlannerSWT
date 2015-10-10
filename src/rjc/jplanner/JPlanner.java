@@ -80,7 +80,10 @@ public class JPlanner
   public static void trace( String txt )
   {
     // prints txt prefixed by date-time
-    System.out.println( DateTime.now() + " " + txt );
+    StackTraceElement[] stack = new Throwable().getStackTrace();
+    String method = " [" + stack[1].getMethodName() + "]";
+    String file = " (" + stack[1].getFileName() + ":" + stack[1].getLineNumber() + ")";
+    System.out.println( DateTime.now() + " " + txt + method + file );
   }
 
   /******************************************* clean *********************************************/

@@ -81,7 +81,7 @@ public class Days extends ArrayList<Day>
             add( new Day( xsr ) );
             break;
           default:
-            JPlanner.trace( "days.loadXml - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
 

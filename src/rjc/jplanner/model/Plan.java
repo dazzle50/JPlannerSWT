@@ -451,7 +451,7 @@ public class Plan
             tasks.loadXML( xsr );
             break;
           default:
-            JPlanner.trace( "Plan.loadXML - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
 
@@ -502,7 +502,7 @@ public class Plan
           m_notes = xsr.getAttributeValue( i );
           break;
         default:
-          JPlanner.trace( "loadXmlPlan - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -528,7 +528,7 @@ public class Plan
         case XmlLabels.XML_SAVEWHERE:
           break;
         default:
-          JPlanner.trace( "loadXmlJPlanner - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
   }

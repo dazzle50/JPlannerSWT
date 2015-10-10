@@ -64,7 +64,7 @@ public class Resources extends ArrayList<Resource>
             add( new Resource( xsr ) );
             break;
           default:
-            JPlanner.trace( "resources.loadXml - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
 

@@ -1039,8 +1039,7 @@ public class MainWindow extends Shell
                   break;
 
                 default:
-                  JPlanner.trace(
-                      "MainWindow.loadDisplayData - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+                  JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
                   break;
               }
 
@@ -1063,7 +1062,7 @@ public class MainWindow extends Shell
             tabs.loadXmlDayTypes( xsr );
             break;
           default:
-            JPlanner.trace( "MainWindow.loadDisplayData - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
     }

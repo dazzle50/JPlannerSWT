@@ -65,7 +65,7 @@ public class Calendars extends ArrayList<Calendar>
             add( new Calendar( xsr ) );
             break;
           default:
-            JPlanner.trace( "calendars.loadXml - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
 

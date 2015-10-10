@@ -24,8 +24,6 @@ import java.time.format.DateTimeFormatter;
 
 import org.apache.commons.lang.StringUtils;
 
-import rjc.jplanner.JPlanner;
-
 /*************************************************************************************************/
 /********************************* Date-time (with no timezone) **********************************/
 /*************************************************************************************************/
@@ -91,8 +89,6 @@ public class DateTime
   /****************************************** toString *******************************************/
   public String toString( String format )
   {
-    JPlanner.trace( "DateTime.toString   " + this + "    <" + format + ">" );
-
     // convert to string in specified format
     LocalDateTime ldt = LocalDateTime.ofEpochSecond( m_milliseconds / 1000L, (int) ( m_milliseconds % 1000 * 1000000 ),
         ZoneOffset.UTC );
@@ -149,7 +145,6 @@ public class DateTime
     if ( inQuote )
       newFormat.append( QUOTE );
 
-    JPlanner.trace( "FORMAT AFTER   <" + newFormat + ">" );
     String str = ldt.format( DateTimeFormatter.ofPattern( newFormat.toString() ) );
 
     // no special code so can return string immediately

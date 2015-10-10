@@ -244,7 +244,7 @@ public class MainTabWidget extends TabFolder
           setTasksGanttSplitter( Integer.parseInt( xsr.getAttributeValue( i ) ) );
           break;
         default:
-          JPlanner.trace( "loadXmlTasksGantt - unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+          JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
 
@@ -264,7 +264,7 @@ public class MainTabWidget extends TabFolder
             m_gantt.loadXML( xsr );
             break;
           default:
-            JPlanner.trace( "MainTabWidget.loadXmlTasksGantt - unhandled start element '" + xsr.getLocalName() + "'" );
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
             break;
         }
     }
