@@ -66,11 +66,13 @@ public class CommandDaySetValue implements IUndoCommand
   @Override
   public void update()
   {
-    // update gui
-    JPlanner.gui.updateTables();
+    // update day-types tables
+    JPlanner.gui.updateDays();
 
-    // update schedule
-    if ( m_section != Day.SECTION_NAME )
+    // if name changed, update calendars tables, otherwise re-schedule
+    if ( m_section == Day.SECTION_NAME )
+      JPlanner.gui.updateCalendars();
+    else
       JPlanner.gui.schedule();
   }
 

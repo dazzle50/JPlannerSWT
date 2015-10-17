@@ -62,12 +62,16 @@ public class CommandCalendarSetValue implements IUndoCommand
   @Override
   public void update()
   {
-    // update calendars tables and properties in case name displayed there
-    JPlanner.gui.properties().updateFromPlan();
-    JPlanner.gui.updateTables();
+    // update calendars tables
+    JPlanner.gui.updateCalendars();
 
-    // update schedule
-    if ( m_section != Calendar.SECTION_NAME )
+    // if name changed, update resources tables and properties, otherwise re-schedule
+    if ( m_section == Calendar.SECTION_NAME )
+    {
+      JPlanner.gui.updateResources();
+      JPlanner.gui.properties().updateFromPlan();
+    }
+    else
       JPlanner.gui.schedule();
   }
 

@@ -163,6 +163,7 @@ public class MainWindow extends Shell
 
         // check for properties/notes changes
         properties().updatePlan();
+        properties().updateFromPlan();
         notes().updatePlan();
 
         // if any table cell editing in progress, end it
@@ -324,7 +325,7 @@ public class MainWindow extends Shell
 
     // update gui
     properties().updateFromPlan();
-    m_tabWidgets.forEach( tabs -> tabs.tasks().redraw() );
+    updateTasks();
     m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
   }
 
@@ -689,23 +690,55 @@ public class MainWindow extends Shell
     return m_mainTabWidget.notes();
   }
 
-  /***************************************** resetTables *****************************************/
-  public void resetTables()
+  /****************************************** resetGui *******************************************/
+  public void resetGui( boolean resetGantt )
   {
-    // update all the tables
+    // update window titles and plan tab
+    updateWindowTitles();
+    properties().updateFromPlan();
+    notes().updateFromPlan();
+
+    // reset tasks resources calendars day-types tables
     m_tabWidgets.forEach( tabs -> tabs.tasks().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.resources().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.calendars().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.days().refresh() );
+
+    // update gantts including reseting to default parameters if requested
+    if ( resetGantt )
+      m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
+    m_tabWidgets.forEach( tabs -> tabs.gantt().updateAll() );
+
+    // update undo-stack window if exists
+    if ( undoWindow != null )
+      undoWindow.setList();
   }
 
-  /***************************************** updateTables ****************************************/
-  public void updateTables()
+  /***************************************** updateTasks *****************************************/
+  public void updateTasks()
   {
-    // update all the tables
+    // update all tasks tables
     m_tabWidgets.forEach( tabs -> tabs.tasks().redraw() );
+  }
+
+  /*************************************** updateResources ***************************************/
+  public void updateResources()
+  {
+    // update all resource tables
     m_tabWidgets.forEach( tabs -> tabs.resources().redraw() );
+  }
+
+  /*************************************** updateCalendars ***************************************/
+  public void updateCalendars()
+  {
+    // update all calendar tables
     m_tabWidgets.forEach( tabs -> tabs.calendars().redraw() );
+  }
+
+  /****************************************** updateDays *****************************************/
+  public void updateDays()
+  {
+    // update all day-type tables
     m_tabWidgets.forEach( tabs -> tabs.days().redraw() );
   }
 
@@ -738,12 +771,7 @@ public class MainWindow extends Shell
     JPlanner.plan.initialise();
 
     // update gui
-    updateWindowTitles();
-    properties().updateFromPlan();
-    notes().updateFromPlan();
-    resetTables();
-    m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
-
+    resetGui( true );
     message( "New plan" );
   }
 
@@ -840,15 +868,10 @@ public class MainWindow extends Shell
       return false;
     }
 
-    // update gui
-    updateWindowTitles();
-    properties().updateFromPlan();
-    notes().updateFromPlan();
-    resetTables();
-    m_tabWidgets.forEach( tabs -> tabs.gantt().updateAll() );
-
-    JPlanner.gui.schedule();
+    // update gui & schedule
+    resetGui( false );
     message( "Successfully loaded '" + file.getPath() + "'" );
+    schedule();
 
     return true;
   }
@@ -989,8 +1012,10 @@ public class MainWindow extends Shell
   /*************************************** loadDisplayData ***************************************/
   public void loadDisplayData( XMLStreamReader xsr ) throws XMLStreamException
   {
-    // close all but main window
-    for ( MainTabWidget tabs : m_tabWidgets )
+    // close all but main window, need to loop around clone to avoid potential concurrent modification of m_tabWidgets
+    @SuppressWarnings( "unchecked" )
+    ArrayList<MainTabWidget> list = (ArrayList<MainTabWidget>) m_tabWidgets.clone();
+    for ( MainTabWidget tabs : list )
     {
       Shell window = tabs.getShell();
 

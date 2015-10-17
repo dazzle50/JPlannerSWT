@@ -19,6 +19,7 @@
 package rjc.jplanner.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import rjc.jplanner.JPlanner;
 
@@ -238,6 +239,27 @@ public class Predecessors
     if ( error.length() > 0 )
       error = error.substring( 0, error.length() - 1 );
     return error;
+  }
+
+  /******************************************** clean ********************************************/
+  public void clean( int thisTaskNum )
+  {
+    // remove any forbidden predecessors
+    Iterator<Predecessor> iter = m_preds.iterator();
+    while ( iter.hasNext() )
+    {
+      Task pred = iter.next().task;
+      int predNum = pred.index();
+
+      // sub-tasks not allowed to depend on their summaries
+      if ( pred.isSummary() && predNum < thisTaskNum && pred.summaryEnd() >= thisTaskNum )
+        iter.remove();
+
+      // summaries not allowed to depend on a sub-task
+      Task thisTask = JPlanner.plan.task( thisTaskNum );
+      if ( thisTask.isSummary() && thisTaskNum < predNum && thisTask.summaryEnd() >= predNum )
+        iter.remove();
+    }
   }
 
   /****************************************** hasToStart *****************************************/

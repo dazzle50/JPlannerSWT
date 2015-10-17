@@ -20,8 +20,10 @@ package rjc.jplanner.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -37,6 +39,32 @@ import rjc.jplanner.XmlLabels;
 public class Tasks extends ArrayList<Task>
 {
   private static final long serialVersionUID = 1L;
+
+  public class PredecessorsList extends TreeMap<Integer, String>
+  {
+    private static final long serialVersionUID = 1L;
+
+    public String toString( String start )
+    {
+      // construct message to indicate change to predecessors
+      if ( size() == 0 )
+        return "";
+
+      if ( size() == 1 )
+        return start + " predecessors for task " + firstKey();
+
+      StringBuilder str = new StringBuilder( start + " predecessors for tasks " );
+      for ( int id : keySet() )
+      {
+        if ( id == lastKey() )
+          str.append( " & " );
+        if ( id != lastKey() && id != firstKey() )
+          str.append( ", " );
+        str.append( id );
+      }
+      return str.toString();
+    }
+  }
 
   /****************************************** initialise *****************************************/
   public void initialise()
@@ -286,6 +314,36 @@ public class Tasks extends ArrayList<Task>
         }
       }
     }
+  }
+
+  /************************************** cleanPredecessors **************************************/
+  public PredecessorsList cleanPredecessors()
+  {
+    // clean all predecessors, returning list of those modified before change
+    PredecessorsList list = new PredecessorsList();
+
+    for ( int id = 1; id < size(); id++ )
+    {
+      Task task = get( id );
+      if ( task.isNull() )
+        continue;
+
+      Predecessors pred = task.predecessors();
+      String before = pred.toString();
+      pred.clean( id );
+      if ( !before.equals( pred.toString() ) )
+        list.put( id, before );
+    }
+
+    return list;
+  }
+
+  /************************************** restorePredecessors **************************************/
+  public void restorePredecessors( PredecessorsList list )
+  {
+    // restore cleaned predecessors
+    for ( HashMap.Entry<Integer, String> entry : list.entrySet() )
+      get( entry.getKey() ).setData( Task.SECTION_PRED, entry.getValue() );
   }
 
 }

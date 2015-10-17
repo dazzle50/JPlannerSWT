@@ -80,34 +80,27 @@ public class Time
   /***************************************** fromString ******************************************/
   public static Time fromString( String str )
   {
-    // if string of type HH:MM
-    if ( str.matches( "\\d\\d:\\d\\d" ) )
-    {
-      int hours = Integer.parseInt( str.substring( 0, 2 ) );
-      int mins = Integer.parseInt( str.substring( 3, 5 ) );
+    // split the time hours:mins:secs by colon separator
+    String[] parts = str.split( ":" );
+    if ( parts.length < 2 )
+      throw new IllegalArgumentException( "str=" + str );
+
+    // hours & minutes parts must be integers
+    int hours = Integer.parseInt( parts[0] );
+    int mins = Integer.parseInt( parts[1] );
+    if ( parts.length == 2 )
       return new Time( hours, mins, 0, 0 );
-    }
 
-    // if string of type HH:MM:SS
-    if ( str.matches( "\\d\\d:\\d\\d:\\d\\d" ) )
-    {
-      int hours = Integer.parseInt( str.substring( 0, 2 ) );
-      int mins = Integer.parseInt( str.substring( 3, 5 ) );
-      int secs = Integer.parseInt( str.substring( 6, 8 ) );
+    // split seconds into integer and milliseconds sections
+    String[] seconds = parts[2].split( "\\." );
+    int secs = Integer.parseInt( seconds[0] );
+    if ( seconds.length == 1 )
       return new Time( hours, mins, secs, 0 );
-    }
 
-    // if string of type HH:MM:SS.mmm
-    if ( str.matches( "\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d" ) )
-    {
-      int hours = Integer.parseInt( str.substring( 0, 2 ) );
-      int mins = Integer.parseInt( str.substring( 3, 5 ) );
-      int secs = Integer.parseInt( str.substring( 6, 8 ) );
-      int ms = Integer.parseInt( str.substring( 9, 12 ) );
-      return new Time( hours, mins, secs, ms );
-    }
-
-    throw new IllegalArgumentException( "String=" + str );
+    // ensure we look at first three digits only for milliseconds
+    String milli = ( seconds[1] + "00" ).substring( 0, 3 );
+    int ms = Integer.parseInt( milli );
+    return new Time( hours, mins, secs, ms );
   }
 
   /****************************************** fromHours ******************************************/

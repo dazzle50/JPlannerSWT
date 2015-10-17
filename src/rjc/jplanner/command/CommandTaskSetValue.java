@@ -63,7 +63,7 @@ public class CommandTaskSetValue implements IUndoCommand
   public void update()
   {
     // update tasks tables
-    JPlanner.gui.updateTables();
+    JPlanner.gui.updateTasks();
 
     // if title and old value was null, update properties so it shows new count of tasks
     if ( m_section == Task.SECTION_TITLE && m_oldValue == null )
@@ -73,7 +73,7 @@ public class CommandTaskSetValue implements IUndoCommand
     }
 
     // update schedule for other changes
-    if ( m_section != Task.SECTION_TITLE && m_section != Task.SECTION_COMMENT )
+    if ( m_section != Task.SECTION_TITLE && m_section != Task.SECTION_COMMENT && m_section != Task.SECTION_COST )
       JPlanner.gui.schedule();
   }
 
@@ -82,7 +82,7 @@ public class CommandTaskSetValue implements IUndoCommand
   public String text()
   {
     // command description
-    return "Task " + ( m_taskID + 1 ) + " " + Task.sectionName( m_section ) + " = " + m_newValue;
+    return "Task " + m_taskID + " " + Task.sectionName( m_section ) + " = " + m_newValue;
   }
 
 }

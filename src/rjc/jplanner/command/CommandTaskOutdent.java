@@ -21,6 +21,7 @@ package rjc.jplanner.command;
 import java.util.Set;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Tasks.PredecessorsList;
 
 /*************************************************************************************************/
 /******************************* UndoCommand for outdenting tasks ********************************/
@@ -28,7 +29,8 @@ import rjc.jplanner.JPlanner;
 
 public class CommandTaskOutdent implements IUndoCommand
 {
-  Set<Integer> m_rows; // rows to be outdented
+  Set<Integer>     m_rows;         // rows to be outdented
+  PredecessorsList m_predecessors; // predecessors before cleaning
 
   /**************************************** constructor ******************************************/
   public CommandTaskOutdent( Set<Integer> rows )
@@ -43,6 +45,8 @@ public class CommandTaskOutdent implements IUndoCommand
   {
     // action command
     JPlanner.plan.tasks.outdent( m_rows );
+    m_predecessors = JPlanner.plan.tasks.cleanPredecessors();
+    JPlanner.gui.message( m_predecessors.toString( "Cleaned" ) );
   }
 
   /******************************************* undo **********************************************/
@@ -51,6 +55,8 @@ public class CommandTaskOutdent implements IUndoCommand
   {
     // revert command
     JPlanner.plan.tasks.indent( m_rows );
+    JPlanner.plan.tasks.restorePredecessors( m_predecessors );
+    JPlanner.gui.message( m_predecessors.toString( "Restored" ) );
   }
 
   /****************************************** update *********************************************/

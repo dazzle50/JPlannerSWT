@@ -188,8 +188,6 @@ public class Gantt extends Composite
     setMsPP( 3600 * 6000 );
     m_upperScale.setInterval( Interval.MONTH, "MMM-YYYY" );
     m_lowerScale.setInterval( Interval.WEEK, "dd" );
-
-    updateAll();
   }
 
   /****************************************** setStart *******************************************/
