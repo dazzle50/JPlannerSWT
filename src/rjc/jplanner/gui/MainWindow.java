@@ -221,20 +221,8 @@ public class MainWindow extends Shell
         m_mainTabWidget.properties().updatePlan();
         m_mainTabWidget.notes().updatePlan();
 
-        // show Task menu when Tasks tab selected, otherwise hide it
-        if ( m_mainTabWidget.getSelection()[0] == m_mainTabWidget.tasksTab() )
-        {
-          if ( m_menuTask == null )
-            addTaskMenu( menuBar );
-        }
-        else
-        {
-          if ( m_menuTask != null )
-          {
-            m_menuTask.dispose();
-            m_menuTask = null;
-          }
-        }
+        // ensure menus reflect selected tab
+        updateMenus();
       }
     } );
 
@@ -327,6 +315,25 @@ public class MainWindow extends Shell
     properties().updateFromPlan();
     updateTasks();
     m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
+  }
+
+  /**************************************** updateMenus ******************************************/
+  private void updateMenus()
+  {
+    // show Task menu when Tasks tab selected, otherwise hide it
+    if ( m_mainTabWidget.getSelection()[0] == m_mainTabWidget.tasksTab() )
+    {
+      if ( m_menuTask == null )
+        addTaskMenu( this.getMenuBar() );
+    }
+    else
+    {
+      if ( m_menuTask != null )
+      {
+        m_menuTask.dispose();
+        m_menuTask = null;
+      }
+    }
   }
 
   /**************************************** addFileMenu ******************************************/
@@ -1070,6 +1077,8 @@ public class MainWindow extends Shell
 
             // set selected tab and window bounding rectangle 
             tabs.setSelection( tab );
+            if ( tabs == m_mainTabWidget )
+              updateMenus();
             tabs.getShell().setBounds( checkShellBounds( rect ) );
             tabs.getShell().open();
             break;

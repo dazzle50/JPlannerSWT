@@ -547,6 +547,7 @@ public class Calendar
     else
     {
       // work is negative, so go backwards in time
+      work = -work;
       Time time = day.workBackward( fromTime, work );
 
       // if valid time then finished in day

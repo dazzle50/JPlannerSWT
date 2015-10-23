@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JPlanner format="2015-09" saved-by="Richard" saved-when="2015-10-09T16:54:25.226" saved-name="!defaultload.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
+<JPlanner format="2015-09" saved-by="Richard" saved-when="2015-10-23T18:29:26.047" saved-name="!defaultload.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
   <plan-data title="DEFAULT" start="2014-08-31T09:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="Todo&#10;&#10;0) All dependencies types need to be drawn correctly&#10;&#10;&#10;1) Ability to re-order (start with something simpler like day-types, not tasks)&#10;2) Ability to delete&#10;3) Ability to insert (blank or duplicate)&#10;&#10;&#10;&#10;&#10;">
     <days-data>
       <day id="0" name="Non working" work="0.0"></day>
@@ -67,23 +67,23 @@
       <task id="0" indent="-1" title="PROJECT" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
       <task id="1" indent="0" title="xxxx" duration="1 d" start="2014-09-01T09:00:00.000" end="2014-09-01T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" deadline="2014-08-26T18:00:00.000" cost="0.0" comment=""></task>
       <task id="2"></task>
-      <task id="3" indent="0" title="aaa" duration="6 d" start="2014-09-01T09:00:00.000" end="2014-09-08T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="3" indent="0" title="aaa" duration="6 d" start="2014-09-10T09:00:00.000" end="2014-09-17T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
       <task id="4" indent="0" title="bbb" duration="3 d" start="2014-09-01T09:00:00.000" end="2014-09-03T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
       <task id="5"></task>
-      <task id="6" indent="0" title="sss" duration="0 d" start="2014-09-01T09:00:00.000" end="2014-09-01T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-      <task id="7" indent="0" title="eeeeeeee" duration="4 d" start="2014-09-01T09:00:00.000" end="2014-09-04T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
-      <task id="8" indent="1" title="ccc" duration="2 m" start="2014-09-01T09:00:00.000" end="2014-10-31T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="6" indent="0" title="sss" duration="0 d" start="2014-09-10T09:00:00.000" end="2014-09-10T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="7" indent="0" title="eeeeeeee" duration="4 d" start="2014-09-04T09:00:00.000" end="2014-09-09T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="8" indent="1" title="ccc" duration="2 w" start="2014-09-04T09:00:00.000" end="2014-09-17T18:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
       <task id="9"></task>
-      <task id="10" indent="0" title="eee" duration="0 d" start="2014-09-01T09:00:00.000" end="2014-09-01T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
+      <task id="10" indent="0" title="eee" duration="0 d" start="2014-09-18T09:00:00.000" end="2014-09-18T09:00:00.000" work="1 d" resources="TBD" type="ASAP - duration" priority="100" cost="0.0" comment=""></task>
       <predecessors task="3" preds="6"></predecessors>
-      <predecessors task="6" preds="4FS-4 d"></predecessors>
+      <predecessors task="6" preds="4FS+4 d"></predecessors>
       <predecessors task="7" preds="4"></predecessors>
       <predecessors task="10" preds="8"></predecessors>
     </tasks-data>
   </plan-data>
-  <display-data window="0" x="-1200" y="189" width="1200" height="543" tab="1">
+  <display-data window="0" x="-1200" y="189" width="1197" height="543" tab="1">
     <tasks-gantt-tab splitter="631">
-      <gantt start="2014-08-28T04:29:59.999" end="2014-11-04T19:30:00.001" mspp="10919337" nonworking="???" current="???" stretch="true">
+      <gantt start="2014-08-29T03:28:14.411" end="2014-09-19T01:30:00.001" mspp="4302933" nonworking="???" current="???" stretch="true">
         <upper-scale interval="MONTH" format="MMM-YYYY"></upper-scale>
         <lower-scale interval="WEEK" format="dd"></lower-scale>
       </gantt>

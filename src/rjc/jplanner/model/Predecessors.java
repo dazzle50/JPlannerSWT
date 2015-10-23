@@ -265,22 +265,82 @@ public class Predecessors
   /****************************************** hasToStart *****************************************/
   public boolean hasToStart()
   {
-    // TODO Auto-generated method stub
+    // return true if has Finish-To-Start or Start-to-Start predecessor
+    for ( Predecessor pred : m_preds )
+    {
+      if ( pred.type == TYPE_FINISH_START )
+        return true;
+      if ( pred.type == TYPE_START_START )
+        return true;
+    }
+
     return false;
   }
 
   /****************************************** hasToFinish ****************************************/
   public boolean hasToFinish()
   {
-    // TODO Auto-generated method stub
+    // return true if has Finish-To-Finish or Start-to-Finish predecessor
+    for ( Predecessor pred : m_preds )
+    {
+      if ( pred.type == TYPE_FINISH_FINISH )
+        return true;
+      if ( pred.type == TYPE_START_FINISH )
+        return true;
+    }
+
     return false;
   }
 
   /******************************************** start ********************************************/
   public DateTime start()
   {
-    // TODO Auto-generated method stub
-    return null;
+    // return task start based on predecessors
+    Calendar cal = JPlanner.plan.calendar();
+    DateTime start = DateTime.MIN_VALUE;
+    for ( Predecessor pred : m_preds )
+    {
+      if ( pred.type == TYPE_FINISH_START )
+      {
+        DateTime check = cal.workTimeSpan( pred.task.end(), pred.lag );
+        if ( check.milliseconds() > start.milliseconds() )
+          start = check;
+      }
+
+      if ( pred.type == TYPE_START_START )
+      {
+        DateTime check = cal.workTimeSpan( pred.task.start(), pred.lag );
+        if ( check.milliseconds() > start.milliseconds() )
+          start = check;
+      }
+    }
+
+    return start;
   }
 
+  /********************************************** end **********************************************/
+  public DateTime end()
+  {
+    // return task end based on predecessors
+    Calendar cal = JPlanner.plan.calendar();
+    DateTime end = DateTime.MAX_VALUE;
+    for ( Predecessor pred : m_preds )
+    {
+      if ( pred.type == TYPE_FINISH_FINISH )
+      {
+        DateTime check = cal.workTimeSpan( pred.task.end(), pred.lag );
+        if ( check.milliseconds() < end.milliseconds() )
+          end = check;
+      }
+
+      if ( pred.type == TYPE_START_FINISH )
+      {
+        DateTime check = cal.workTimeSpan( pred.task.start(), pred.lag );
+        if ( check.milliseconds() < end.milliseconds() )
+          end = check;
+      }
+    }
+
+    return end;
+  }
 }

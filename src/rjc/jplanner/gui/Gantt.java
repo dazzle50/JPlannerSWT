@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
@@ -89,6 +90,32 @@ public class Gantt extends Composite
 
     // set default gantt parameters
     setDefault();
+
+    // listen to gantt horizontal-scroll-bar buttons
+    parent.getHorizontalBar().addSelectionListener( new SelectionAdapter()
+    {
+      @Override
+      public void widgetSelected( SelectionEvent event )
+      {
+        ScrollBar sb = getParent().getHorizontalBar();
+
+        // if left button and already scrolled to start, make start slightly earlier
+        if ( event.detail == SWT.ARROW_UP && sb.getSelection() == sb.getMinimum() )
+        {
+          setStart( new DateTime( m_start.milliseconds() - m_millisecondsPP * sb.getIncrement() ) );
+          updateAll();
+        }
+
+        // if right button and already scrolled to end, make end slightly later
+        if ( event.detail == SWT.ARROW_DOWN && sb.getSelection() + sb.getThumb() == sb.getMaximum() )
+        {
+          setEnd( new DateTime( m_end.milliseconds() + m_millisecondsPP * sb.getIncrement() ) );
+          updateAll();
+          sb.setSelection( sb.getMaximum() - sb.getThumb() );
+        }
+      }
+    } );
+
   }
 
   @Override
@@ -184,8 +211,8 @@ public class Gantt extends Composite
   {
     // set gantt to default parameters and trigger redraw
     setStart( new DateTime( JPlanner.plan.start().milliseconds() - 300000000L ) );
-    setEnd( m_start.plusDays( 100 ) );
     setMsPP( 3600 * 6000 );
+    setEnd( new DateTime( m_start.milliseconds() + m_millisecondsPP * getParent().getClientArea().width ) );
     m_upperScale.setInterval( Interval.MONTH, "MMM-YYYY" );
     m_lowerScale.setInterval( Interval.WEEK, "dd" );
   }

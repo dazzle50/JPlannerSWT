@@ -79,11 +79,11 @@ public class JPlanner
   /******************************************* trace *********************************************/
   public static void trace( String txt )
   {
-    // prints txt prefixed by date-time
+    // prints txt prefixed by date-time and suffixed by file+line-number & method
     StackTraceElement[] stack = new Throwable().getStackTrace();
-    String method = " [" + stack[1].getMethodName() + "]";
-    String file = " (" + stack[1].getFileName() + ":" + stack[1].getLineNumber() + ")";
-    System.out.println( DateTime.now() + " " + txt + method + file );
+    String method = stack[1].getMethodName() + "()";
+    String file = " (" + stack[1].getFileName() + ":" + stack[1].getLineNumber() + ") ";
+    System.out.println( DateTime.now() + " " + txt + file + method );
   }
 
   /******************************************* clean *********************************************/
