@@ -493,6 +493,9 @@ public class Day
     // work forwards specified number of ms
     for ( DayWorkPeriod period : m_periods )
     {
+      if ( period.m_end.milliseconds() < from )
+        continue;
+
       if ( from < period.m_start.milliseconds() )
         from = period.m_start.milliseconds();
 
@@ -513,7 +516,7 @@ public class Day
 
   public Time millisecondsBackward( int ms )
   {
-    return millisecondsBackward( 0, ms );
+    return millisecondsBackward( Time.MILLISECONDS_IN_DAY, ms );
   }
 
   public Time millisecondsBackward( int from, int ms )
@@ -525,6 +528,9 @@ public class Day
     for ( int p = m_periods.size() - 1; p >= 0; p-- )
     {
       DayWorkPeriod period = m_periods.get( p );
+
+      if ( period.m_start.milliseconds() > from )
+        continue;
 
       if ( from > period.m_end.milliseconds() )
         from = period.m_end.milliseconds();
@@ -552,16 +558,17 @@ public class Day
     if ( m_periods.size() == 0 )
       return time;
 
-    int s = m_periods.get( 0 ).m_start.milliseconds();
-    int e = m_periods.get( m_periods.size() - 1 ).m_end.milliseconds();
     int now = time.milliseconds();
+    int s = m_periods.get( 0 ).m_start.milliseconds();
     if ( now <= s )
       return Time.MIN_VALUE;
+
+    int e = m_periods.get( m_periods.size() - 1 ).m_end.milliseconds();
     if ( now >= e )
       return Time.MAX_VALUE;
 
     // stretch time component so it uses whole 24 hours
-    double scale = Time.MILLISECONDS_IN_DAY / ( e - s );
+    double scale = (double) Time.MILLISECONDS_IN_DAY / ( e - s );
     return Time.fromMilliseconds( (int) ( scale * ( now - s ) ) );
   }
 

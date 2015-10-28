@@ -91,15 +91,23 @@ public class Date
   public static Date fromString( String str )
   {
     // if string of type YYYY-MM-DD or YYYY/MM/DD
-    if ( str.matches( "\\d\\d\\d\\d-\\d\\d-\\d\\d" ) || str.matches( "\\d\\d\\d\\d/\\d\\d/\\d\\d" ) )
+    try
     {
-      int year = Integer.parseInt( str.substring( 0, 4 ) );
-      int mon = Integer.parseInt( str.substring( 5, 7 ) );
-      int day = Integer.parseInt( str.substring( 8, 10 ) );
+      String[] parts = str.split( "/" );
+      if ( parts.length != 3 )
+        parts = str.split( "-" );
+
+      int year = Integer.parseInt( parts[0] );
+      int mon = Integer.parseInt( parts[1] );
+      int day = Integer.parseInt( parts[2] );
       return new Date( year, mon, day );
     }
-
-    throw new IllegalArgumentException( "String=" + str );
+    catch ( Exception exception )
+    {
+      // some sort of exception thrown
+      exception.printStackTrace();
+      throw new IllegalArgumentException( "String=" + str );
+    }
   }
 
   /******************************************** year *********************************************/
@@ -128,6 +136,12 @@ public class Date
   public void increment()
   {
     m_epochday++;
+  }
+
+  /***************************************** decrement *******************************************/
+  public void decrement()
+  {
+    m_epochday--;
   }
 
   /****************************************** plusDays *******************************************/

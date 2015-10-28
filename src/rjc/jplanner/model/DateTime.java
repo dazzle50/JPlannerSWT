@@ -33,8 +33,8 @@ public class DateTime
   private long                 m_milliseconds;                                                      // milliseconds from 00:00:00.000 start of epoch-day
 
   public static final long     MILLISECONDS_IN_DAY = Time.MILLISECONDS_IN_DAY;                      // milliseconds in day
-  public static final DateTime MIN_VALUE           = new DateTime( Date.MIN_VALUE, Time.MIN_VALUE );
-  public static final DateTime MAX_VALUE           = new DateTime( Date.MAX_VALUE, Time.MAX_VALUE );
+  public static final DateTime MIN_VALUE           = new DateTime( Date.MIN_VALUE, Time.MAX_VALUE );
+  public static final DateTime MAX_VALUE           = new DateTime( Date.MAX_VALUE, Time.MIN_VALUE );
 
   public enum Interval
   {

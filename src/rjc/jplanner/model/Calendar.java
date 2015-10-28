@@ -349,7 +349,7 @@ public class Calendar
     Time newTime = day.workDown( time );
     while ( newTime == null )
     {
-      date = date.plusDays( -1 );
+      date.decrement();
       day = day( date );
 
       if ( day.isWorking() )
@@ -370,7 +370,7 @@ public class Calendar
     Time newTime = day.workUp( time );
     while ( newTime == null )
     {
-      date = date.plusDays( 1 );
+      date.increment();
       day = day( date );
 
       if ( day.isWorking() )
@@ -470,12 +470,12 @@ public class Calendar
 
       // if not valid time, move to next date
       ms -= day.millisecondsToGo( fromTime );
-      date = date.plusDays( 1 );
+      date.increment();
       day = day( date );
       while ( ms >= day.milliseconds() )
       {
         ms -= day.milliseconds();
-        date = date.plusDays( 1 );
+        date.increment();
         day = day( date );
       }
 
@@ -487,6 +487,7 @@ public class Calendar
     else
     {
       // milliseconds is negative, so go backwards in time
+      ms = -ms;
       Time time = day.millisecondsBackward( fromTime, ms );
 
       // if valid time then finished in day
@@ -495,12 +496,12 @@ public class Calendar
 
       // if not valid time, move to previous date
       ms -= day.millisecondsDone( fromTime );
-      date = date.plusDays( -1 );
+      date.decrement();
       day = day( date );
       while ( ms >= day.milliseconds() )
       {
         ms -= day.milliseconds();
-        date = date.plusDays( -1 );
+        date.decrement();
         day = day( date );
       }
 
@@ -530,12 +531,12 @@ public class Calendar
 
       // if not valid time, move to next date
       work -= day.workToGo( fromTime );
-      date = date.plusDays( 1 );
+      date.increment();
       day = day( date );
       while ( work >= day.work() )
       {
         work -= day.work();
-        date = date.plusDays( 1 );
+        date.increment();
         day = day( date );
       }
 
@@ -556,12 +557,12 @@ public class Calendar
 
       // if not valid time, move to previous date
       work -= day.workDone( fromTime );
-      date = date.plusDays( -1 );
+      date.decrement();
       day = day( date );
       while ( work >= day.work() )
       {
         work -= day.work();
-        date = date.plusDays( -1 );
+        date.decrement();
         day = day( date );
       }
 

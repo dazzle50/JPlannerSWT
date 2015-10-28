@@ -35,6 +35,8 @@ import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;
 import rjc.jplanner.model.DateTime;
 import rjc.jplanner.model.GanttData;
+import rjc.jplanner.model.Predecessors;
+import rjc.jplanner.model.Predecessors.Predecessor;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
@@ -48,20 +50,22 @@ public class GanttPlot extends Composite
   private XNatTable     m_table;
 
   private static int    m_taskHeight = 6;
+  private static int    m_arrowSize  = 4;
 
   public static boolean ganttStretch;
 
   /**************************************** constructor ******************************************/
   public GanttPlot( Gantt parent )
   {
+    // create composite
     super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
 
+    // add listener for painting the gantt plot
     addPaintListener( new PaintListener()
     {
       @Override
       public void paintControl( PaintEvent event )
       {
-        // update the gantt plot for the specified paint-event
         shadeNonWorkingDays( event );
         drawTasks( event );
         drawDependencies( event );
@@ -217,8 +221,140 @@ public class GanttPlot extends Composite
   /*************************************** drawDependencies **************************************/
   private void drawDependencies( PaintEvent event )
   {
-    // TODO Auto-generated method stub
+    // draw dependencies on gantt
+    int y = event.y;
+    int h = event.height;
+    GC gc = event.gc;
 
+    // for each task
+    for ( int t = 0; t < JPlanner.plan.tasksCount(); t++ )
+    {
+      Task task = JPlanner.plan.task( t );
+      if ( task.isNull() )
+        continue;
+      int thisY = m_table.getMiddleY( t );
+
+      // for each predecessor on task
+      Predecessors preds = task.predecessors();
+      for ( int p = 0; p < preds.count(); p++ )
+      {
+        Predecessor pred = preds.get( p );
+        int otherY = m_table.getMiddleY( pred.task.index() );
+
+        switch ( pred.type )
+        {
+          case Predecessors.TYPE_START_FINISH:
+            drawDependencySF( gc, x( pred.task.start() ), otherY, x( task.end() ), thisY );
+            break;
+          case Predecessors.TYPE_START_START:
+            drawDependencySS( gc, x( pred.task.start() ), otherY, x( task.start() ), thisY );
+            break;
+          case Predecessors.TYPE_FINISH_FINISH:
+            drawDependencyFF( gc, x( pred.task.end() ), otherY, x( task.end() ), thisY );
+            break;
+          case Predecessors.TYPE_FINISH_START:
+            drawDependencyFS( gc, x( pred.task.end() ), otherY, x( task.start() ), thisY );
+            break;
+          default:
+            throw new IllegalArgumentException( "Invalid predecessor type: " + pred.type );
+        }
+      }
+    }
+
+  }
+
+  /*************************************** drawDependencyFS **************************************/
+  private void drawDependencyFS( GC gc, int x1, int y1, int x2, int y2 )
+  {
+    // draw dependency from one task-finish to another task-start
+    int sign = y1 > y2 ? -1 : 1;
+
+    // if task-start after or equal task-finish can draw simple arrow
+    if ( x2 >= x1 )
+    {
+      int x = x2 - x1 - 1;
+      if ( x < 3 )
+        x = 3;
+
+      gc.drawLine( x1 + 1, y1, x1 + x, y1 );
+      x++;
+      drawArrow( gc, x1 + x, y1 + sign, x1 + x, y2 - sign * ( m_taskHeight + 1 ) );
+      return;
+    }
+
+    // need to draw arrow double backing from later task-finish to earlier task-start
+    gc.drawLine( x1 + 1, y1, x1 + 3, y1 );
+    gc.drawLine( x1 + 4, y1 + sign, x1 + 4, y1 + sign * ( m_taskHeight + 3 ) );
+    gc.drawLine( x1 + 3, y1 + sign * ( m_taskHeight + 4 ), x2 - 7, y1 + sign * ( m_taskHeight + 4 ) );
+    gc.drawLine( x2 - 8, y1 + sign * ( m_taskHeight + 5 ), x2 - 8, y2 - sign );
+    drawArrow( gc, x2 - 7, y2, x2 - 1, y2 );
+  }
+
+  /*************************************** drawDependencySF **************************************/
+  private void drawDependencySF( GC gc, int x1, int y1, int x2, int y2 )
+  {
+    // draw dependency FINISH_START line on gantt
+
+    gc.setForeground( JPlanner.gui.COLOR_ERROR );
+    gc.drawLine( x1, y1, x2, y2 );
+    gc.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+    JPlanner.trace( "Unhandled dependency x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2 );
+  }
+
+  /*************************************** drawDependencySS **************************************/
+  private void drawDependencySS( GC gc, int x1, int y1, int x2, int y2 )
+  {
+    // draw dependency FINISH_START line on gantt
+
+    gc.setForeground( JPlanner.gui.COLOR_ERROR );
+    gc.drawLine( x1, y1, x2, y2 );
+    gc.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+    JPlanner.trace( "Unhandled dependency x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2 );
+  }
+
+  /*************************************** drawDependencyFF **************************************/
+  private void drawDependencyFF( GC gc, int x1, int y1, int x2, int y2 )
+  {
+    // draw dependency FINISH_START line on gantt
+
+    gc.setForeground( JPlanner.gui.COLOR_ERROR );
+    gc.drawLine( x1, y1, x2, y2 );
+    gc.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+    JPlanner.trace( "Unhandled dependency x1=" + x1 + " y1=" + y1 + " x2=" + x2 + " y2=" + y2 );
+  }
+
+  /****************************************** drawArrow ******************************************/
+  private void drawArrow( GC gc, int x1, int y1, int x2, int y2 )
+  {
+    // draw line with arrow at end
+    if ( x1 == x2 )
+    {
+      // vertical line and arrow
+      gc.drawLine( x1, y1, x2, y2 );
+      int sign = y1 > y2 ? -1 : 1;
+      int y = y2 - sign * m_arrowSize;
+
+      for ( int s = 1; s <= m_arrowSize; s++ )
+      {
+        y2 -= sign;
+        gc.drawLine( x2 + s, y, x2 + s, y2 );
+        gc.drawLine( x2 - s, y, x2 - s, y2 );
+      }
+    }
+    else
+    {
+      // horizontal line and arrow
+      gc.drawLine( x1, y1, x2, y2 );
+      int sign = x1 > x2 ? -1 : 1;
+      int x = x2 - sign * m_arrowSize;
+
+      for ( int s = 1; s <= m_arrowSize; s++ )
+      {
+        x2 -= sign;
+        gc.drawLine( x, y2 + s, x2, y2 + s );
+        gc.drawLine( x, y2 - s, x2, y2 - s );
+      }
+    }
   }
 
   /****************************************** datetime *******************************************/

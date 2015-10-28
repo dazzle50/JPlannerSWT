@@ -396,6 +396,14 @@ public class XNatTable extends NatTable
     return viewport.getRowHeightByPosition( viewport.getRowPositionByIndex( row ) );
   }
 
+  /***************************************** getMiddleY ******************************************/
+  public int getMiddleY( int index )
+  {
+    // return middle-y of specified row index
+    int pos = viewport.getRowPositionByIndex( index );
+    return viewport.getStartYOfRowPosition( pos ) + viewport.getRowHeightByPosition( pos ) / 2;
+  }
+
   /***************************************** columnWidth *****************************************/
   private int columnWidth( int col )
   {

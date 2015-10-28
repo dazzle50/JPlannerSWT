@@ -35,11 +35,26 @@ public class Predecessors
   public static final String TYPE_FINISH_FINISH = "FF";
   public static final String TYPE_DEFAULT       = TYPE_FINISH_START;
 
-  private class Predecessor
+  public class Predecessor
   {
     public Task     task;
     public String   type;
     public TimeSpan lag;
+
+    @Override
+    public String toString()
+    {
+      String str = Integer.toString( task.index() );
+      if ( type != TYPE_DEFAULT || lag.number() != 0.0 )
+      {
+        str += type;
+        if ( lag.number() > 0.0 )
+          str += "+";
+        if ( lag.number() != 0.0 )
+          str += lag.toString();
+      }
+      return str;
+    }
   }
 
   private ArrayList<Predecessor> m_preds = new ArrayList<Predecessor>();
@@ -104,20 +119,7 @@ public class Predecessors
 
     // build up string equivalent
     for ( Predecessor pred : m_preds )
-    {
-      str += pred.task.index();
-
-      if ( pred.type != TYPE_DEFAULT || pred.lag.number() != 0.0 )
-      {
-        str += pred.type;
-        if ( pred.lag.number() > 0.0 )
-          str += "+";
-        if ( pred.lag.number() != 0.0 )
-          str += pred.lag.toString();
-      }
-
-      str += ", ";
-    }
+      str += pred + ", ";
 
     // remove final ", " and return string equivalent
     if ( str.length() > 1 )
@@ -170,6 +172,13 @@ public class Predecessors
       if ( taskNum >= JPlanner.plan.tasksCount() || JPlanner.plan.task( taskNum ).isNull() )
       {
         error += "'" + taskNum + "' is a null task.\n";
+        continue;
+      }
+
+      // check number is not zero
+      if ( taskNum == 0 )
+      {
+        error += "'" + part + "' does not start with a valid task number.\n";
         continue;
       }
 
@@ -318,7 +327,7 @@ public class Predecessors
     return start;
   }
 
-  /********************************************** end **********************************************/
+  /********************************************* end *********************************************/
   public DateTime end()
   {
     // return task end based on predecessors
@@ -343,4 +352,17 @@ public class Predecessors
 
     return end;
   }
+
+  /******************************************** count ********************************************/
+  public int count()
+  {
+    return m_preds.size();
+  }
+
+  /********************************************* get *********************************************/
+  public Predecessor get( int index )
+  {
+    return m_preds.get( index );
+  }
+
 }

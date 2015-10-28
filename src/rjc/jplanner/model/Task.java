@@ -454,20 +454,36 @@ public class Task implements Comparable<Task>
     }
 
     Calendar planCal = JPlanner.plan.calendar();
-    if ( hasToStart )
+    if ( m_duration.number() == 0.0 )
     {
-      m_start = planCal.workUp( startDueToPredecessors() );
-      m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
-    }
-    else if ( hasToFinish )
-    {
-      m_end = planCal.workDown( startDueToPredecessors() );
-      m_start = planCal.workUp( planCal.workTimeSpan( m_end, m_duration.minus() ) );
+      // milestone
+      if ( hasToStart )
+        m_start = planCal.workDown( startDueToPredecessors() );
+      else
+      {
+        m_start = planCal.workDown( endDueToPredecessors() );
+      }
+
+      m_end = m_start;
     }
     else
     {
-      m_start = planCal.workUp( JPlanner.plan.start() );
-      m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
+      // not milestone
+      if ( hasToStart )
+      {
+        m_start = planCal.workUp( startDueToPredecessors() );
+        m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
+      }
+      else if ( hasToFinish )
+      {
+        m_end = planCal.workDown( endDueToPredecessors() );
+        m_start = planCal.workUp( planCal.workTimeSpan( m_end, m_duration.minus() ) );
+      }
+      else
+      {
+        m_start = planCal.workUp( JPlanner.plan.start() );
+        m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
+      }
     }
 
     // ensure end is always greater or equal to start
@@ -548,6 +564,27 @@ public class Task implements Comparable<Task>
     }
 
     return start;
+  }
+
+  /************************************* endDueToPredecessors ************************************/
+  private DateTime endDueToPredecessors()
+  {
+    // get end based on this task's predecessors
+    DateTime end = m_predecessors.end();
+
+    // if indented also check end against summary(s) predecessors
+    Task task = this;
+    for ( int indent = m_indent; indent > 0; indent-- )
+    {
+      task = JPlanner.plan.task( task.m_summaryStart );
+
+      // if end from summary predecessors is later, use it instead
+      DateTime summaryEnd = task.m_predecessors.end();
+      if ( summaryEnd.isLessThan( end ) )
+        end = summaryEnd;
+    }
+
+    return end;
   }
 
   /**************************************** predecessors *****************************************/
