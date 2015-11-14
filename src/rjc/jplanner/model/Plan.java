@@ -66,6 +66,14 @@ public class Plan
     daytypes = new Days();
 
     m_undostack = new UndoStack();
+
+    m_title = "";
+    m_datetimeFormat = "EEE dd/MM/yyyy HH:mm";
+    m_dateFormat = "dd/MM/yyyy";
+    m_filename = "";
+    m_fileLocation = "";
+    m_savedBy = "";
+    m_notes = "";
   }
 
   /***************************************** toString ********************************************/
@@ -88,15 +96,8 @@ public class Plan
     resources.initialise();
     tasks.initialise();
 
-    m_title = "";
     m_calendar = calendar( 0 );
     m_start = m_calendar.workUp( new DateTime( Date.now(), Time.fromMilliseconds( 0 ) ) );
-    m_datetimeFormat = "EEE dd/MM/yyyy HH:mm";
-    m_dateFormat = "dd/MM/yyyy";
-    m_filename = "";
-    m_fileLocation = "";
-    m_savedBy = "";
-    m_notes = "";
   }
 
   /************************************** tasksNotNullCount **************************************/

@@ -78,4 +78,11 @@ public class GanttData
     return value.get( 0 ) < 0;
   }
 
+  /***************************************** isMilestone *****************************************/
+  public boolean isMilestone()
+  {
+    // return true of gantt-data indicates milestone
+    return end == null;
+  }
+
 }

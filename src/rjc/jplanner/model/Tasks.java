@@ -158,7 +158,7 @@ public class Tasks extends ArrayList<Task>
   {
     // first construct list of tasks in correct order
     ArrayList<Task> scheduleList = new ArrayList<Task>();
-    for ( int index = 0; index < size(); index++ )
+    for ( int index = 1; index < size(); index++ )
       if ( !get( index ).isNull() )
         scheduleList.add( get( index ) );
     Collections.sort( scheduleList );

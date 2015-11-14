@@ -89,6 +89,7 @@ public class MainWindow extends Shell
   public Color                     COLOR_BLUE;
   public Color                     COLOR_GREEN;
   public Color                     COLOR_CYAN;
+  public Color                     COLOR_GRAY_VDARK;
   public Color                     COLOR_GRAY_DARK;
   public Color                     COLOR_GRAY_MID;
   public Color                     COLOR_GRAY_LIGHT;
@@ -108,6 +109,7 @@ public class MainWindow extends Shell
   public Color                     COLOR_GANTT_TASK_FILL;
   public Color                     COLOR_GANTT_SUMMARY;
   public Color                     COLOR_GANTT_MILESTONE;
+  public Color                     COLOR_GANTT_DEPENDENCY;
 
   public Color                     COLOR_ERROR;
   public Color                     COLOR_NO_ERROR;
@@ -131,6 +133,7 @@ public class MainWindow extends Shell
     COLOR_BLUE = display.getSystemColor( SWT.COLOR_BLUE );
     COLOR_GREEN = display.getSystemColor( SWT.COLOR_GREEN );
     COLOR_CYAN = display.getSystemColor( SWT.COLOR_CYAN );
+    COLOR_GRAY_VDARK = new Color( display, 128, 128, 128 );
     COLOR_GRAY_DARK = display.getSystemColor( SWT.COLOR_GRAY );
     COLOR_GRAY_MID = new Color( display, 227, 227, 227 );
     COLOR_GRAY_LIGHT = new Color( display, 240, 240, 240 );
@@ -148,6 +151,7 @@ public class MainWindow extends Shell
     COLOR_GANTT_TASK_FILL = COLOR_YELLOW;
     COLOR_GANTT_SUMMARY = COLOR_BLACK;
     COLOR_GANTT_MILESTONE = COLOR_BLACK;
+    COLOR_GANTT_DEPENDENCY = COLOR_GRAY_VDARK;
     COLOR_ERROR = COLOR_RED;
     COLOR_NO_ERROR = COLOR_BLACK;
     TRANSFORM = new Transform( display );
@@ -849,6 +853,13 @@ public class MainWindow extends Shell
       FileInputStream fis = new FileInputStream( file );
       XMLStreamReader xsr = xif.createXMLStreamReader( fis );
 
+      // check first element is JPlanner
+      while ( xsr.hasNext() && !xsr.isStartElement() )
+        xsr.next();
+      if ( !xsr.isStartElement() || !xsr.getLocalName().equals( XmlLabels.XML_JPLANNER ) )
+        throw new XMLStreamException( "Missing JPlanner element" );
+
+      // load plan data
       JPlanner.plan.loadXML( xsr, file.getName(), file.getParent() );
 
       // if new plan not okay, revert back to old plan
@@ -861,12 +872,13 @@ public class MainWindow extends Shell
         return false;
       }
 
+      // load display data
       loadDisplayData( xsr );
 
       fis.close();
       xsr.close();
     }
-    catch ( XMLStreamException | IOException exception )
+    catch ( Exception exception )
     {
       // some sort of exception thrown
       message( "Failed to load '" + file.getPath() + "'" );

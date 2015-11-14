@@ -453,7 +453,7 @@ public class Day
 
   public Time workBackward( double work )
   {
-    return workBackward( 0, work );
+    return workBackward( Time.MILLISECONDS_IN_DAY, work );
   }
 
   public Time workBackward( int from, double work )

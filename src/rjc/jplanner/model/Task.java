@@ -459,10 +459,10 @@ public class Task implements Comparable<Task>
       // milestone
       if ( hasToStart )
         m_start = planCal.workDown( startDueToPredecessors() );
-      else
-      {
+      else if ( hasToFinish )
         m_start = planCal.workDown( endDueToPredecessors() );
-      }
+      else
+        m_start = planCal.workUp( JPlanner.plan.start() );
 
       m_end = m_start;
     }

@@ -1,105 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<JPlanner version="2015-06" user="Richard" when="2014-09-27T21:36:47">
+<JPlanner format="2015-09" saved-by="Richard" saved-when="2015-10-30T20:25:38.589" saved-name="test9 - start-to-start dependency examples.xml" saved-where="C:\Users\Richard\EclipseWS\JPlannerSWT\tests">
+  <plan-data title="" start="2015-10-29T06:00:00.000" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm" date-format="dd/MM/yyyy" notes="">
     <days-data>
-        <day id="0" name="Non working" work="0"/>
-        <day id="1" name="Standard work day" work="1">
-            <period id="0" start="09:00" end="13:00"/>
-            <period id="1" start="14:00" end="18:00"/>
-        </day>
-        <day id="2" name="Morning only" work="0.5">
-            <period id="0" start="09:00" end="13:00"/>
-        </day>
-        <day id="3" name="Evening shift" work="0.6">
-            <period id="0" start="18:00" end="22:00"/>
-        </day>
-        <day id="4" name="24H day" work="1.5">
-            <period id="0" start="00:00" end="24:00"/>
-        </day>
+      <day id="0" name="Non Working" work="0.0"></day>
+      <day id="1" name="Standard work day" work="1.0">
+        <period id="0" start="09:00:00.000" end="13:00:00.000"/>
+        <period id="1" start="14:00:00.000" end="18:00:00.000"/>
+      </day>
+      <day id="2" name="Morning only" work="0.5">
+        <period id="0" start="09:00:00.000" end="13:00:00.000"/>
+      </day>
+      <day id="3" name="Evening shift" work="0.6">
+        <period id="0" start="18:00:00.000" end="22:00:00.000"/>
+      </day>
+      <day id="4" name="24H day" work="1.5">
+        <period id="0" start="00:00:00.000" end="24:00:00.000"/>
+      </day>
     </days-data>
     <calendars-data>
-        <calendar id="0" name="Standard" anchor="2000-01-01">
-            <normal id="0" day="0"/>
-            <normal id="1" day="0"/>
-            <normal id="2" day="1"/>
-            <normal id="3" day="1"/>
-            <normal id="4" day="1"/>
-            <normal id="5" day="1"/>
-            <normal id="6" day="1"/>
-            <exception date="2013-05-06" day="0"/>
-            <exception date="2013-04-01" day="0"/>
-            <exception date="2013-01-01" day="0"/>
-            <exception date="2013-12-25" day="0"/>
-            <exception date="2013-08-26" day="0"/>
-            <exception date="2013-05-27" day="0"/>
-            <exception date="2013-12-26" day="0"/>
-            <exception date="2013-03-29" day="0"/>
-            <exception date="2012-12-26" day="0"/>
-            <exception date="2012-12-25" day="0"/>
-        </calendar>
-        <calendar id="1" name="Full Time" anchor="2012-01-01">
-            <normal id="0" day="4"/>
-        </calendar>
-        <calendar id="2" name="Fancy" anchor="2012-01-01">
-            <normal id="0" day="0"/>
-            <normal id="1" day="0"/>
-            <normal id="2" day="0"/>
-            <normal id="3" day="2"/>
-            <normal id="4" day="2"/>
-            <normal id="5" day="3"/>
-            <normal id="6" day="3"/>
-            <normal id="7" day="4"/>
-            <normal id="8" day="0"/>
-            <normal id="9" day="4"/>
-            <exception date="2012-12-26" day="0"/>
-            <exception date="2012-12-25" day="0"/>
-        </calendar>
+      <calendar id="0" name="Standard" anchor="2000-01-01">
+        <normal id="0" day="0"/>
+        <normal id="1" day="0"/>
+        <normal id="2" day="1"/>
+        <normal id="3" day="1"/>
+        <normal id="4" day="1"/>
+        <normal id="5" day="1"/>
+        <normal id="6" day="1"/>
+        <exception date="2014-12-25" day="0"/>
+        <exception date="2014-12-26" day="0"/>
+        <exception date="2015-01-01" day="0"/>
+        <exception date="2015-04-03" day="0"/>
+        <exception date="2015-04-06" day="0"/>
+        <exception date="2015-05-04" day="0"/>
+        <exception date="2015-05-25" day="0"/>
+        <exception date="2015-08-31" day="0"/>
+        <exception date="2015-12-25" day="0"/>
+        <exception date="2015-12-28" day="0"/>
+      </calendar>
+      <calendar id="1" name="Full time" anchor="2015-01-01">
+        <normal id="0" day="4"/>
+      </calendar>
+      <calendar id="2" name="Fancy" anchor="2015-01-01">
+        <normal id="0" day="0"/>
+        <normal id="1" day="0"/>
+        <normal id="2" day="0"/>
+        <normal id="3" day="2"/>
+        <normal id="4" day="2"/>
+        <normal id="5" day="3"/>
+        <normal id="6" day="3"/>
+        <normal id="7" day="4"/>
+        <normal id="8" day="0"/>
+        <normal id="9" day="4"/>
+        <exception date="2015-12-25" day="0"/>
+        <exception date="2015-12-28" day="0"/>
+      </calendar>
     </calendars-data>
     <resources-data>
-        <resource id="0"/>
-        <resource id="1"/>
-        <resource id="2"/>
-        <resource id="3"/>
-        <resource id="4"/>
-        <resource id="5"/>
+      <resource id="0"></resource>
+      <resource id="1"></resource>
+      <resource id="2"></resource>
+      <resource id="3"></resource>
+      <resource id="4"></resource>
+      <resource id="5"></resource>
+      <resource id="6"></resource>
+      <resource id="7"></resource>
+      <resource id="8"></resource>
+      <resource id="9"></resource>
+      <resource id="10"></resource>
     </resources-data>
     <tasks-data>
-        <task id="0"/>
-        <task id="1" indent="0" summary="-1" expanded="1" title="aaa" duration="5 d" start="2013-10-22T09:00" end="2013-10-28T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="2" indent="0" summary="-1" expanded="1" title="bbb" duration="3 d" start="2013-10-24T10:00" end="2013-10-29T10:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="3"/>
-        <task id="4" indent="0" summary="-1" expanded="1" title="aaa1" duration="10 d" start="2013-10-22T09:00" end="2013-11-04T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="5" indent="0" summary="-1" expanded="1" title="bbb1" duration="3 d" start="2013-11-05T09:00" end="2013-11-07T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="6"/>
-        <task id="7" indent="0" summary="-1" expanded="1" title="aaa2" duration="15 d" start="2013-10-22T09:00" end="2013-11-11T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="8" indent="0" summary="-1" expanded="1" title="bbb2" duration="3 d" start="2013-11-04T09:00" end="2013-11-06T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="9"/>
-        <task id="10" indent="0" summary="-1" expanded="1" title="aaa3" duration="9 d" start="2013-10-22T09:00" end="2013-11-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="11" indent="0" summary="-1" expanded="1" title="bbb3" duration="1 w" start="2013-10-28T09:00" end="2013-11-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="12"/>
-        <task id="13" indent="0" summary="-1" expanded="1" title="aaa4" duration="9 d" start="2013-10-22T09:00" end="2013-11-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="14" indent="0" summary="-1" expanded="1" title="bbb4" duration="3 w" start="2013-09-30T09:00" end="2013-10-18T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="15"/>
-        <task id="16" indent="0" summary="-1" expanded="1" title="aaa5" duration="9 d" start="2013-10-22T09:00" end="2013-11-01T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="17" indent="0" summary="-1" expanded="1" title="bbb5" duration="0.5 w" start="2013-10-11T09:00" end="2013-10-14T18:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="18"/>
-        <task id="19" indent="0" summary="-1" expanded="1" title="aaa6" duration="0 d" start="2013-10-22T09:00" end="2013-10-22T09:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <task id="20" indent="0" summary="-1" expanded="1" title="bbb6" duration="0 d" start="2013-10-22T09:00" end="2013-10-22T09:00" work="1 d" resources="" type="ASAP - duration" priority="100" cost="0.0" comment=""/>
-        <predecessors task="2" preds="1SS+1 H"/>
-        <predecessors task="5" preds="4SS+3 d"/>
-        <predecessors task="8" preds="7SS-3 d"/>
-        <predecessors task="11" preds="10SS"/>
-        <predecessors task="14" preds="13SS-2 w"/>
-        <predecessors task="17" preds="16SS-2.5 w"/>
-        <predecessors task="20" preds="19SS"/>
+      <task id="0" indent="-1" title="PROJECT" duration="1 d" start="2015-10-29T09:00:00.000" end="2015-10-29T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="1" indent="0" title="ss" duration="10 d" start="2015-10-22T09:00:00.000" end="2015-11-04T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="2" indent="0" title="ssss" duration="20 d" start="2015-10-29T09:00:00.000" end="2015-11-25T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="3" indent="0" title="ss" duration="10 d" start="2015-10-22T09:00:00.000" end="2015-11-04T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="4" indent="0" title="ss" duration="10 d" start="2015-10-29T09:00:00.000" end="2015-11-11T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="5" indent="0" title="ssss" duration="10 d" start="2015-10-29T09:00:00.000" end="2015-11-11T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="6" indent="0" title="ss" duration="10 d" start="2015-10-29T09:00:00.000" end="2015-11-11T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="7" indent="0" title="ss" duration="10 d" start="2015-11-05T09:00:00.000" end="2015-11-18T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="8" indent="0" title="ssss" duration="5 d" start="2015-10-29T09:00:00.000" end="2015-11-04T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="9" indent="0" title="ss" duration="10 d" start="2015-11-05T09:00:00.000" end="2015-11-18T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="10"></task>
+      <task id="11" indent="0" title="ss" duration="0 d" start="2015-10-21T18:00:00.000" end="2015-10-21T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="12" indent="0" title="ssss" duration="0 d" start="2015-10-29T09:00:00.000" end="2015-10-29T09:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="13" indent="0" title="ss" duration="0 d" start="2015-10-21T18:00:00.000" end="2015-10-21T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="14" indent="0" title="ss" duration="0 d" start="2015-10-28T18:00:00.000" end="2015-10-28T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="15" indent="0" title="ssss" duration="0 d" start="2015-10-29T09:00:00.000" end="2015-10-29T09:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="16" indent="0" title="ss" duration="0 d" start="2015-10-28T18:00:00.000" end="2015-10-28T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="17" indent="0" title="ss" duration="0 d" start="2015-11-04T18:00:00.000" end="2015-11-04T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="18" indent="0" title="ssss" duration="0 d" start="2015-10-29T09:00:00.000" end="2015-10-29T09:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="19" indent="0" title="ss" duration="0 d" start="2015-11-04T18:00:00.000" end="2015-11-04T18:00:00.000" work="0 d" resources="TBD" type="ASAP - duration" priority="100"></task>
+      <task id="20"></task>
+      <predecessors task="1" preds="2SS-5 d"></predecessors>
+      <predecessors task="3" preds="2SS-5 d"></predecessors>
+      <predecessors task="4" preds="5SS"></predecessors>
+      <predecessors task="6" preds="5SS"></predecessors>
+      <predecessors task="7" preds="8SS+5 d"></predecessors>
+      <predecessors task="9" preds="8SS+5 d"></predecessors>
+      <predecessors task="11" preds="12SS-5 d"></predecessors>
+      <predecessors task="13" preds="12SS-5 d"></predecessors>
+      <predecessors task="14" preds="15SS"></predecessors>
+      <predecessors task="16" preds="15SS"></predecessors>
+      <predecessors task="17" preds="18SS+5 d"></predecessors>
+      <predecessors task="19" preds="18SS+5 d"></predecessors>
     </tasks-data>
-    <plan-data title="test2" start="2013-10-22T09:00:00" calendar="0" datetime-format="EEE dd/MM/yyyy HH:mm:ss" date-format="dd/MM/yyyy" notes=""/>
-    <display-data>
-        <tasks-gantt start="2013-09-27T07:30" end="2013-11-14T16:29" minspp="134.737" nonworking="TODO" current="TODO" upper="TODO" lower="TODO" splitter="TODO">
-            <upper-scale interval="?" format="?"/>
-            <lower-scale interval="?" format="?"/>
-        </tasks-gantt>
-        <resources-tab/>
-        <calendars-tab/>
-        <days-tab/>
-    </display-data>
+  </plan-data>
+  <display-data window="0" x="-1197" y="99" width="1197" height="588" tab="1">
+    <tasks-gantt-tab splitter="743">
+      <gantt start="2015-10-19T19:29:59.999" end="2015-11-28T04:30:00.001" mspp="7948598" nonworking="???" current="???" stretch="true">
+        <upper-scale interval="MONTH" format="MMM-YYYY"></upper-scale>
+        <lower-scale interval="DAY" format="eeeee"></lower-scale>
+      </gantt>
+      <columns>
+        <column id="0" width="200"></column>
+        <column id="1" width="60"></column>
+        <column id="2" width="140"></column>
+        <column id="3" width="140"></column>
+        <column id="4" width="60"></column>
+        <column id="5" width="110"></column>
+        <column id="6" width="110"></column>
+        <column id="7" width="110"></column>
+        <column id="8" width="60"></column>
+        <column id="9" width="140"></column>
+        <column id="10" width="60"></column>
+        <column id="11" width="200"></column>
+      </columns>
+      <rows>
+        <row id="0" height="20"></row>
+        <row id="1" height="20"></row>
+        <row id="2" height="20"></row>
+        <row id="3" height="20"></row>
+        <row id="4" height="20"></row>
+        <row id="5" height="20"></row>
+        <row id="6" height="20"></row>
+        <row id="7" height="20"></row>
+        <row id="8" height="20"></row>
+        <row id="9" height="20"></row>
+        <row id="10" height="20"></row>
+        <row id="11" height="20"></row>
+        <row id="12" height="20"></row>
+        <row id="13" height="20"></row>
+        <row id="14" height="20"></row>
+        <row id="15" height="20"></row>
+        <row id="16" height="20"></row>
+        <row id="17" height="20"></row>
+        <row id="18" height="20"></row>
+        <row id="19" height="20"></row>
+        <row id="20" height="20"></row>
+      </rows>
+    </tasks-gantt-tab>
+    <resources-tab>
+      <columns>
+        <column id="0" width="50"></column>
+        <column id="1" width="100"></column>
+        <column id="2" width="100"></column>
+        <column id="3" width="100"></column>
+        <column id="4" width="100"></column>
+        <column id="5" width="100"></column>
+        <column id="6" width="100"></column>
+        <column id="7" width="100"></column>
+        <column id="8" width="100"></column>
+        <column id="9" width="100"></column>
+        <column id="10" width="100"></column>
+        <column id="11" width="100"></column>
+      </columns>
+      <rows>
+        <row id="0" height="20"></row>
+        <row id="1" height="20"></row>
+        <row id="2" height="20"></row>
+        <row id="3" height="20"></row>
+        <row id="4" height="20"></row>
+        <row id="5" height="20"></row>
+        <row id="6" height="20"></row>
+        <row id="7" height="20"></row>
+        <row id="8" height="20"></row>
+        <row id="9" height="20"></row>
+        <row id="10" height="20"></row>
+      </rows>
+    </resources-tab>
+    <calendars-tab>
+      <columns>
+        <column id="0" width="140"></column>
+        <column id="1" width="140"></column>
+        <column id="2" width="140"></column>
+      </columns>
+      <rows>
+        <row id="0" height="20"></row>
+        <row id="1" height="20"></row>
+        <row id="2" height="20"></row>
+        <row id="3" height="20"></row>
+        <row id="4" height="20"></row>
+        <row id="5" height="20"></row>
+        <row id="6" height="20"></row>
+        <row id="7" height="20"></row>
+        <row id="8" height="20"></row>
+        <row id="9" height="20"></row>
+        <row id="10" height="20"></row>
+        <row id="11" height="20"></row>
+        <row id="12" height="20"></row>
+        <row id="13" height="20"></row>
+      </rows>
+    </calendars-tab>
+    <days-tab>
+      <columns>
+        <column id="0" width="150"></column>
+        <column id="1" width="60"></column>
+        <column id="2" width="60"></column>
+        <column id="3" width="60"></column>
+        <column id="4" width="60"></column>
+        <column id="5" width="60"></column>
+        <column id="6" width="60"></column>
+      </columns>
+      <rows>
+        <row id="0" height="20"></row>
+        <row id="1" height="20"></row>
+        <row id="2" height="20"></row>
+        <row id="3" height="20"></row>
+        <row id="4" height="20"></row>
+      </rows>
+    </days-tab>
+  </display-data>
 </JPlanner>
