@@ -183,7 +183,7 @@ public class GanttPlot extends Composite
     GC gc = event.gc;
 
     // if negative means area to be drawn is below bottom of table, so just return  
-    int first = m_table.rowAt( y );
+    int first = m_table.getRowAtY( y );
     if ( first < 0 )
       return;
 
@@ -192,8 +192,8 @@ public class GanttPlot extends Composite
     for ( int row = first; row < numTasks; row++ )
     {
       // get row start-y and height
-      int ry = m_table.rowY( row );
-      int rh = m_table.rowHeight( row );
+      int ry = m_table.getRowStartY( row );
+      int rh = m_table.getRowHeight( row );
 
       // if task not null, draw task gantt-data
       Task task = JPlanner.plan.task( row );
@@ -234,14 +234,14 @@ public class GanttPlot extends Composite
       Task task = JPlanner.plan.task( t );
       if ( task.isNull() )
         continue;
-      int thisY = m_table.getMiddleY( t );
+      int thisY = m_table.getRowMiddleY( t );
 
       // for each predecessor on task
       Predecessors preds = task.predecessors();
       for ( int p = 0; p < preds.count(); p++ )
       {
         Predecessor pred = preds.get( p );
-        int otherY = m_table.getMiddleY( pred.task.index() );
+        int otherY = m_table.getRowMiddleY( pred.task.index() );
 
         switch ( pred.type )
         {

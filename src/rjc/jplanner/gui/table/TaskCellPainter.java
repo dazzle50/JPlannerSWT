@@ -36,6 +36,15 @@ public class TaskCellPainter extends XCellPainter
   private static int INDENT_SIZE    = 14;
   private static int INDENT_INITIAL = 14;
 
+  private XNatTable  m_xnattable;
+
+  /**************************************** constructor ******************************************/
+  public TaskCellPainter( XNatTable xnattable )
+  {
+    // keep record of XNatTable for future reference
+    m_xnattable = xnattable;
+  }
+
   /**************************************** getTextBounds ****************************************/
   @Override
   protected Rectangle getTextBounds( ILayerCell cell, Rectangle bounds )
@@ -82,10 +91,14 @@ public class TaskCellPainter extends XCellPainter
     int x = bounds.x + ( INDENT_INITIAL / 3 ) + indent * INDENT_SIZE;
     int y = bounds.y + ( bounds.height / 2 );
 
-    gc.setForeground( JPlanner.gui.COLOR_GRAY_DARK );
+    // draw collapse mark (minus sign in box)
+    gc.setForeground( JPlanner.gui.COLOR_GRAY_VDARK );
     gc.drawRectangle( x, y - 4, 8, 8 );
     gc.drawLine( x + 2, y, x + 6, y );
-    gc.drawLine( x + 4, y - 2, x + 4, y + 2 );
+
+    // if next row is hidden draw expand mark (plus sign in box)
+    if ( m_xnattable.isRowHidden( cell.getRowIndex() + 1 ) )
+      gc.drawLine( x + 4, y - 2, x + 4, y + 2 );
   }
 
   /************************************** getTextAlignment ***************************************/

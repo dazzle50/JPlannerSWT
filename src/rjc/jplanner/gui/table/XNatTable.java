@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.eclipse.nebula.widgets.nattable.NatTable;
@@ -86,8 +87,8 @@ import rjc.jplanner.gui.editor.TaskCellEditor;
 
 public class XNatTable extends NatTable
 {
-  private static ModernNatTableThemeConfiguration m_theme;                 // theme to use for all the tables
-  private static IConfiguration                   m_labels;                // to support styling of individual cells
+  private static ModernNatTableThemeConfiguration m_JPlannerTheme;         // theme to use for all the tables
+  private static IConfiguration                   m_defaultLabelsConfig;   // to support styling of individual cells
   private static IConfiguration                   m_columnHeaderConfig;    // for column resizing and reordering
   private static IConfiguration                   m_rowHeaderConfig;       // for row resizing and reordering
   private static KeyListener                      m_indentOutdentListener; // to support indenting / outdenting
@@ -112,6 +113,8 @@ public class XNatTable extends NatTable
   public ViewportLayer       viewport;
   public DataLayer           bodyDataLayer;
 
+  private TableType          m_type;
+
   /**************************************** constructor ******************************************/
   public XNatTable( Composite parent, TableType type )
   {
@@ -120,6 +123,7 @@ public class XNatTable extends NatTable
     checkStatics();
 
     // depending on table type configure differently
+    m_type = type;
     switch ( type )
     {
       case DAY:
@@ -129,7 +133,7 @@ public class XNatTable extends NatTable
         IDataProvider rowh = new DaysRowHeader( body );
         IConfigLabelAccumulator label = new DaysLabelAccumulator();
         int[] widthD = { 60, 25, 150 };
-        configTable( body, colh, rowh, label, widthD, -1 );
+        buildTable( body, colh, rowh, label, widthD, -1 );
         break;
 
       case CALENDAR:
@@ -139,7 +143,7 @@ public class XNatTable extends NatTable
         rowh = new CalendarsRowHeader( body );
         label = new CalendarsLabelAccumulator();
         int[] widthC = { 140, 75 };
-        configTable( body, colh, rowh, label, widthC, -1 );
+        buildTable( body, colh, rowh, label, widthC, -1 );
         break;
 
       case RESOURCE:
@@ -149,7 +153,7 @@ public class XNatTable extends NatTable
         rowh = new ResourcesRowHeader( body );
         label = new ResourcesLabelAccumulator();
         int[] widthR = { 100, 25, 50 };
-        configTable( body, colh, rowh, label, widthR, -1 );
+        buildTable( body, colh, rowh, label, widthR, -1 );
         break;
 
       case TASK:
@@ -159,8 +163,19 @@ public class XNatTable extends NatTable
         rowh = new TasksRowHeader( body );
         label = new TasksLabelAccumulator();
         int[] widthT = { 110, 25, 200, 60, 140, 140, 60, 110, 110, 110, 60, 140, 60, 200 };
-        configTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
+        buildTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
         addKeyListener( m_indentOutdentListener );
+        addConfiguration( new AbstractRegistryConfiguration()
+        {
+          @Override
+          public void configureRegistry( IConfigRegistry reg )
+          {
+            // specialist tasks labels config
+            reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter( XNatTable.this ),
+                DisplayMode.NORMAL, LABEL_TASK_PAINTER );
+          }
+        } );
+        configure();
         break;
 
       default:
@@ -168,20 +183,30 @@ public class XNatTable extends NatTable
     }
   }
 
+  /***************************************** toString ********************************************/
+  @Override
+  public String toString()
+  {
+    // short string summary
+    return "XNatTable@" + Integer.toHexString( hashCode() ) + "[" + m_type + " " + bodyDataLayer.getColumnCount() + "x"
+        + bodyDataLayer.getRowCount() + "]";
+  }
+
   /*************************************** checkStatics ******************************************/
   private void checkStatics()
   {
     // check static variables have been initialised
-    if ( m_theme == null )
+    if ( m_JPlannerTheme == null )
     {
-      m_theme = new ModernNatTableThemeConfiguration();
-      m_theme.defaultHAlign = HorizontalAlignmentEnum.CENTER;
-      m_theme.cHeaderHAlign = HorizontalAlignmentEnum.CENTER;
-      m_theme.rHeaderHAlign = HorizontalAlignmentEnum.CENTER;
+      m_JPlannerTheme = new ModernNatTableThemeConfiguration();
+      m_JPlannerTheme.defaultHAlign = HorizontalAlignmentEnum.CENTER;
+      m_JPlannerTheme.cHeaderHAlign = HorizontalAlignmentEnum.CENTER;
+      m_JPlannerTheme.rHeaderHAlign = HorizontalAlignmentEnum.CENTER;
     }
 
-    if ( m_labels == null )
-      m_labels = new AbstractRegistryConfiguration()
+    // configuration for labels controlling editable, painters, and editors
+    if ( m_defaultLabelsConfig == null )
+      m_defaultLabelsConfig = new AbstractRegistryConfiguration()
       {
         @Override
         public void configureRegistry( IConfigRegistry reg )
@@ -197,8 +222,6 @@ public class XNatTable extends NatTable
               LABEL_CALENDAR_PAINTER );
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new ResourceCellPainter(), DisplayMode.NORMAL,
               LABEL_RESOURCE_PAINTER );
-          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter(), DisplayMode.NORMAL,
-              LABEL_TASK_PAINTER );
 
           // Cell editors
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
@@ -212,6 +235,7 @@ public class XNatTable extends NatTable
         }
       };
 
+    // column header configuration for smooth resizing
     if ( m_columnHeaderConfig == null )
       m_columnHeaderConfig = new DefaultColumnHeaderLayerConfiguration()
       {
@@ -245,6 +269,7 @@ public class XNatTable extends NatTable
         }
       };
 
+    // NatTable row header configuration for smooth resizing
     if ( m_rowHeaderConfig == null )
       m_rowHeaderConfig = new DefaultRowHeaderLayerConfiguration()
       {
@@ -277,6 +302,7 @@ public class XNatTable extends NatTable
         }
       };
 
+    // NatTable key adapter for indenting and outdenting tasks
     if ( m_indentOutdentListener == null )
       m_indentOutdentListener = new KeyAdapter()
       {
@@ -286,7 +312,7 @@ public class XNatTable extends NatTable
           // detect indent
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_RIGHT )
           {
-            Set<Integer> rows = JPlanner.plan.tasks.canIndent( selectedRows() );
+            Set<Integer> rows = JPlanner.plan.tasks.canIndent( getSelectedRowsIndexes() );
             if ( !rows.isEmpty() )
               JPlanner.plan.undostack().push( new CommandTaskIndent( rows ) );
           }
@@ -294,7 +320,7 @@ public class XNatTable extends NatTable
           // detect outdent
           if ( event.stateMask == SWT.ALT && event.keyCode == SWT.ARROW_LEFT )
           {
-            Set<Integer> rows = JPlanner.plan.tasks.canOutdent( selectedRows() );
+            Set<Integer> rows = JPlanner.plan.tasks.canOutdent( getSelectedRowsIndexes() );
             if ( !rows.isEmpty() )
               JPlanner.plan.undostack().push( new CommandTaskOutdent( rows ) );
           }
@@ -302,8 +328,8 @@ public class XNatTable extends NatTable
       };
   }
 
-  /**************************************** configTable ******************************************/
-  private void configTable( IDataProvider body, IDataProvider ch, IDataProvider rh, IConfigLabelAccumulator label,
+  /***************************************** buildTable ******************************************/
+  private void buildTable( IDataProvider body, IDataProvider ch, IDataProvider rh, IConfigLabelAccumulator label,
       int[] widths, int chHeight )
   {
     // create body layer stack
@@ -337,15 +363,15 @@ public class XNatTable extends NatTable
     GridLayer grid = new GridLayer( viewport, colHeader, rowHeader, corner, false );
     grid.addConfiguration( new XGridLayerConfiguration() );
 
-    // configure NatTable with grid, theme, and labels
+    // configure NatTable with grid and theme
     setLayer( grid );
-    addConfiguration( m_theme );
-    addConfiguration( m_labels );
+    addConfiguration( m_JPlannerTheme );
+    addConfiguration( m_defaultLabelsConfig );
     configure();
   }
 
-  /**************************************** selectedRows *****************************************/
-  public Set<Integer> selectedRows()
+  /*********************************** getSelectedRowsIndexes ************************************/
+  public Set<Integer> getSelectedRowsIndexes()
   {
     // return set of selected row indexes
     Set<Integer> rows = new HashSet<Integer>();
@@ -368,13 +394,6 @@ public class XNatTable extends NatTable
     rowHideShowLayer.hideRowIndexes( rowList );
   }
 
-  /******************************************* rowAt *********************************************/
-  public int rowAt( int y )
-  {
-    // returns the row in which the specified y-coordinate
-    return viewport.getRowIndexByPosition( viewport.getRowPositionByY( y ) );
-  }
-
   /**************************************** isRowHidden ******************************************/
   public boolean isRowHidden( int row )
   {
@@ -382,33 +401,64 @@ public class XNatTable extends NatTable
     return rowHideShowLayer.isRowIndexHidden( row );
   }
 
-  /******************************************** rowY *********************************************/
-  public int rowY( int row )
+  /***************************************** getRowAtY *******************************************/
+  public int getRowAtY( int y )
+  {
+    // returns the row in which the specified y-coordinate
+    return viewport.getRowIndexByPosition( viewport.getRowPositionByY( y ) );
+  }
+
+  /*************************************** getRowStartY ******************************************/
+  public int getRowStartY( int row )
   {
     // return start-y of specified row
     return viewport.getStartYOfRowPosition( viewport.getRowPositionByIndex( row ) );
   }
 
-  /****************************************** rowHeight ******************************************/
-  public int rowHeight( int row )
+  /*************************************** getRowHeight ******************************************/
+  public int getRowHeight( int row )
   {
     // return height of specified row
     return viewport.getRowHeightByPosition( viewport.getRowPositionByIndex( row ) );
   }
 
-  /***************************************** getMiddleY ******************************************/
-  public int getMiddleY( int index )
+  /*************************************** setRowHeight ******************************************/
+  private void setRowHeight( int row, int height )
+  {
+    // set width of specified column
+    bodyDataLayer.setRowHeightByPosition( row, height );
+  }
+
+  /*************************************** getRowMiddleY *****************************************/
+  public int getRowMiddleY( int index )
   {
     // return middle-y of specified row index
     int pos = viewport.getRowPositionByIndex( index );
     return viewport.getStartYOfRowPosition( pos ) + viewport.getRowHeightByPosition( pos ) / 2;
   }
 
-  /***************************************** columnWidth *****************************************/
-  private int columnWidth( int col )
+  /*************************************** getColumnWidth ****************************************/
+  private int getColumnWidth( int col )
   {
     // return width of specified column
     return viewport.getColumnWidthByPosition( viewport.getColumnPositionByIndex( col ) );
+  }
+
+  /*************************************** setColumnWidth ****************************************/
+  private void setColumnWidth( int col, int width )
+  {
+    // set width of specified column
+    bodyDataLayer.setColumnWidthByPosition( col, width );
+  }
+
+  /*********************************** setRowsHeightToDefault ************************************/
+  public void setRowsHeightToDefault()
+  {
+    // show all hidden rows and reset height to default
+    rowHideShowLayer.showAllRows();
+    int count = bodyDataLayer.getRowCount();
+    for ( int row = 0; row < count; row++ )
+      bodyDataLayer.setRowHeightByPosition( row, DataLayer.DEFAULT_ROW_HEIGHT );
   }
 
   /****************************************** writeXML *******************************************/
@@ -421,7 +471,7 @@ public class XNatTable extends NatTable
     {
       xsw.writeStartElement( XmlLabels.XML_COLUMN );
       xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( col ) );
-      xsw.writeAttribute( XmlLabels.XML_WIDTH, Integer.toString( columnWidth( col ) ) );
+      xsw.writeAttribute( XmlLabels.XML_WIDTH, Integer.toString( getColumnWidth( col ) ) );
       xsw.writeEndElement(); // XML_COLUMN
     }
     xsw.writeEndElement(); // XML_COLUMNS
@@ -433,10 +483,107 @@ public class XNatTable extends NatTable
     {
       xsw.writeStartElement( XmlLabels.XML_ROW );
       xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( row ) );
-      xsw.writeAttribute( XmlLabels.XML_HEIGHT, Integer.toString( rowHeight( row ) ) );
+      xsw.writeAttribute( XmlLabels.XML_HEIGHT, Integer.toString( getRowHeight( row ) ) );
+      xsw.writeAttribute( XmlLabels.XML_HIDDEN, Boolean.toString( isRowHidden( row ) ) );
       xsw.writeEndElement(); // XML_ROW
     }
     xsw.writeEndElement(); // XML_ROWS
+  }
+
+  /***************************************** loadColumns *****************************************/
+  public void loadColumns( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML columns data
+    while ( xsr.hasNext() )
+    {
+      xsr.next();
+
+      // if reached end of columns data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_COLUMNS ) )
+        return;
+
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case XmlLabels.XML_COLUMN:
+
+            // get attributes from column element to set column width
+            int id = -1;
+            int width = DataLayer.DEFAULT_COLUMN_WIDTH;
+            for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+              switch ( xsr.getAttributeLocalName( i ) )
+              {
+                case XmlLabels.XML_ID:
+                  id = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_WIDTH:
+                  width = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                default:
+                  JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+                  break;
+              }
+            if ( id >= 0 && id < bodyDataLayer.getColumnCount() )
+              setColumnWidth( id, width );
+            break;
+
+          default:
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
+    }
+  }
+
+  /****************************************** loadRows *******************************************/
+  public void loadRows( XMLStreamReader xsr ) throws XMLStreamException
+  {
+    // read XML rows data
+    while ( xsr.hasNext() )
+    {
+      xsr.next();
+
+      // if reached end of rows data, return
+      if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_ROWS ) )
+        return;
+
+      if ( xsr.isStartElement() )
+        switch ( xsr.getLocalName() )
+        {
+          case XmlLabels.XML_ROW:
+
+            // get attributes from row element to set row height and hidden
+            int id = -1;
+            int height = DataLayer.DEFAULT_ROW_HEIGHT;
+            boolean hidden = false;
+            for ( int i = 0; i < xsr.getAttributeCount(); i++ )
+              switch ( xsr.getAttributeLocalName( i ) )
+              {
+                case XmlLabels.XML_ID:
+                  id = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_HEIGHT:
+                  height = Integer.parseInt( xsr.getAttributeValue( i ) );
+                  break;
+                case XmlLabels.XML_HIDDEN:
+                  hidden = Boolean.parseBoolean( xsr.getAttributeValue( i ) );
+                  break;
+                default:
+                  JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
+                  break;
+              }
+            if ( id >= 0 && id < bodyDataLayer.getRowCount() )
+            {
+              setRowHeight( id, height );
+              if ( hidden )
+                hideRow( id );
+            }
+            break;
+
+          default:
+            JPlanner.trace( "Unhandled start element '" + xsr.getLocalName() + "'" );
+            break;
+        }
+    }
   }
 
 }

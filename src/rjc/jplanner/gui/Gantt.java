@@ -188,7 +188,6 @@ public class Gantt extends Composite
       if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_GANTT ) )
         return;
 
-      // 
       if ( xsr.isStartElement() )
         switch ( xsr.getLocalName() )
         {

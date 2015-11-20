@@ -533,13 +533,13 @@ public class MainWindow extends Shell
     // add task menu items
     MenuItem actionIndent = new MenuItem( taskMenu, SWT.NONE );
     actionIndent.setAccelerator( SWT.ALT + SWT.ARROW_RIGHT );
-    actionIndent.setText( "Indent" );
+    actionIndent.setText( "Indent\tAlt+>" );
     actionIndent.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        Set<Integer> rows = m_mainTabWidget.tasks().selectedRows();
+        Set<Integer> rows = m_mainTabWidget.tasks().getSelectedRowsIndexes();
         rows = JPlanner.plan.tasks.canIndent( rows );
         if ( !rows.isEmpty() )
           JPlanner.plan.undostack().push( new CommandTaskIndent( rows ) );
@@ -548,13 +548,13 @@ public class MainWindow extends Shell
 
     MenuItem actionOutdent = new MenuItem( taskMenu, SWT.NONE );
     actionOutdent.setAccelerator( SWT.ALT + SWT.ARROW_LEFT );
-    actionOutdent.setText( "Outdent" );
+    actionOutdent.setText( "Outdent\tAlt+<" );
     actionOutdent.addSelectionListener( new SelectionAdapter()
     {
       @Override
       public void widgetSelected( SelectionEvent event )
       {
-        Set<Integer> rows = m_mainTabWidget.tasks().selectedRows();
+        Set<Integer> rows = m_mainTabWidget.tasks().getSelectedRowsIndexes();
         rows = JPlanner.plan.tasks.canOutdent( rows );
         if ( !rows.isEmpty() )
           JPlanner.plan.undostack().push( new CommandTaskOutdent( rows ) );
@@ -701,22 +701,33 @@ public class MainWindow extends Shell
     return m_mainTabWidget.notes();
   }
 
-  /****************************************** resetGui *******************************************/
-  public void resetGui( boolean resetGantt )
+  /***************************************** refreshGui ******************************************/
+  public void refreshGui( boolean reset )
   {
     // update window titles and plan tab
     updateWindowTitles();
     properties().updateFromPlan();
     notes().updateFromPlan();
 
-    // reset tasks resources calendars day-types tables
+    // if reset set all table row heights to default
+    if ( reset )
+    {
+      m_tabWidgets.forEach( tabs -> tabs.tasks().setRowsHeightToDefault() );
+      m_tabWidgets.forEach( tabs -> tabs.tasks().hideRow( 0 ) );
+      m_tabWidgets.forEach( tabs -> tabs.resources().setRowsHeightToDefault() );
+      m_tabWidgets.forEach( tabs -> tabs.resources().hideRow( 0 ) );
+      m_tabWidgets.forEach( tabs -> tabs.calendars().setRowsHeightToDefault() );
+      m_tabWidgets.forEach( tabs -> tabs.days().setRowsHeightToDefault() );
+    }
+
+    // refresh tasks resources calendars day-types tables
     m_tabWidgets.forEach( tabs -> tabs.tasks().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.resources().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.calendars().refresh() );
     m_tabWidgets.forEach( tabs -> tabs.days().refresh() );
 
     // update gantts including reseting to default parameters if requested
-    if ( resetGantt )
+    if ( reset )
       m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
     m_tabWidgets.forEach( tabs -> tabs.gantt().updateAll() );
 
@@ -782,7 +793,7 @@ public class MainWindow extends Shell
     JPlanner.plan.initialise();
 
     // update gui
-    resetGui( true );
+    refreshGui( true );
     message( "New plan" );
   }
 
@@ -873,6 +884,7 @@ public class MainWindow extends Shell
       }
 
       // load display data
+      refreshGui( true );
       loadDisplayData( xsr );
 
       fis.close();
@@ -883,12 +895,12 @@ public class MainWindow extends Shell
       // some sort of exception thrown
       message( "Failed to load '" + file.getPath() + "'" );
       JPlanner.plan = oldPlan;
+      refreshGui( false );
       exception.printStackTrace();
       return false;
     }
 
-    // update gui & schedule
-    resetGui( false );
+    // plan loaded successfully, so schedule
     message( "Successfully loaded '" + file.getPath() + "'" );
     schedule();
 
