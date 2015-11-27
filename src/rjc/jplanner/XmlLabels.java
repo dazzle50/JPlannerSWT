@@ -111,5 +111,5 @@ public class XmlLabels
   public static final String XML_STRETCH         = "stretch";
   public static final String XML_SPLITTER        = "splitter";
   public static final String XML_HIDDEN          = "hidden";
-
+  public static final String XML_COLLAPSED       = "collapsed";
 }

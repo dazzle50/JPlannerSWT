@@ -29,8 +29,8 @@ import rjc.jplanner.model.Tasks.PredecessorsList;
 
 public class CommandTaskOutdent implements IUndoCommand
 {
-  Set<Integer>     m_rows;         // rows to be outdented
-  PredecessorsList m_predecessors; // predecessors before cleaning
+  private Set<Integer>     m_rows;         // rows to be outdented
+  private PredecessorsList m_predecessors; // predecessors before cleaning
 
   /**************************************** constructor ******************************************/
   public CommandTaskOutdent( Set<Integer> rows )
@@ -71,8 +71,22 @@ public class CommandTaskOutdent implements IUndoCommand
   @Override
   public String text()
   {
+    // determine lowest & highest row number
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
+    for ( int row : m_rows )
+    {
+      if ( row < min )
+        min = row;
+      if ( row > max )
+        max = row;
+    }
+
     // command description
-    return "Outdent";
+    if ( min == max )
+      return "Outdented task " + min;
+    else
+      return "Outdented tasks " + min + " to " + max;
   }
 
 }

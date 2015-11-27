@@ -18,75 +18,56 @@
 
 package rjc.jplanner.command;
 
-import java.util.Set;
-
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Tasks.PredecessorsList;
+import rjc.jplanner.gui.table.XNatTable;
 
 /*************************************************************************************************/
-/******************************* UndoCommand for indenting tasks *********************************/
+/********************* UndoCommand for collapsing summary task on gui table **********************/
 /*************************************************************************************************/
 
-public class CommandTaskIndent implements IUndoCommand
+public class CommandSummaryCollapse implements IUndoCommand
 {
-  private Set<Integer>     m_rows;         // rows to be indented
-  private PredecessorsList m_predecessors; // predecessors before cleaning
+  private XNatTable m_table;
+  private int       m_row;
 
   /**************************************** constructor ******************************************/
-  public CommandTaskIndent( Set<Integer> rows )
+  public CommandSummaryCollapse( XNatTable table, int row )
   {
     // initialise private variables
-    m_rows = rows;
+    m_table = table;
+    m_row = row;
   }
 
   /******************************************* redo **********************************************/
   @Override
   public void redo()
   {
-    // action command
-    JPlanner.plan.tasks.indent( m_rows );
-    m_predecessors = JPlanner.plan.tasks.cleanPredecessors();
-    JPlanner.gui.message( m_predecessors.toString( "Cleaned" ) );
+    // action command - collapsing
+    m_table.collapseSummary( m_row );
   }
 
   /******************************************* undo **********************************************/
   @Override
   public void undo()
   {
-    // revert command
-    JPlanner.plan.tasks.outdent( m_rows );
-    JPlanner.plan.tasks.restorePredecessors( m_predecessors );
-    JPlanner.gui.message( m_predecessors.toString( "Restored" ) );
+    // revert command - expanding
+    m_table.expandSummary( m_row );
   }
 
   /****************************************** update *********************************************/
   @Override
   public void update()
   {
-    // re-schedule plan (which in turn will update gui)
-    JPlanner.gui.schedule();
+    // redraw gantt plot & table (table would be redrawn anyway but this avoids any visual delay) 
+    m_table.gantt.updatePlot();
+    m_table.redraw();
   }
 
   /******************************************* text **********************************************/
   @Override
   public String text()
   {
-    // determine lowest & highest row number
-    int min = Integer.MAX_VALUE;
-    int max = Integer.MIN_VALUE;
-    for ( int row : m_rows )
-    {
-      if ( row < min )
-        min = row;
-      if ( row > max )
-        max = row;
-    }
-
     // command description
-    if ( min == max )
-      return "Indented task " + min;
-    else
-      return "Indented tasks " + min + " to " + max;
+    return "Collapsed task " + m_row;
   }
 
 }

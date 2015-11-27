@@ -81,6 +81,7 @@ public class Gantt extends Composite
     m_plot = new GanttPlot( this );
     m_plot.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
     m_plot.setTable( table );
+    table.gantt = this;
 
     // set context menu
     Menu menu = contextMenu();

@@ -191,6 +191,10 @@ public class GanttPlot extends Composite
     int numTasks = JPlanner.plan.tasksCount();
     for ( int row = first; row < numTasks; row++ )
     {
+      // if hidden, skip row
+      if ( m_table.isRowHidden( row ) )
+        continue;
+
       // get row start-y and height
       int ry = m_table.getRowStartY( row );
       int rh = m_table.getRowHeight( row );
@@ -229,19 +233,31 @@ public class GanttPlot extends Composite
     gc.setForeground( JPlanner.gui.COLOR_GANTT_DEPENDENCY );
 
     // for each task
-    for ( int t = 0; t < JPlanner.plan.tasksCount(); t++ )
+    int numTasks = JPlanner.plan.tasksCount();
+    for ( int row = 0; row < numTasks; row++ )
     {
-      Task task = JPlanner.plan.task( t );
+      // if hidden, skip row
+      if ( m_table.isRowHidden( row ) )
+        continue;
+
+      // if null task, skip row
+      Task task = JPlanner.plan.task( row );
       if ( task.isNull() )
         continue;
-      int thisY = m_table.getRowMiddleY( t );
+
+      int thisY = m_table.getRowMiddleY( row );
 
       // for each predecessor on task
       Predecessors preds = task.predecessors();
       for ( int p = 0; p < preds.count(); p++ )
       {
+        // if hidden, skip predecessor
         Predecessor pred = preds.get( p );
-        int otherY = m_table.getRowMiddleY( pred.task.index() );
+        int other = pred.task.index();
+        if ( m_table.isRowHidden( other ) )
+          continue;
+
+        int otherY = m_table.getRowMiddleY( other );
 
         switch ( pred.type )
         {

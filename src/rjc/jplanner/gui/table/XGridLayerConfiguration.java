@@ -27,7 +27,6 @@ import org.eclipse.nebula.widgets.nattable.export.config.DefaultExportBindings;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.print.config.DefaultPrintBindings;
 import org.eclipse.nebula.widgets.nattable.ui.binding.UiBindingRegistry;
-import org.eclipse.nebula.widgets.nattable.ui.matcher.CellEditorMouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.ui.matcher.KeyEventMatcher;
 import org.eclipse.nebula.widgets.nattable.ui.matcher.LetterOrDigitKeyEventMatcher;
 import org.eclipse.swt.SWT;
@@ -54,7 +53,7 @@ public class XGridLayerConfiguration extends AggregateConfiguration
         uiBindingRegistry.registerKeyBinding( new LetterOrDigitKeyEventMatcher(), new KeyEditAction() );
         uiBindingRegistry.registerKeyBinding( new LetterOrDigitKeyEventMatcher( SWT.SHIFT ), new KeyEditAction() );
 
-        uiBindingRegistry.registerFirstDoubleClickBinding( new CellEditorMouseEventMatcher( GridRegion.BODY ),
+        uiBindingRegistry.registerFirstDoubleClickBinding( new XCellEditorMouseEventMatcher( GridRegion.BODY ),
             new MouseEditAction() );
       }
     } );

@@ -101,6 +101,21 @@ public class TaskCellPainter extends XCellPainter
       gc.drawLine( x + 4, y - 2, x + 4, y + 2 );
   }
 
+  /************************************* expandCollapseMark **************************************/
+  public static boolean expandCollapseMark( int indent, int x, int y, Rectangle bounds )
+  {
+    // check if specified x,y is mark, ensure calculations are consistent with paintDecorations!
+    int markX = bounds.x + ( INDENT_INITIAL / 3 ) + indent * INDENT_SIZE;
+    if ( x < markX - 1 || x > markX + 9 )
+      return false;
+
+    int markY = bounds.y + ( bounds.height / 2 );
+    if ( y < markY - 6 || y > markY + 4 )
+      return false;
+
+    return true;
+  }
+
   /************************************** getTextAlignment ***************************************/
   @Override
   protected Alignment getTextAlignment( ILayerCell cell )

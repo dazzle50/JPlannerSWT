@@ -262,6 +262,7 @@ public class MainTabWidget extends TabFolder
         {
           case XmlLabels.XML_GANTT:
             m_gantt.loadXML( xsr );
+            m_gantt.updateAll();
             break;
           case XmlLabels.XML_COLUMNS:
             m_tasksTable.loadColumns( xsr );

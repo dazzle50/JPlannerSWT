@@ -857,6 +857,7 @@ public class MainWindow extends Shell
     JPlanner.plan = new Plan();
 
     // attempt to load plan and display-data from XML file
+    JPlanner.trace( "Loading '" + file.getPath() + "'" );
     try
     {
       // create XML stream reader

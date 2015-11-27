@@ -19,6 +19,7 @@
 package rjc.jplanner.gui.table;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,10 +77,12 @@ import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.CommandTaskIndent;
 import rjc.jplanner.command.CommandTaskOutdent;
+import rjc.jplanner.gui.Gantt;
 import rjc.jplanner.gui.editor.CalendarCellEditor;
 import rjc.jplanner.gui.editor.DayCellEditor;
 import rjc.jplanner.gui.editor.ResourceCellEditor;
 import rjc.jplanner.gui.editor.TaskCellEditor;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
 /**************************** JPlanner table based on Nebula NatTable ****************************/
@@ -112,6 +115,9 @@ public class XNatTable extends NatTable
   public RowHideShowLayer    rowHideShowLayer;
   public ViewportLayer       viewport;
   public DataLayer           bodyDataLayer;
+
+  public Collection<Task>    collapsedTasks;
+  public Gantt               gantt;
 
   private TableType          m_type;
 
@@ -170,12 +176,13 @@ public class XNatTable extends NatTable
           @Override
           public void configureRegistry( IConfigRegistry reg )
           {
-            // specialist tasks labels config
+            // specialist tasks cell painter label config with reference to this table
             reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter( XNatTable.this ),
                 DisplayMode.NORMAL, LABEL_TASK_PAINTER );
           }
         } );
         configure();
+        collapsedTasks = new HashSet<Task>();
         break;
 
       default:
@@ -190,6 +197,13 @@ public class XNatTable extends NatTable
     // short string summary
     return "XNatTable@" + Integer.toHexString( hashCode() ) + "[" + m_type + " " + bodyDataLayer.getColumnCount() + "x"
         + bodyDataLayer.getRowCount() + "]";
+  }
+
+  /******************************************* type **********************************************/
+  public TableType type()
+  {
+    // return table type
+    return m_type;
   }
 
   /*************************************** checkStatics ******************************************/
@@ -215,7 +229,7 @@ public class XNatTable extends NatTable
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITABLE_RULE, IEditableRule.ALWAYS_EDITABLE,
               DisplayMode.EDIT, LABEL_CELL_EDITABLE );
 
-          // Cell painters
+          // Cell painters - except task which can't be done from this static
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new DayCellPainter(), DisplayMode.NORMAL,
               LABEL_DAY_PAINTER );
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new CalendarCellPainter(), DisplayMode.NORMAL,
@@ -456,6 +470,9 @@ public class XNatTable extends NatTable
   {
     // show all hidden rows and reset height to default
     rowHideShowLayer.showAllRows();
+    if ( collapsedTasks != null )
+      collapsedTasks.clear();
+
     int count = bodyDataLayer.getRowCount();
     for ( int row = 0; row < count; row++ )
       bodyDataLayer.setRowHeightByPosition( row, DataLayer.DEFAULT_ROW_HEIGHT );
@@ -484,7 +501,13 @@ public class XNatTable extends NatTable
       xsw.writeStartElement( XmlLabels.XML_ROW );
       xsw.writeAttribute( XmlLabels.XML_ID, Integer.toString( row ) );
       xsw.writeAttribute( XmlLabels.XML_HEIGHT, Integer.toString( getRowHeight( row ) ) );
-      xsw.writeAttribute( XmlLabels.XML_HIDDEN, Boolean.toString( isRowHidden( row ) ) );
+      if ( m_type == TableType.TASK )
+      {
+        if ( isRowHidden( row ) )
+          xsw.writeAttribute( XmlLabels.XML_HIDDEN, "true" );
+        if ( collapsedTasks.contains( JPlanner.plan.task( row ) ) )
+          xsw.writeAttribute( XmlLabels.XML_COLLAPSED, "true" );
+      }
       xsw.writeEndElement(); // XML_ROW
     }
     xsw.writeEndElement(); // XML_ROWS
@@ -555,6 +578,8 @@ public class XNatTable extends NatTable
             int id = -1;
             int height = DataLayer.DEFAULT_ROW_HEIGHT;
             boolean hidden = false;
+            boolean collapsed = false;
+
             for ( int i = 0; i < xsr.getAttributeCount(); i++ )
               switch ( xsr.getAttributeLocalName( i ) )
               {
@@ -567,15 +592,21 @@ public class XNatTable extends NatTable
                 case XmlLabels.XML_HIDDEN:
                   hidden = Boolean.parseBoolean( xsr.getAttributeValue( i ) );
                   break;
+                case XmlLabels.XML_COLLAPSED:
+                  collapsed = Boolean.parseBoolean( xsr.getAttributeValue( i ) );
+                  break;
                 default:
                   JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
                   break;
               }
+
             if ( id >= 0 && id < bodyDataLayer.getRowCount() )
             {
               setRowHeight( id, height );
               if ( hidden )
                 hideRow( id );
+              if ( collapsed && collapsedTasks != null )
+                collapsedTasks.add( JPlanner.plan.task( id ) );
             }
             break;
 
@@ -584,6 +615,41 @@ public class XNatTable extends NatTable
             break;
         }
     }
+  }
+
+  /************************************* expandCollapseList **************************************/
+  private Collection<Integer> expandCollapseList( int row )
+  {
+    // construct list of rows to be hidden or shown for specified summary row
+    ArrayList<Integer> list = new ArrayList<Integer>();
+    int end = JPlanner.plan.task( row ).summaryEnd();
+    for ( int index = row + 1; index <= end; index++ )
+    {
+      list.add( index );
+
+      // skip over already collapsed sub-summaries
+      Task task = JPlanner.plan.task( index );
+      if ( collapsedTasks.contains( task ) )
+        index = task.summaryEnd();
+    }
+
+    return list;
+  }
+
+  /**************************************** expandSummary ****************************************/
+  public void expandSummary( int row )
+  {
+    // expand task summary
+    rowHideShowLayer.showRowIndexes( expandCollapseList( row ) );
+    collapsedTasks.remove( JPlanner.plan.task( row ) );
+  }
+
+  /*************************************** collapseSummary ***************************************/
+  public void collapseSummary( int row )
+  {
+    // collapse task summary
+    rowHideShowLayer.hideRowIndexes( expandCollapseList( row ) );
+    collapsedTasks.add( JPlanner.plan.task( row ) );
   }
 
 }
