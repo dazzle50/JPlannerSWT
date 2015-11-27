@@ -27,6 +27,7 @@ import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.CommandSummaryCollapse;
 import rjc.jplanner.command.CommandSummaryExpand;
 import rjc.jplanner.gui.table.XNatTable.TableType;
+import rjc.jplanner.gui.task.TaskCellPainter;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/

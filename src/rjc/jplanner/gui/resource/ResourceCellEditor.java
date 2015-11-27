@@ -16,36 +16,48 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.resource;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Day;
+import rjc.jplanner.gui.editor.TextEditor;
+import rjc.jplanner.gui.editor.XAbstractCellEditor;
+import rjc.jplanner.gui.editor.XComboCalendar;
+import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/******************************** Editor for resource table cells ********************************/
 /*************************************************************************************************/
 
-public class DaysLabelAccumulator implements IConfigLabelAccumulator
+public class ResourceCellEditor extends XAbstractCellEditor
 {
-
-  /*********************************** accumulateConfigLabels ************************************/
+  /**************************************** createEditor *****************************************/
   @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  public Control createEditor( int row, int col )
   {
-    // add config labels to style cell
-    Day day = JPlanner.plan.day( row );
+    // create editor based on column
+    if ( col == Resource.SECTION_INITIALS )
+      return new ResourceInitialsEditor( parent );
 
-    labels.addLabel( XNatTable.LABEL_DAY_PAINTER );
-
-    // all cells editable except shaded unused start/end cells
-    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
+    if ( col == Resource.SECTION_NAME || col == Resource.SECTION_ORG || col == Resource.SECTION_GROUP
+        || col == Resource.SECTION_ROLE || col == Resource.SECTION_ALIAS || col == Resource.SECTION_COMMENT )
     {
-      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-      labels.addLabel( XNatTable.LABEL_DAY_EDITOR );
+      TextEditor editor = new TextEditor( parent );
+      editor.setTextLimit( 100 );
+      return editor;
     }
+
+    if ( col == Resource.SECTION_CALENDAR )
+    {
+      XComboCalendar combo = new XComboCalendar( parent, SWT.NONE );
+      combo.setText( JPlanner.plan.resource( row ).toString( col ) );
+      return combo;
+    }
+
+    // TODO - use Text editor until find/write something better
+    return new TextEditor( parent );
   }
 
 }

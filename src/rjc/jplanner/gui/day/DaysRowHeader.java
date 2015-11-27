@@ -16,34 +16,55 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.editor;
+package rjc.jplanner.gui.day;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
-
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Calendar;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /*************************************************************************************************/
-/******************************** Editor for calendar table cells ********************************/
+/************************ Row header data provider for day-types NatTable ************************/
 /*************************************************************************************************/
 
-public class CalendarCellEditor extends XAbstractCellEditor
+public class DaysRowHeader implements IDataProvider
 {
-  /**************************************** createEditor *****************************************/
-  @Override
-  public Control createEditor( int row, int col )
-  {
-    // create editor based on row
-    if ( row >= Calendar.SECTION_NORMAL1 )
-    {
-      XComboDay combo = new XComboDay( parent, SWT.NONE );
-      combo.setText( JPlanner.plan.calendar( col ).toString( row ) );
-      return combo;
-    }
+  private IDataProvider m_body; // data provider for the table body
 
-    // TODO - use Text editor until find/write something better
-    return new TextEditor( parent );
+  /**************************************** constructor ******************************************/
+  public DaysRowHeader( IDataProvider body )
+  {
+    // initialise variable
+    m_body = body;
+  }
+
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // must be one
+    return 1;
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return row index plus one
+    return row + 1;
+  }
+
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // must be same as body
+    return m_body.getRowCount();
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int col, int row, Object newValue )
+  {
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }

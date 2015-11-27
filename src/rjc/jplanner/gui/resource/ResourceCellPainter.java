@@ -16,36 +16,47 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.resource;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
+import org.eclipse.swt.graphics.Color;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XCellPainter;
 import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/************************ Responsible for painting a Resource table cell *************************/
 /*************************************************************************************************/
 
-public class ResourcesLabelAccumulator implements IConfigLabelAccumulator
+public class ResourceCellPainter extends XCellPainter
 {
 
-  /*********************************** accumulateConfigLabels ************************************/
+  /**************************************** getBackground ****************************************/
   @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  protected Color getBackground( ILayerCell cell )
   {
-    // add config labels to style cell
-    Resource res = JPlanner.plan.resource( row );
+    // cell colour depends on if cell editable or not
+    int col = cell.getColumnIndex();
+    Resource res = JPlanner.plan.resource( cell.getRowIndex() );
 
-    labels.addLabel( XNatTable.LABEL_RESOURCE_PAINTER );
-
-    // all cells editable unless resource is null
     if ( col == Resource.SECTION_INITIALS || !res.isNull() )
-    {
-      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-      labels.addLabel( XNatTable.LABEL_RESOURCE_EDITOR );
-    }
+      return JPlanner.gui.COLOR_CELL_ENABLED;
+
+    return JPlanner.gui.COLOR_CELL_DISABLED;
+  }
+
+  /************************************** getTextAlignment ***************************************/
+  @Override
+  protected Alignment getTextAlignment( ILayerCell cell )
+  {
+    // text alignment depends on column
+    int col = cell.getColumnIndex();
+
+    if ( col == Resource.SECTION_COMMENT )
+      return Alignment.LEFT;
+
+    return Alignment.MIDDLE;
   }
 
 }

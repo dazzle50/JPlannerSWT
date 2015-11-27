@@ -16,57 +16,37 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.day;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
+import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XNatTable;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/************************ Row header data provider for calendars NatTable ************************/
+/*********************** Label Accumulator for styling of individual cells ***********************/
 /*************************************************************************************************/
 
-public class CalendarsRowHeader implements IDataProvider
+public class DaysLabelAccumulator implements IConfigLabelAccumulator
 {
-  private IDataProvider m_body; // data provider for the table body
 
-  /**************************************** constructor ******************************************/
-  public CalendarsRowHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
-
-  /************************************** getColumnCount *****************************************/
+  /*********************************** accumulateConfigLabels ************************************/
   @Override
-  public int getColumnCount()
+  public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
-    // must be one
-    return 1;
-  }
+    // add config labels to style cell
+    Day day = JPlanner.plan.day( row );
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return column title
-    return Calendar.sectionName( row );
-  }
+    labels.addLabel( XNatTable.LABEL_DAY_PAINTER );
 
-  /**************************************** getRowCount ******************************************/
-  @Override
-  public int getRowCount()
-  {
-    // must be same as body
-    return m_body.getRowCount();
-  }
-
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // all cells editable except shaded unused start/end cells
+    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 )
+    {
+      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+      labels.addLabel( XNatTable.LABEL_DAY_EDITOR );
+    }
   }
 
 }

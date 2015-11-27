@@ -16,12 +16,13 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.day;
 
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.swt.graphics.Color;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XCellPainter;
 import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/

@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.command.CommandPlanSetProperties;
+import rjc.jplanner.gui.editor.DateTimeEditor;
 import rjc.jplanner.gui.editor.XComboCalendar;
 import rjc.jplanner.model.Calendar;
 import rjc.jplanner.model.Date;

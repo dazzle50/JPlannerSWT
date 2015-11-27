@@ -16,7 +16,7 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui;
+package rjc.jplanner.gui.editor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;

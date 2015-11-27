@@ -16,55 +16,34 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.calendar;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
+import org.eclipse.swt.graphics.Color;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandResourceSetValue;
-import rjc.jplanner.model.Resource;
+import rjc.jplanner.gui.table.XCellPainter;
+import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
-/************************** Body data provider for resources NatTable ****************************/
+/************************ Responsible for painting a Calendar table cell *************************/
 /*************************************************************************************************/
 
-public class ResourcesBody implements IDataProvider
+public class CalendarCellPainter extends XCellPainter
 {
 
-  /************************************** getColumnCount *****************************************/
+  /**************************************** getBackground ****************************************/
   @Override
-  public int getColumnCount()
+  protected Color getBackground( ILayerCell cell )
   {
-    // table row count is constant
-    return Resource.SECTION_MAX + 1;
-  }
+    // cell colour depends on if cell editable or not
+    int row = cell.getRowIndex();
+    Calendar cal = JPlanner.plan.calendar( cell.getColumnIndex() );
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return appropriate value for table cell
-    return JPlanner.plan.resource( row ).toString( col );
-  }
+    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
+      return JPlanner.gui.COLOR_CELL_ENABLED;
 
-  /**************************************** getRowCount ******************************************/
-  @Override
-  public int getRowCount()
-  {
-    // return number of resources in plan
-    return JPlanner.plan.resourcesCount();
-  }
-
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // if new value equals old value, exit with no command
-    Object oldValue = getDataValue( col, row );
-    if ( newValue.equals( oldValue ) )
-      return;
-
-    JPlanner.plan.undostack().push( new CommandResourceSetValue( row, col, newValue, oldValue ) );
+    return JPlanner.gui.COLOR_CELL_DISABLED;
   }
 
 }

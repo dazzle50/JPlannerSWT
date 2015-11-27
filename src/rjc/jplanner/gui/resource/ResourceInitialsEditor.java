@@ -16,29 +16,27 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.editor;
+package rjc.jplanner.gui.resource;
 
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Predecessors;
-import rjc.jplanner.model.TimeSpan;
+import rjc.jplanner.gui.editor.TextEditor;
 
 /*************************************************************************************************/
-/**************************** Table cell editor for Task predecessors ****************************/
+/**************************** Table cell editor for Resource initials ****************************/
 /*************************************************************************************************/
 
-public class TaskPredecessorsEditor extends TextEditor
+public class ResourceInitialsEditor extends TextEditor
 {
 
   /**************************************** constructor ******************************************/
-  public TaskPredecessorsEditor( Composite parent, int row )
+  public ResourceInitialsEditor( Composite parent )
   {
     super( parent );
-
-    String valid = "[" + TimeSpan.UNITS + "fFsS+-0123456789.]*";
+    setTextLimit( 20 );
 
     m_prime.addVerifyListener( new VerifyListener()
     {
@@ -50,16 +48,20 @@ public class TaskPredecessorsEditor extends TextEditor
           String oldS = m_prime.getText();
           String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
 
-          // any characters valid for time-spans and upper+lower case s & f
-          if ( !newS.matches( valid ) )
+          // any characters except white-space, comma, open & close sq brackets
+          if ( !newS.matches( "[^\\s,\\[\\]]*" ) )
             throw new IllegalArgumentException();
 
           // highlight text red with explanation message if invalid
-          String errors = Predecessors.errors( newS, row );
-          if ( errors.length() > 0 )
+          if ( newS.length() == 0 )
           {
             m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-            JPlanner.gui.message( errors );
+            JPlanner.gui.message( "Blank initials not allowed" );
+          }
+          else if ( newS.equals( "TODO" ) ) // TODO duplicates not allowed !!!!!!!!!!
+          {
+            m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+            JPlanner.gui.message( "Duplicate initials not allowed" );
           }
           else
           {
@@ -70,19 +72,10 @@ public class TaskPredecessorsEditor extends TextEditor
         catch ( Exception e )
         {
           event.doit = false;
-          JPlanner.trace( "DEBUG TaskPredecessorsEditor verifyText exception = " + e.toString() );
         }
       }
     } );
 
-  }
-
-  /******************************************* setText *******************************************/
-  @Override
-  public void setText( String str )
-  {
-    // take out any white spaces
-    super.setText( str.replaceAll( "\\s+", "" ) );
   }
 
 }

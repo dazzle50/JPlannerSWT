@@ -16,46 +16,37 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.calendar;
 
-import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
+import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Resource;
+import rjc.jplanner.gui.table.XNatTable;
+import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
-/************************ Responsible for painting a Resource table cell *************************/
+/*********************** Label Accumulator for styling of individual cells ***********************/
 /*************************************************************************************************/
 
-public class ResourceCellPainter extends XCellPainter
+public class CalendarsLabelAccumulator implements IConfigLabelAccumulator
 {
 
-  /**************************************** getBackground ****************************************/
+  /*********************************** accumulateConfigLabels ************************************/
   @Override
-  protected Color getBackground( ILayerCell cell )
+  public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
-    // cell colour depends on if cell editable or not
-    int col = cell.getColumnIndex();
-    Resource res = JPlanner.plan.resource( cell.getRowIndex() );
+    // add config labels to style cell
+    Calendar cal = JPlanner.plan.calendar( col );
 
-    if ( col == Resource.SECTION_INITIALS || !res.isNull() )
-      return JPlanner.gui.COLOR_CELL_ENABLED;
+    labels.addLabel( XNatTable.LABEL_CALENDAR_PAINTER );
 
-    return JPlanner.gui.COLOR_CELL_DISABLED;
-  }
-
-  /************************************** getTextAlignment ***************************************/
-  @Override
-  protected Alignment getTextAlignment( ILayerCell cell )
-  {
-    // text alignment depends on column
-    int col = cell.getColumnIndex();
-
-    if ( col == Resource.SECTION_COMMENT )
-      return Alignment.LEFT;
-
-    return Alignment.MIDDLE;
+    // all cells editable except shaded unused normal cells
+    if ( row < cal.numNormals() + Calendar.SECTION_NORMAL1 )
+    {
+      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+      labels.addLabel( XNatTable.LABEL_CALENDAR_EDITOR );
+    }
   }
 
 }

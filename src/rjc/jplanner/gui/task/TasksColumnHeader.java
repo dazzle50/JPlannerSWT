@@ -16,45 +16,57 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.editor;
+package rjc.jplanner.gui.task;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Resource;
+import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
-/******************************** Editor for resource table cells ********************************/
+/************************ Column header data provider for tasks NatTable *************************/
 /*************************************************************************************************/
 
-public class ResourceCellEditor extends XAbstractCellEditor
+public class TasksColumnHeader implements IDataProvider
 {
-  /**************************************** createEditor *****************************************/
-  @Override
-  public Control createEditor( int row, int col )
+  private IDataProvider m_body; // data provider for the table body
+
+  /**************************************** constructor ******************************************/
+  public TasksColumnHeader( IDataProvider body )
   {
-    // create editor based on column
-    if ( col == Resource.SECTION_INITIALS )
-      return new ResourceInitialsEditor( parent );
+    // initialise variable
+    m_body = body;
+  }
 
-    if ( col == Resource.SECTION_NAME || col == Resource.SECTION_ORG || col == Resource.SECTION_GROUP
-        || col == Resource.SECTION_ROLE || col == Resource.SECTION_ALIAS || col == Resource.SECTION_COMMENT )
-    {
-      TextEditor editor = new TextEditor( parent );
-      editor.setTextLimit( 100 );
-      return editor;
-    }
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // must be same as body
+    return m_body.getColumnCount();
+  }
 
-    if ( col == Resource.SECTION_CALENDAR )
-    {
-      XComboCalendar combo = new XComboCalendar( parent, SWT.NONE );
-      combo.setText( JPlanner.plan.resource( row ).toString( col ) );
-      return combo;
-    }
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return column title
+    return Task.sectionName( col );
+  }
 
-    // TODO - use Text editor until find/write something better
-    return new TextEditor( parent );
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // must be one
+    return 1;
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int col, int row, Object newValue )
+  {
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }

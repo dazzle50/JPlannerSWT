@@ -16,43 +16,49 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.day;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandTaskSetValue;
-import rjc.jplanner.model.Task;
+import rjc.jplanner.command.CommandDaySetNumPeriods;
+import rjc.jplanner.command.CommandDaySetValue;
+import rjc.jplanner.model.Day;
 
 /*************************************************************************************************/
-/**************************** Body data provider for tasks NatTable ******************************/
+/************************** Body data provider for day-types NatTable ****************************/
 /*************************************************************************************************/
 
-public class TasksBody implements IDataProvider
+public class DaysBody implements IDataProvider
 {
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // table row count is constant
-    return Task.SECTION_MAX + 1;
-  }
+    // table column count is max number of periods * 2 + SECTION_START1
+    int max = 0;
+    for ( int i = 0; i < getRowCount(); i++ )
+      if ( JPlanner.plan.day( i ).numPeriods() > max )
+        max = JPlanner.plan.day( i ).numPeriods();
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return appropriate value for table cell
-    return JPlanner.plan.task( row ).toString( col );
+    return max * 2 + Day.SECTION_START1;
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // return number of tasks in plan
-    return JPlanner.plan.tasksCount();
+    // return number of day-types in plan
+    return JPlanner.plan.daysCount();
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return appropriate display value for table cell
+    return JPlanner.plan.day( row ).toString( col );
   }
 
   /*************************************** setDataValue ******************************************/
@@ -64,7 +70,11 @@ public class TasksBody implements IDataProvider
     if ( newValue.equals( oldValue ) )
       return;
 
-    JPlanner.plan.undostack().push( new CommandTaskSetValue( row, col, newValue, oldValue ) );
+    // special command for setting number of work periods, otherwise generic
+    if ( col == Day.SECTION_PERIODS )
+      JPlanner.plan.undostack().push( new CommandDaySetNumPeriods( row, newValue, oldValue ) );
+    else
+      JPlanner.plan.undostack().push( new CommandDaySetValue( row, col, newValue, oldValue ) );
   }
 
 }

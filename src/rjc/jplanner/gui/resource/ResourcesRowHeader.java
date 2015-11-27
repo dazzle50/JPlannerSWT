@@ -16,44 +16,55 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.editor;
+package rjc.jplanner.gui.resource;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
-
-import rjc.jplanner.JPlanner;
-import rjc.jplanner.model.Task;
-import rjc.jplanner.model.TimeSpan;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /*************************************************************************************************/
-/********************************** Editor for task table cells **********************************/
+/************************ Row header data provider for resources NatTable ************************/
 /*************************************************************************************************/
 
-public class TaskCellEditor extends XAbstractCellEditor
+public class ResourcesRowHeader implements IDataProvider
 {
-  /**************************************** createEditor *****************************************/
-  @Override
-  public Control createEditor( int row, int col )
+  private IDataProvider m_body; // data provider for the table body
+
+  /**************************************** constructor ******************************************/
+  public ResourcesRowHeader( IDataProvider body )
   {
-    // create editor based on column
-    if ( col == Task.SECTION_TYPE )
-    {
-      XComboTaskType combo = new XComboTaskType( parent, SWT.NONE );
-      combo.setText( JPlanner.plan.task( row ).toString( col ) );
-      return combo;
-    }
+    // initialise variable
+    m_body = body;
+  }
 
-    if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
-    {
-      TimeSpan sp = new TimeSpan( JPlanner.plan.task( row ).toString( col ) );
-      return new TimeSpanEditor( parent, sp );
-    }
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // must be one
+    return 1;
+  }
 
-    if ( col == Task.SECTION_PRED )
-      return new TaskPredecessorsEditor( parent, row );
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return row index
+    return row;
+  }
 
-    // TODO - use Text editor until find/write something better
-    return new TextEditor( parent );
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // must be same as body
+    return m_body.getRowCount();
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int col, int row, Object newValue )
+  {
+    // setting header data not supported
+    throw new UnsupportedOperationException();
   }
 
 }

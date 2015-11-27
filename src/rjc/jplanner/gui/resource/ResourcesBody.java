@@ -16,29 +16,27 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.resource;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 import rjc.jplanner.JPlanner;
-import rjc.jplanner.command.CommandCalendarSetCycleLength;
-import rjc.jplanner.command.CommandCalendarSetExceptions;
-import rjc.jplanner.command.CommandCalendarSetValue;
-import rjc.jplanner.model.Calendar;
+import rjc.jplanner.command.CommandResourceSetValue;
+import rjc.jplanner.model.Resource;
 
 /*************************************************************************************************/
-/************************** Body data provider for calendars NatTable ****************************/
+/************************** Body data provider for resources NatTable ****************************/
 /*************************************************************************************************/
 
-public class CalendarsBody implements IDataProvider
+public class ResourcesBody implements IDataProvider
 {
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // return number of calendars in plan
-    return JPlanner.plan.calendarsCount();
+    // table row count is constant
+    return Resource.SECTION_MAX + 1;
   }
 
   /*************************************** getDataValue ******************************************/
@@ -46,20 +44,15 @@ public class CalendarsBody implements IDataProvider
   public Object getDataValue( int col, int row )
   {
     // return appropriate value for table cell
-    return JPlanner.plan.calendar( col ).toString( row );
+    return JPlanner.plan.resource( row ).toString( col );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // table row count is max number of normals + SECTION_NORMAL1
-    int max = 0;
-    for ( int i = 0; i < getColumnCount(); i++ )
-      if ( JPlanner.plan.calendar( i ).numNormals() > max )
-        max = JPlanner.plan.calendar( i ).numNormals();
-
-    return max + Calendar.SECTION_NORMAL1;
+    // return number of resources in plan
+    return JPlanner.plan.resourcesCount();
   }
 
   /*************************************** setDataValue ******************************************/
@@ -71,13 +64,7 @@ public class CalendarsBody implements IDataProvider
     if ( newValue.equals( oldValue ) )
       return;
 
-    // special command for setting exceptions & cycle-length, otherwise generic
-    if ( row == Calendar.SECTION_EXCEPTIONS )
-      JPlanner.plan.undostack().push( new CommandCalendarSetExceptions( col, newValue, oldValue ) );
-    else if ( row == Calendar.SECTION_CYCLE )
-      JPlanner.plan.undostack().push( new CommandCalendarSetCycleLength( col, newValue, oldValue ) );
-    else
-      JPlanner.plan.undostack().push( new CommandCalendarSetValue( col, row, newValue, oldValue ) );
+    JPlanner.plan.undostack().push( new CommandResourceSetValue( row, col, newValue, oldValue ) );
   }
 
 }

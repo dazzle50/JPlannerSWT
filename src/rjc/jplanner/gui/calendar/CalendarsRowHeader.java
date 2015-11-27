@@ -16,32 +16,57 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.calendar;
 
-import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
-import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
-import rjc.jplanner.JPlanner;
+import rjc.jplanner.model.Calendar;
 
 /*************************************************************************************************/
-/*********************** Label Accumulator for styling of individual cells ***********************/
+/************************ Row header data provider for calendars NatTable ************************/
 /*************************************************************************************************/
 
-public class TasksLabelAccumulator implements IConfigLabelAccumulator
+public class CalendarsRowHeader implements IDataProvider
 {
+  private IDataProvider m_body; // data provider for the table body
 
-  /*********************************** accumulateConfigLabels ************************************/
-  @Override
-  public void accumulateConfigLabels( LabelStack labels, int col, int row )
+  /**************************************** constructor ******************************************/
+  public CalendarsRowHeader( IDataProvider body )
   {
-    // add config labels to style cell
-    labels.addLabel( XNatTable.LABEL_TASK_PAINTER );
-
-    // if cell is editable, add editable and task editor labels
-    if ( JPlanner.plan.task( row ).isSectionEditable( col ) )
-    {
-      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
-      labels.addLabel( XNatTable.LABEL_TASK_EDITOR );
-    }
+    // initialise variable
+    m_body = body;
   }
+
+  /************************************** getColumnCount *****************************************/
+  @Override
+  public int getColumnCount()
+  {
+    // must be one
+    return 1;
+  }
+
+  /*************************************** getDataValue ******************************************/
+  @Override
+  public Object getDataValue( int col, int row )
+  {
+    // return column title
+    return Calendar.sectionName( row );
+  }
+
+  /**************************************** getRowCount ******************************************/
+  @Override
+  public int getRowCount()
+  {
+    // must be same as body
+    return m_body.getRowCount();
+  }
+
+  /*************************************** setDataValue ******************************************/
+  @Override
+  public void setDataValue( int col, int row, Object newValue )
+  {
+    // setting header data not supported
+    throw new UnsupportedOperationException();
+  }
+
 }

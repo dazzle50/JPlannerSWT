@@ -16,57 +16,33 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.task;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.nebula.widgets.nattable.layer.LabelStack;
+import org.eclipse.nebula.widgets.nattable.layer.cell.IConfigLabelAccumulator;
 
-import rjc.jplanner.model.Resource;
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XNatTable;
 
 /*************************************************************************************************/
-/********************** Column header data provider for resources NatTable ***********************/
+/*********************** Label Accumulator for styling of individual cells ***********************/
 /*************************************************************************************************/
 
-public class ResourcesColumnHeader implements IDataProvider
+public class TasksLabelAccumulator implements IConfigLabelAccumulator
 {
-  private IDataProvider m_body; // data provider for the table body
 
-  /**************************************** constructor ******************************************/
-  public ResourcesColumnHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
-
-  /************************************** getColumnCount *****************************************/
+  /*********************************** accumulateConfigLabels ************************************/
   @Override
-  public int getColumnCount()
+  public void accumulateConfigLabels( LabelStack labels, int col, int row )
   {
-    // must be same as body
-    return m_body.getColumnCount();
-  }
+    // add config labels to style cell
+    labels.addLabel( XNatTable.LABEL_TASK_PAINTER );
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return column title
-    return Resource.sectionName( col );
+    // if cell is editable, add editable and task editor labels
+    if ( JPlanner.plan.task( row ).isSectionEditable( col ) )
+    {
+      labels.addLabel( XNatTable.LABEL_CELL_EDITABLE );
+      labels.addLabel( XNatTable.LABEL_TASK_EDITOR );
+    }
   }
-
-  /**************************************** getRowCount ******************************************/
-  @Override
-  public int getRowCount()
-  {
-    // must be one
-    return 1;
-  }
-
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
-  }
-
 }

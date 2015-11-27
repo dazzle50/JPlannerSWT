@@ -78,10 +78,30 @@ import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.CommandTaskIndent;
 import rjc.jplanner.command.CommandTaskOutdent;
 import rjc.jplanner.gui.Gantt;
-import rjc.jplanner.gui.editor.CalendarCellEditor;
-import rjc.jplanner.gui.editor.DayCellEditor;
-import rjc.jplanner.gui.editor.ResourceCellEditor;
-import rjc.jplanner.gui.editor.TaskCellEditor;
+import rjc.jplanner.gui.calendar.CalendarCellEditor;
+import rjc.jplanner.gui.calendar.CalendarCellPainter;
+import rjc.jplanner.gui.calendar.CalendarsBody;
+import rjc.jplanner.gui.calendar.CalendarsColumnHeader;
+import rjc.jplanner.gui.calendar.CalendarsLabelAccumulator;
+import rjc.jplanner.gui.calendar.CalendarsRowHeader;
+import rjc.jplanner.gui.day.DayCellEditor;
+import rjc.jplanner.gui.day.DayCellPainter;
+import rjc.jplanner.gui.day.DaysBody;
+import rjc.jplanner.gui.day.DaysColumnHeader;
+import rjc.jplanner.gui.day.DaysLabelAccumulator;
+import rjc.jplanner.gui.day.DaysRowHeader;
+import rjc.jplanner.gui.resource.ResourceCellEditor;
+import rjc.jplanner.gui.resource.ResourceCellPainter;
+import rjc.jplanner.gui.resource.ResourcesBody;
+import rjc.jplanner.gui.resource.ResourcesColumnHeader;
+import rjc.jplanner.gui.resource.ResourcesLabelAccumulator;
+import rjc.jplanner.gui.resource.ResourcesRowHeader;
+import rjc.jplanner.gui.task.TaskCellEditor;
+import rjc.jplanner.gui.task.TaskCellPainter;
+import rjc.jplanner.gui.task.TasksBody;
+import rjc.jplanner.gui.task.TasksColumnHeader;
+import rjc.jplanner.gui.task.TasksLabelAccumulator;
+import rjc.jplanner.gui.task.TasksRowHeader;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
@@ -437,7 +457,7 @@ public class XNatTable extends NatTable
   }
 
   /*************************************** setRowHeight ******************************************/
-  private void setRowHeight( int row, int height )
+  public void setRowHeight( int row, int height )
   {
     // set width of specified column
     bodyDataLayer.setRowHeightByPosition( row, height );

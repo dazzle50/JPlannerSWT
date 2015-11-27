@@ -16,55 +16,48 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.task;
 
-import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
+
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.editor.TextEditor;
+import rjc.jplanner.gui.editor.TimeSpanEditor;
+import rjc.jplanner.gui.editor.XAbstractCellEditor;
+import rjc.jplanner.gui.editor.XComboTaskType;
+import rjc.jplanner.model.Task;
+import rjc.jplanner.model.TimeSpan;
 
 /*************************************************************************************************/
-/************************ Row header data provider for resources NatTable ************************/
+/********************************** Editor for task table cells **********************************/
 /*************************************************************************************************/
 
-public class ResourcesRowHeader implements IDataProvider
+public class TaskCellEditor extends XAbstractCellEditor
 {
-  private IDataProvider m_body; // data provider for the table body
-
-  /**************************************** constructor ******************************************/
-  public ResourcesRowHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
-
-  /************************************** getColumnCount *****************************************/
+  /**************************************** createEditor *****************************************/
   @Override
-  public int getColumnCount()
+  public Control createEditor( int row, int col )
   {
-    // must be one
-    return 1;
-  }
+    // create editor based on column
+    if ( col == Task.SECTION_TYPE )
+    {
+      XComboTaskType combo = new XComboTaskType( parent, SWT.NONE );
+      combo.setText( JPlanner.plan.task( row ).toString( col ) );
+      return combo;
+    }
 
-  /*************************************** getDataValue ******************************************/
-  @Override
-  public Object getDataValue( int col, int row )
-  {
-    // return row index
-    return row;
-  }
+    if ( col == Task.SECTION_DURATION || col == Task.SECTION_WORK )
+    {
+      TimeSpan sp = new TimeSpan( JPlanner.plan.task( row ).toString( col ) );
+      return new TimeSpanEditor( parent, sp );
+    }
 
-  /**************************************** getRowCount ******************************************/
-  @Override
-  public int getRowCount()
-  {
-    // must be same as body
-    return m_body.getRowCount();
-  }
+    if ( col == Task.SECTION_PRED )
+      return new TaskPredecessorsEditor( parent, row );
 
-  /*************************************** setDataValue ******************************************/
-  @Override
-  public void setDataValue( int col, int row, Object newValue )
-  {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // TODO - use Text editor until find/write something better
+    return new TextEditor( parent );
   }
 
 }

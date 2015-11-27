@@ -16,55 +16,55 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.task;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.JPlanner;
+import rjc.jplanner.command.CommandTaskSetValue;
+import rjc.jplanner.model.Task;
+
 /*************************************************************************************************/
-/********************** Column header data provider for calendars NatTable ***********************/
+/**************************** Body data provider for tasks NatTable ******************************/
 /*************************************************************************************************/
 
-public class CalendarsColumnHeader implements IDataProvider
+public class TasksBody implements IDataProvider
 {
-  private IDataProvider m_body; // data provider for the table body
-
-  /**************************************** constructor ******************************************/
-  public CalendarsColumnHeader( IDataProvider body )
-  {
-    // initialise variable
-    m_body = body;
-  }
 
   /************************************** getColumnCount *****************************************/
   @Override
   public int getColumnCount()
   {
-    // must be same as body
-    return m_body.getColumnCount();
+    // table row count is constant
+    return Task.SECTION_MAX + 1;
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return column title
-    return "Calendar " + ( col + 1 );
+    // return appropriate value for table cell
+    return JPlanner.plan.task( row ).toString( col );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // must be one
-    return 1;
+    // return number of tasks in plan
+    return JPlanner.plan.tasksCount();
   }
 
   /*************************************** setDataValue ******************************************/
   @Override
   public void setDataValue( int col, int row, Object newValue )
   {
-    // setting header data not supported
-    throw new UnsupportedOperationException();
+    // if new value equals old value, exit with no command
+    Object oldValue = getDataValue( col, row );
+    if ( newValue.equals( oldValue ) )
+      return;
+
+    JPlanner.plan.undostack().push( new CommandTaskSetValue( row, col, newValue, oldValue ) );
   }
 
 }

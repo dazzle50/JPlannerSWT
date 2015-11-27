@@ -16,7 +16,7 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.task;
 
 import org.eclipse.nebula.widgets.nattable.layer.cell.ILayerCell;
 import org.eclipse.swt.SWT;
@@ -25,6 +25,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.table.XCellPainter;
+import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/

@@ -16,7 +16,7 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.editor;
+package rjc.jplanner.gui.day;
 
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,6 +24,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.editor.SpinEditor;
+import rjc.jplanner.gui.editor.TextEditor;
+import rjc.jplanner.gui.editor.TimeEditor;
+import rjc.jplanner.gui.editor.XAbstractCellEditor;
 import rjc.jplanner.model.Day;
 import rjc.jplanner.model.Time;
 

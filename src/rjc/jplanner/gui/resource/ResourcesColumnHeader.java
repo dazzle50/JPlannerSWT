@@ -16,20 +16,22 @@
  *  along with this program.  If not, see http://www.gnu.org/licenses/    *
  **************************************************************************/
 
-package rjc.jplanner.gui.table;
+package rjc.jplanner.gui.resource;
 
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
+import rjc.jplanner.model.Resource;
+
 /*************************************************************************************************/
-/************************** Row header data provider for tasks NatTable **************************/
+/********************** Column header data provider for resources NatTable ***********************/
 /*************************************************************************************************/
 
-public class TasksRowHeader implements IDataProvider
+public class ResourcesColumnHeader implements IDataProvider
 {
   private IDataProvider m_body; // data provider for the table body
 
   /**************************************** constructor ******************************************/
-  public TasksRowHeader( IDataProvider body )
+  public ResourcesColumnHeader( IDataProvider body )
   {
     // initialise variable
     m_body = body;
@@ -39,24 +41,24 @@ public class TasksRowHeader implements IDataProvider
   @Override
   public int getColumnCount()
   {
-    // must be one
-    return 1;
+    // must be same as body
+    return m_body.getColumnCount();
   }
 
   /*************************************** getDataValue ******************************************/
   @Override
   public Object getDataValue( int col, int row )
   {
-    // return row index
-    return row;
+    // return column title
+    return Resource.sectionName( col );
   }
 
   /**************************************** getRowCount ******************************************/
   @Override
   public int getRowCount()
   {
-    // must be same as body
-    return m_body.getRowCount();
+    // must be one
+    return 1;
   }
 
   /*************************************** setDataValue ******************************************/
