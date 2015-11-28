@@ -24,8 +24,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
@@ -45,22 +43,25 @@ import rjc.jplanner.JPlanner;
 /******************************* Replacement for SWT Spinner widget ******************************/
 /*************************************************************************************************/
 
-public class SpinEditor extends Composite
+public class SpinEditor extends Composite implements ModifyListener, VerifyListener
 {
-  private Text      m_prime;         // control which accepts the key presses etc
-  private int       m_height;        // height of editor
-  private int       m_minWidth;      // minimum width of editor, can be larger
+  private Text      m_prime;             // control which accepts the key presses etc
+  private int       m_height;            // height of editor
+  private int       m_minWidth;          // minimum width of editor, can be larger
+  private Listener  m_mouseWheelListener;// listener for mouse wheel events
 
-  protected String  m_prefix;        // prefix shown before value
-  protected String  m_suffix;        // suffix shown after value
-  protected double  m_value;         // numerical value being shown
-  protected double  m_step;          // small step for example on arrow-up or arrow-down
-  protected double  m_page;          // large step for example on page-up or page-down
-  protected double  m_min;           // min valid value
-  protected double  m_max;           // max valid value
-  protected int     m_minDigits;     // minimum number of digits, padded with zeros on left
-  protected int     m_decimalPlaces; // number of decimal places, padded with zeros on right
-  protected boolean m_suppressZeros; // suppress unneeded zeros & dp at end of displayed value
+  protected String  m_prefix;            // prefix shown before value
+  protected String  m_suffix;            // suffix shown after value
+  protected double  m_value;             // numerical value being shown
+  protected double  m_step;              // small step for example on arrow-up or arrow-down
+  protected double  m_page;              // large step for example on page-up or page-down
+  protected double  m_min;               // min valid value
+  protected double  m_max;               // max valid value
+  protected int     m_minDigits;         // minimum number of digits, padded with zeros on left
+  protected int     m_decimalPlaces;     // number of decimal places, padded with zeros on right
+  protected boolean m_suppressZeros;     // suppress unneeded zeros & dp at end of displayed value
+
+  public static int TEXT_WIDTH_EXTRA;
 
   /**************************************** constructor ******************************************/
   public SpinEditor( Composite parent, double value, boolean suppressZeros )
@@ -76,6 +77,7 @@ public class SpinEditor extends Composite
     setBackground( JPlanner.gui.COLOR_WHITE );
 
     // SWT text editor to display value and accept user edit actions 
+    TEXT_WIDTH_EXTRA = ( SpinUpDownButtons.SPINBUTTONS_WIDTH * 13 ) / 10;
     m_prime = new Text( this, SWT.NONE );
     m_prime.setLayoutData( new GridData( SWT.FILL, SWT.CENTER, true, false, 1, 1 ) );
 
@@ -96,50 +98,23 @@ public class SpinEditor extends Composite
     m_suppressZeros = suppressZeros;
 
     // listen to modify to ensure editor width is sufficient to show whole text, and in valid value range
-    m_prime.addModifyListener( new ModifyListener()
-    {
-      @Override
-      public void modifyText( ModifyEvent event )
-      {
-        SpinEditor.this.setSize( widthForText(), m_height );
-
-        // if value is out of range, highlight text red to indicated invalid
-        determineValue();
-        if ( getText().length() == 0 )
-        {
-          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-          JPlanner.gui.message( "Blank not allowed" );
-        }
-        else if ( m_value < m_min )
-        {
-          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-          JPlanner.gui.message( "Value below minimum allowed (" + m_min + ")" );
-        }
-        else if ( m_value > m_max )
-        {
-          m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
-          JPlanner.gui.message( "Value above maximum allowed (" + m_max + ")" );
-        }
-        else
-        {
-          m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
-          JPlanner.gui.message( "" );
-        }
-      }
-    } );
+    m_prime.addModifyListener( this );
 
     // react to mouse wheel events
-    addMouseWheelListener( new MouseWheelListener()
+    m_mouseWheelListener = new Listener()
     {
       @Override
-      public void mouseScrolled( MouseEvent event )
+      public void handleEvent( Event event )
       {
+        event.doit = false;
         if ( event.count > 0 )
           stepUp();
         else
           stepDown();
       }
-    } );
+    };
+    m_prime.addListener( SWT.MouseWheel, m_mouseWheelListener );
+    getParent().addListener( SWT.MouseWheel, m_mouseWheelListener );
 
     // react to up / down button presses
     buttons.addListener( SWT.MouseDown, new Listener()
@@ -201,53 +176,85 @@ public class SpinEditor extends Composite
     } );
 
     // verify any changes to editor text are valid, i.e. don't edit suffix & prefix, and valid number
-    m_prime.addVerifyListener( new VerifyListener()
-    {
-      @Override
-      public void verifyText( VerifyEvent event )
-      {
-        try
-        {
-          String oldS = m_prime.getText();
-          String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
-          String prefix = newS.substring( 0, m_prefix.length() );
-          String suffix = newS.substring( newS.length() - m_suffix.length() );
-
-          // check prefix & suffix not altered
-          if ( !prefix.equals( m_prefix ) || !suffix.equals( m_suffix ) )
-            event.doit = false;
-
-          // check new value is valid double
-          String valueS = newS.substring( prefix.length(), newS.length() - suffix.length() );
-          String regex = "";
-          if ( m_min < 0.0 )
-          {
-            if ( m_max < 0.0 )
-              regex += "-"; // both min & max <0 so must start with -
-            else
-              regex += "-?"; // only min <0 so might start with -
-          }
-          regex += "\\d*"; // zero or more digits
-          if ( m_decimalPlaces > 0 )
-            regex += "\\.?\\d{0," + m_decimalPlaces + "}"; // optional . with at most decimal digits
-          if ( !valueS.matches( regex ) )
-            event.doit = false;
-        }
-        catch ( Exception e )
-        {
-          event.doit = false;
-        }
-      }
-    } );
-
+    m_prime.addVerifyListener( this );
   }
 
-  @Override
-  protected void checkSubclass()
+  /*************************************** removeListeners ***************************************/
+  public void removeListeners()
   {
-    // Disable the check that prevents subclassing of SWT components
+    // remove listener from parent, needs to be done before closing or committing!
+    getParent().removeListener( SWT.MouseWheel, m_mouseWheelListener );
   }
 
+  /****************************************** verifyText *****************************************/
+  @Override
+  public void verifyText( VerifyEvent event )
+  {
+    // reject any invalid text changes
+    try
+    {
+      String oldS = m_prime.getText();
+      String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
+      String prefix = newS.substring( 0, m_prefix.length() );
+      String suffix = newS.substring( newS.length() - m_suffix.length() );
+
+      // check prefix & suffix not altered
+      if ( !prefix.equals( m_prefix ) || !suffix.equals( m_suffix ) )
+        event.doit = false;
+
+      // check new value is valid double
+      String valueS = newS.substring( prefix.length(), newS.length() - suffix.length() );
+      String regex = "";
+      if ( m_min < 0.0 )
+      {
+        if ( m_max < 0.0 )
+          regex += "-"; // both min & max <0 so must start with -
+        else
+          regex += "-?"; // only min <0 so might start with -
+      }
+      regex += "\\d*"; // zero or more digits
+      if ( m_decimalPlaces > 0 )
+        regex += "\\.?\\d{0," + m_decimalPlaces + "}"; // optional . with at most decimal digits
+      if ( !valueS.matches( regex ) )
+        event.doit = false;
+    }
+    catch ( Exception exception )
+    {
+      event.doit = false;
+    }
+  }
+
+  /****************************************** modifyText *****************************************/
+  @Override
+  public void modifyText( ModifyEvent event )
+  {
+    setSize( widthForText(), m_height );
+
+    // if value is out of range, highlight text red to indicated invalid
+    determineValue();
+    if ( getText().length() == 0 )
+    {
+      m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+      JPlanner.gui.message( "Blank not allowed" );
+    }
+    else if ( m_value < m_min )
+    {
+      m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+      JPlanner.gui.message( "Value below minimum allowed (" + m_min + ")" );
+    }
+    else if ( m_value > m_max )
+    {
+      m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
+      JPlanner.gui.message( "Value above maximum allowed (" + m_max + ")" );
+    }
+    else
+    {
+      m_prime.setForeground( JPlanner.gui.COLOR_NO_ERROR );
+      JPlanner.gui.message( "" );
+    }
+  }
+
+  /************************************** addFocusListener ***************************************/
   @Override
   public void addFocusListener( FocusListener listener )
   {
@@ -255,6 +262,7 @@ public class SpinEditor extends Composite
     m_prime.addFocusListener( listener );
   }
 
+  /************************************* addTraverseListener *************************************/
   @Override
   public void addTraverseListener( TraverseListener listener )
   {
@@ -262,6 +270,7 @@ public class SpinEditor extends Composite
     m_prime.addTraverseListener( listener );
   }
 
+  /****************************************** setBounds ******************************************/
   @Override
   public void setBounds( Rectangle rect )
   {
@@ -280,8 +289,8 @@ public class SpinEditor extends Composite
     Point size = gc.textExtent( m_prime.getText() );
     gc.dispose();
 
-    if ( size.x + 22 > m_minWidth )
-      return size.x + 22;
+    if ( size.x + TEXT_WIDTH_EXTRA > m_minWidth )
+      return size.x + TEXT_WIDTH_EXTRA;
 
     return m_minWidth;
   }
@@ -326,7 +335,7 @@ public class SpinEditor extends Composite
     {
       m_value = Double.parseDouble( getText() );
     }
-    catch ( NumberFormatException e )
+    catch ( NumberFormatException exception )
     {
       // if NumberFormatException then default m_value to zero
       m_value = 0.0;
@@ -417,7 +426,7 @@ public class SpinEditor extends Composite
       m_prime.setText( m_prefix + str + m_suffix );
       positonCursorValueEnd();
     }
-    catch ( NumberFormatException e )
+    catch ( NumberFormatException exception )
     {
       // if NumberFormatException then don't use string
     }

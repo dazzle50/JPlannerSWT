@@ -115,7 +115,6 @@ public class MainWindow extends Shell
   public Color                     COLOR_NO_ERROR;
 
   public Transform                 TRANSFORM;
-  public int                       GANTTSCALE_HEIGHT = 15;
 
   /**************************************** constructor ******************************************/
   public MainWindow( Display display )
@@ -271,6 +270,7 @@ public class MainWindow extends Shell
 
   }
 
+  /*************************************** checkSubclass *****************************************/
   @Override
   protected void checkSubclass()
   {

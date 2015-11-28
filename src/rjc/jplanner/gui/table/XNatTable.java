@@ -78,6 +78,7 @@ import rjc.jplanner.XmlLabels;
 import rjc.jplanner.command.CommandTaskIndent;
 import rjc.jplanner.command.CommandTaskOutdent;
 import rjc.jplanner.gui.Gantt;
+import rjc.jplanner.gui.GanttScale;
 import rjc.jplanner.gui.calendar.CalendarCellEditor;
 import rjc.jplanner.gui.calendar.CalendarCellPainter;
 import rjc.jplanner.gui.calendar.CalendarsBody;
@@ -189,7 +190,7 @@ public class XNatTable extends NatTable
         rowh = new TasksRowHeader( body );
         label = new TasksLabelAccumulator();
         int[] widthT = { 110, 25, 200, 60, 140, 140, 60, 110, 110, 110, 60, 140, 60, 200 };
-        buildTable( body, colh, rowh, label, widthT, 2 * JPlanner.gui.GANTTSCALE_HEIGHT );
+        buildTable( body, colh, rowh, label, widthT, 2 * GanttScale.GANTTSCALE_HEIGHT );
         addKeyListener( m_indentOutdentListener );
         addConfiguration( new AbstractRegistryConfiguration()
         {

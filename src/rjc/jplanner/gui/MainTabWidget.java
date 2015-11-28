@@ -133,6 +133,7 @@ public class MainTabWidget extends TabFolder
     } );
   }
 
+  /*************************************** checkSubclass *****************************************/
   @Override
   protected void checkSubclass()
   {

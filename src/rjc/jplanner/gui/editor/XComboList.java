@@ -122,6 +122,7 @@ public class XComboList extends Shell
 
   }
 
+  /**************************************** constructor ******************************************/
   @Override
   protected void checkSubclass()
   {

@@ -27,7 +27,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Canvas;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.XmlLabels;
@@ -38,42 +38,36 @@ import rjc.jplanner.model.DateTime.Interval;
 /************************* GanttScale provides a scale for the gantt plot ************************/
 /*************************************************************************************************/
 
-public class GanttScale extends Composite
+public class GanttScale extends Canvas implements PaintListener
 {
-  private DateTime m_start;
-  private long     m_millisecondsPP;
-  private Interval m_interval;
-  private String   m_format;
+  private DateTime        m_start;
+  private long            m_millisecondsPP;
+  private Interval        m_interval;
+  private String          m_format;
+
+  final public static int GANTTSCALE_HEIGHT = 15;
 
   /**************************************** constructor ******************************************/
   public GanttScale( Gantt parent )
   {
-    super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
-    setDragDetect( false );
-
-    addPaintListener( new PaintListener()
-    {
-      @Override
-      public void paintControl( PaintEvent event )
-      {
-        // update the gantt scale for the specified paint-event
-        drawScale( event, true );
-      }
-    } );
-
+    super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED );
+    addPaintListener( this );
   }
 
+  /**************************************** computeSize ******************************************/
   @Override
   public Point computeSize( int wHint, int hHint, boolean changed )
   {
     // only vertical size is important, as horizontally it stretches
-    return new Point( 1, JPlanner.gui.GANTTSCALE_HEIGHT );
+    return new Point( 1, GANTTSCALE_HEIGHT );
   }
 
+  /*************************************** paintControl ******************************************/
   @Override
-  protected void checkSubclass()
+  public void paintControl( PaintEvent event )
   {
-    // Disable the check that prevents subclassing of SWT components
+    // paint gantt scale
+    drawScale( event, true );
   }
 
   /********************************************** x **********************************************/

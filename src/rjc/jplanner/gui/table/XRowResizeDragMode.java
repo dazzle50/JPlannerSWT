@@ -63,9 +63,14 @@ public class XRowResizeDragMode implements IDragMode
     if ( height < MIN_ROW_HEIGHT )
       height = MIN_ROW_HEIGHT;
 
-    // update table row height and trigger redraw
+    // update table row height
     nattable.doCommand( new RowResizeCommand( nattable, m_row, height ) );
+
+    // cause table and gantt to be updated immediately for smooth resize
     nattable.redraw();
+    XNatTable xnattable = (XNatTable) nattable;
+    if ( xnattable.gantt != null )
+      xnattable.gantt.updatePlot();
   }
 
   /******************************************* mouseUp *******************************************/

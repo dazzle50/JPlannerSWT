@@ -70,12 +70,6 @@ public class DateTimeEditor extends Composite
     workEnd.setText( "End of work day" );
   }
 
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
   /***************************************** setDateTime *****************************************/
   public void setDateTime( rjc.jplanner.model.DateTime dt )
   {

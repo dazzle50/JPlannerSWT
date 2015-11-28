@@ -198,6 +198,10 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public void close()
   {
+    // SpinEditor needs to remove listener from parent before closing
+    if ( m_editor instanceof SpinEditor )
+      ( (SpinEditor) m_editor ).removeListeners();
+
     // editor being closed, so clear cell editor in progress
     cellEditorInProgress = null;
     super.close();
@@ -207,6 +211,10 @@ public abstract class XAbstractCellEditor extends AbstractCellEditor
   @Override
   public boolean commit( MoveDirectionEnum direction, boolean closeAfterCommit, boolean skipValidation )
   {
+    // SpinEditor needs to remove listener from parent before closing
+    if ( m_editor instanceof SpinEditor )
+      ( (SpinEditor) m_editor ).removeListeners();
+
     // editor being committed, so clear cell editor in progress
     cellEditorInProgress = null;
     return super.commit( direction, closeAfterCommit, skipValidation );

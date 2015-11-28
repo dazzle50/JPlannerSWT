@@ -119,17 +119,12 @@ public class Gantt extends Composite
 
   }
 
+  /**************************************** computeSize ******************************************/
   @Override
   public Point computeSize( int wHint, int hHint, boolean changed )
   {
     // only horizontal size is important, as vertically it stretches
     return new Point( (int) ( ( m_end.milliseconds() - m_start.milliseconds() ) / m_millisecondsPP ), 1 );
-  }
-
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
   }
 
   /****************************************** writeXML *******************************************/
@@ -267,8 +262,9 @@ public class Gantt extends Composite
   /**************************************** updatePlot *******************************************/
   public void updatePlot()
   {
-    // cause gantt plot to be redrawn
+    // cause gantt plot to be redrawn immediately
     m_plot.redraw();
+    m_plot.update();
   }
 
   /******************************************** zoom *********************************************/

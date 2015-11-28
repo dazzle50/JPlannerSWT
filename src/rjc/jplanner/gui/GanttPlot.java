@@ -27,7 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Canvas;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.table.XNatTable;
@@ -43,7 +43,7 @@ import rjc.jplanner.model.Task;
 /***************** GanttPlot provides a view of the plan tasks and dependencies ******************/
 /*************************************************************************************************/
 
-public class GanttPlot extends Composite
+public class GanttPlot extends Canvas implements PaintListener
 {
   private DateTime      m_start;
   private long          m_millisecondsPP;
@@ -58,26 +58,20 @@ public class GanttPlot extends Composite
   public GanttPlot( Gantt parent )
   {
     // create composite
-    super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE );
+    super( parent, SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE | SWT.DOUBLE_BUFFERED );
 
     // add listener for painting the gantt plot
-    addPaintListener( new PaintListener()
-    {
-      @Override
-      public void paintControl( PaintEvent event )
-      {
-        shadeNonWorkingDays( event );
-        drawTasks( event );
-        drawDependencies( event );
-      }
-    } );
-
+    addPaintListener( this );
   }
 
+  /*************************************** paintControl ******************************************/
   @Override
-  protected void checkSubclass()
+  public void paintControl( PaintEvent event )
   {
-    // Disable the check that prevents subclassing of SWT components
+    // paint gantt plot
+    shadeNonWorkingDays( event );
+    drawTasks( event );
+    drawDependencies( event );
   }
 
   /****************************************** setConfig ******************************************/

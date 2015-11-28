@@ -186,12 +186,6 @@ public class PlanProperties extends Composite
     verifyDateFormat();
   }
 
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
   /************************************ verifyDateTimeFormat *************************************/
   private void verifyDateTimeFormat()
   {

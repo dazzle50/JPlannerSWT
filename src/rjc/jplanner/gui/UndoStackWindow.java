@@ -88,9 +88,9 @@ public class UndoStackWindow extends Shell
           executeUndoRedo( m_list.getSelectionIndex() );
       }
     } );
-
   }
 
+  /*************************************** checkSubclass *****************************************/
   @Override
   protected void checkSubclass()
   {

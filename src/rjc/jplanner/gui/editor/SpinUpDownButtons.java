@@ -23,6 +23,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
@@ -31,8 +32,9 @@ import rjc.jplanner.JPlanner;
 /*************************** Simple custom widget with up & down button **************************/
 /*************************************************************************************************/
 
-public class SpinUpDownButtons extends Composite
+public class SpinUpDownButtons extends Canvas implements PaintListener
 {
+  final public static int SPINBUTTONS_WIDTH = 17;
 
   /**************************************** constructor ******************************************/
   public SpinUpDownButtons( Composite parent )
@@ -40,55 +42,49 @@ public class SpinUpDownButtons extends Composite
     super( parent, SWT.NO_FOCUS );
 
     // add paint listener to paint the up & down buttons
-    addPaintListener( new PaintListener()
-    {
-      @Override
-      public void paintControl( PaintEvent event )
-      {
-        Composite area = SpinUpDownButtons.this;
-        GC gc = event.gc;
-        int w = area.getSize().x - 3;
-        int h = ( area.getSize().y - 3 ) / 2;
-
-        // draw the button dividing lines
-        gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
-        gc.drawRectangle( 1, 1, w, h );
-        gc.drawRectangle( 1, h + 2, w, h );
-
-        // draw up & down triangles
-        gc.setForeground( JPlanner.gui.COLOR_BLACK );
-        int y1 = 3;
-        int y2 = h;
-        if ( y2 - y1 > w ) // prevent triangles being taller than wide
-        {
-          int delta = y2 - y1 - w;
-          y1 += delta / 2;
-          y2 -= delta / 2;
-        }
-        for ( int y = y1; y < y2; y++ )
-        {
-          int size = ( y - y1 ) * ( w - 3 ) / ( y2 - y1 ) / 2;
-          int x1 = w / 2 - size + 1;
-          int x2 = w / 2 + size + 1;
-          gc.drawLine( x1, y, x2, y );
-          gc.drawLine( x1, h * 2 - y + 3, x2, h * 2 - y + 3 );
-        }
-      }
-    } );
-
+    addPaintListener( this );
   }
 
+  /**************************************** computeSize ******************************************/
   @Override
   public Point computeSize( int wHint, int hHint, boolean changed )
   {
     // only horizontal size is important, as vertically it stretches
-    return new Point( 17, 1 );
+    return new Point( SPINBUTTONS_WIDTH, 1 );
   }
 
+  /*************************************** paintControl ******************************************/
   @Override
-  protected void checkSubclass()
+  public void paintControl( PaintEvent event )
   {
-    // Disable the check that prevents subclassing of SWT components
+    // paint the up & down buttons
+    GC gc = event.gc;
+    int w = getSize().x - 3;
+    int h = ( getSize().y - 3 ) / 2;
+
+    // draw the button dividing lines
+    gc.setForeground( JPlanner.gui.COLOR_GANTT_DIVIDER );
+    gc.drawRectangle( 1, 1, w, h );
+    gc.drawRectangle( 1, h + 2, w, h );
+
+    // draw up & down triangles
+    gc.setForeground( JPlanner.gui.COLOR_BLACK );
+    int y1 = 3;
+    int y2 = h;
+    if ( y2 - y1 > w ) // prevent triangles being taller than wide
+    {
+      int delta = y2 - y1 - w;
+      y1 += delta / 2;
+      y2 -= delta / 2;
+    }
+    for ( int y = y1; y < y2; y++ )
+    {
+      int size = ( y - y1 ) * ( w - 3 ) / ( y2 - y1 ) / 2;
+      int x1 = w / 2 - size + 1;
+      int x2 = w / 2 + size + 1;
+      gc.drawLine( x1, y, x2, y );
+      gc.drawLine( x1, h * 2 - y + 3, x2, h * 2 - y + 3 );
+    }
   }
 
 }

@@ -51,12 +51,6 @@ public class PlanNotes extends Composite
     m_notesText.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
   }
 
-  @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
   /*************************************** updateFromPlan ****************************************/
   public void updateFromPlan()
   {

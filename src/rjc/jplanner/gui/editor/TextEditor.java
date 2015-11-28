@@ -87,12 +87,6 @@ public class TextEditor extends Composite
   }
 
   @Override
-  protected void checkSubclass()
-  {
-    // Disable the check that prevents subclassing of SWT components
-  }
-
-  @Override
   public void addFocusListener( FocusListener listener )
   {
     // interested in when Text editor loses focus, not the extended composite
