@@ -24,22 +24,19 @@ import org.eclipse.swt.widgets.Composite;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.editor.TextEditor;
-import rjc.jplanner.model.Predecessors;
-import rjc.jplanner.model.TimeSpan;
+import rjc.jplanner.model.TaskResources;
 
 /*************************************************************************************************/
-/**************************** Table cell editor for Task predecessors ****************************/
+/***************************** Table cell editor for Task resources ******************************/
 /*************************************************************************************************/
 
-public class TaskPredecessorsEditor extends TextEditor
+public class TaskResourcesEditor extends TextEditor
 {
 
   /**************************************** constructor ******************************************/
-  public TaskPredecessorsEditor( Composite parent, int row )
+  public TaskResourcesEditor( Composite parent )
   {
     super( parent );
-
-    String valid = "[" + TimeSpan.UNITS + "fFsS+-0123456789.]*";
 
     m_prime.addVerifyListener( new VerifyListener()
     {
@@ -49,15 +46,8 @@ public class TaskPredecessorsEditor extends TextEditor
         String oldS = m_prime.getText();
         String newS = oldS.substring( 0, event.start ) + event.text + oldS.substring( event.end );
 
-        // any characters valid for time-spans and upper+lower case s & f
-        if ( !newS.matches( valid ) )
-        {
-          event.doit = false;
-          return;
-        }
-
         // highlight text red with explanation message if invalid
-        String errors = Predecessors.errors( newS, row );
+        String errors = TaskResources.errors( newS );
         if ( errors.length() > 0 )
         {
           m_prime.setForeground( JPlanner.gui.COLOR_ERROR );
@@ -71,14 +61,6 @@ public class TaskPredecessorsEditor extends TextEditor
       }
     } );
 
-  }
-
-  /******************************************* setText *******************************************/
-  @Override
-  public void setText( String str )
-  {
-    // take out any white spaces
-    super.setText( str.replaceAll( "\\s+", "" ) );
   }
 
 }

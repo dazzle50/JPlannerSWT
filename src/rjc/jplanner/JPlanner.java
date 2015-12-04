@@ -86,6 +86,17 @@ public class JPlanner
     System.out.println( DateTime.now() + " " + txt + file + method );
   }
 
+  /******************************************* stack *********************************************/
+  public static void stack()
+  {
+    // prints stack
+    StackTraceElement[] stack = new Throwable().getStackTrace();
+    System.out.println( DateTime.now() + "======================= STACK =======================" );
+    for ( int i = 1; i < stack.length; i++ )
+      System.out.println( stack[i] );
+    System.out.println( DateTime.now() + "===================== STACK END =====================" );
+  }
+
   /******************************************* clean *********************************************/
   public static String clean( String txt )
   {

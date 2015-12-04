@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 
 import rjc.jplanner.JPlanner;
+import rjc.jplanner.gui.editor.SpinEditor;
 import rjc.jplanner.gui.editor.TextEditor;
 import rjc.jplanner.gui.editor.TimeSpanEditor;
 import rjc.jplanner.gui.editor.XAbstractCellEditor;
@@ -55,6 +56,17 @@ public class TaskCellEditor extends XAbstractCellEditor
 
     if ( col == Task.SECTION_PRED )
       return new TaskPredecessorsEditor( parent, row );
+
+    if ( col == Task.SECTION_RES )
+      return new TaskResourcesEditor( parent );
+
+    if ( col == Task.SECTION_PRIORITY )
+    {
+      int priority = JPlanner.plan.task( row ).priority();
+      SpinEditor editor = new SpinEditor( parent, priority, true );
+      editor.setMinMaxStepPageDPs( 0, 999, 1, 100, 0 );
+      return editor;
+    }
 
     // TODO - use Text editor until find/write something better
     return new TextEditor( parent );

@@ -81,4 +81,15 @@ public class Resources extends ArrayList<Resource>
     xsw.writeEndElement(); // XML_RES_DATA
   }
 
+  /***************************************** isAssignable ****************************************/
+  public boolean isAssignable( String tag )
+  {
+    // return true only if any tag is recognised as an assignable resource
+    for ( Resource res : this )
+      if ( res.isAssignable( tag ) )
+        return true;
+
+    return false;
+  }
+
 }

@@ -183,7 +183,8 @@ public class SpinEditor extends Composite implements ModifyListener, VerifyListe
   public void removeListeners()
   {
     // remove listener from parent, needs to be done before closing or committing!
-    getParent().removeListener( SWT.MouseWheel, m_mouseWheelListener );
+    if ( !isDisposed() )
+      getParent().removeListener( SWT.MouseWheel, m_mouseWheelListener );
   }
 
   /****************************************** verifyText *****************************************/

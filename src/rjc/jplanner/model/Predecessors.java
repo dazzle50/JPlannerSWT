@@ -147,7 +147,7 @@ public class Predecessors
   public static String errors( String text, int thisTaskNum )
   {
     // split text into individual predecessors
-    String error = "";
+    StringBuilder error = new StringBuilder();
     for ( String part : text.split( "," ) )
     {
       // if blank part, skip
@@ -163,7 +163,7 @@ public class Predecessors
       // check start is number
       if ( digit == 0 )
       {
-        error += "'" + part + "' does not start with a valid task number.\n";
+        error.append( '\'' ).append( part ).append( "' does not start with a valid task number.  " );
         continue;
       }
 
@@ -171,14 +171,14 @@ public class Predecessors
       int taskNum = Integer.parseInt( part.substring( 0, digit ) );
       if ( taskNum >= JPlanner.plan.tasksCount() || JPlanner.plan.task( taskNum ).isNull() )
       {
-        error += "'" + taskNum + "' is a null task.\n";
+        error.append( '\'' ).append( taskNum ).append( "' is a null task.  " );
         continue;
       }
 
       // check number is not zero
       if ( taskNum == 0 )
       {
-        error += "'" + part + "' does not start with a valid task number.\n";
+        error.append( '\'' ).append( part ).append( "' does not start with a valid task number.  " );
         continue;
       }
 
@@ -186,7 +186,7 @@ public class Predecessors
       if ( JPlanner.plan.task( thisTaskNum ).isSummary() && taskNum > thisTaskNum
           && taskNum <= JPlanner.plan.task( thisTaskNum ).summaryEnd() )
       {
-        error += "'" + taskNum + "' is a sub-task of this summary.\n";
+        error.append( '\'' ).append( taskNum ).append( "' is a sub-task of this summary.  " );
         continue;
       }
 
@@ -194,21 +194,21 @@ public class Predecessors
       if ( JPlanner.plan.task( taskNum ).isSummary() && thisTaskNum > taskNum
           && thisTaskNum <= JPlanner.plan.task( taskNum ).summaryEnd() )
       {
-        error += "'" + taskNum + "' is a summary containing this sub-task.\n";
+        error.append( '\'' ).append( taskNum ).append( "' is a summary containing this sub-task.  " );
         continue;
       }
 
       // check number is not this task
       if ( taskNum == thisTaskNum )
       {
-        error += "'" + taskNum + "' is a reference to this task.\n";
+        error.append( '\'' ).append( taskNum ).append( "' is a reference to this task.  " );
         continue;
       }
 
       // check number is does not cause circular reference
       if ( JPlanner.plan.task( taskNum ).hasPredecessor( JPlanner.plan.task( thisTaskNum ) ) )
       {
-        error += "'" + taskNum + "' gives a circular reference to this task.\n";
+        error.append( '\'' ).append( taskNum ).append( "' gives a circular reference to this task.  " );
         continue;
       }
 
@@ -226,7 +226,7 @@ public class Predecessors
       if ( !start.equalsIgnoreCase( TYPE_FINISH_START ) && !start.equalsIgnoreCase( TYPE_START_START )
           && !start.equalsIgnoreCase( TYPE_START_FINISH ) && !start.equalsIgnoreCase( TYPE_FINISH_FINISH ) )
       {
-        error += "'" + part + "' is not a valid dependency type.\n";
+        error.append( '\'' ).append( part ).append( "' is not a valid dependency type.  " );
         continue;
       }
 
@@ -240,14 +240,11 @@ public class Predecessors
       }
       catch ( Exception e )
       {
-        error += "'" + part + "' is not a valid time span.\n";
+        error.append( '\'' ).append( part ).append( "' is not a valid time span.  " );
       }
     }
 
-    // remove final '\n' and return validation error text
-    if ( error.length() > 0 )
-      error = error.substring( 0, error.length() - 1 );
-    return error;
+    return error.toString();
   }
 
   /******************************************** clean ********************************************/

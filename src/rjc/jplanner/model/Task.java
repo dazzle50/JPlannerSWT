@@ -153,7 +153,7 @@ public class Task implements Comparable<Task>
       return "";
 
     if ( section == SECTION_DURATION )
-      return m_duration.toString();
+      return duration().toString();
 
     if ( section == SECTION_START )
       return start().toString( JPlanner.plan.datetimeFormat() );
@@ -162,7 +162,7 @@ public class Task implements Comparable<Task>
       return end().toString( JPlanner.plan.datetimeFormat() );
 
     if ( section == SECTION_WORK )
-      return m_work.toString();
+      return work().toString();
 
     if ( section == SECTION_PRED )
       return m_predecessors.toString();
@@ -219,6 +219,9 @@ public class Task implements Comparable<Task>
 
     else if ( section == SECTION_PRED )
       m_predecessors = new Predecessors( (String) newValue );
+
+    else if ( section == SECTION_RES )
+      m_resources = new TaskResources( (String) newValue );
 
     else if ( section == SECTION_TYPE )
       m_type = new TaskType( (String) newValue );
@@ -521,6 +524,32 @@ public class Task implements Comparable<Task>
     return m_end;
   }
 
+  /******************************************** work *********************************************/
+  public TimeSpan work()
+  {
+    // return task or summary work time-span
+    if ( isSummary() )
+    {
+      //TODO
+      return new TimeSpan();
+    }
+
+    return m_work;
+  }
+
+  /****************************************** duration *******************************************/
+  public TimeSpan duration()
+  {
+    // return task or summary work time-span
+    if ( isSummary() )
+    {
+      //TODO
+      return new TimeSpan();
+    }
+
+    return m_duration;
+  }
+
   /******************************************** start ********************************************/
   public DateTime start()
   {
@@ -606,6 +635,12 @@ public class Task implements Comparable<Task>
     return JPlanner.plan.index( this );
   }
 
+  /****************************************** priority *******************************************/
+  public int priority()
+  {
+    return m_priority;
+  }
+
   /******************************************* indent ********************************************/
   public int indent()
   {
@@ -627,6 +662,14 @@ public class Task implements Comparable<Task>
 
     if ( isNull() )
       return false;
+
+    if ( section == SECTION_COST )
+      return false;
+
+    if ( isSummary() )
+      if ( section == SECTION_DURATION || section == SECTION_START || section == SECTION_END
+          || section == SECTION_WORK )
+        return false;
 
     return m_type.isSectionEditable( section );
   }

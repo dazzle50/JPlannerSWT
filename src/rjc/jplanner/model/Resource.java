@@ -303,4 +303,15 @@ public class Resource
     return JPlanner.plan.index( this );
   }
 
+  /***************************************** isAssignable ****************************************/
+  public boolean isAssignable( String tag )
+  {
+    // return true only if any tag is recognised as a resource reference
+    if ( tag.equals( m_initials ) || tag.equals( m_name ) || tag.equals( m_org ) || tag.equals( m_group )
+        || tag.equals( m_role ) || tag.equals( m_alias ) )
+      return true;
+
+    return false;
+  }
+
 }
