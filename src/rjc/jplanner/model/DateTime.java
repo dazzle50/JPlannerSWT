@@ -28,8 +28,9 @@ import org.apache.commons.lang.StringUtils;
 /********************************* Date-time (with no timezone) **********************************/
 /*************************************************************************************************/
 
-public class DateTime
+public class DateTime implements Comparable<DateTime>
 {
+  // range constrained by valid Date (approx 5,800,000 BC to 5,800,000 AD)
   private long                 m_milliseconds;                                                      // milliseconds from 00:00:00.000 start of epoch-day
 
   public static final long     MILLISECONDS_IN_DAY = Time.MILLISECONDS_IN_DAY;                      // milliseconds in day
@@ -363,6 +364,18 @@ public class DateTime
   public boolean equals( DateTime other )
   {
     return m_milliseconds == other.m_milliseconds;
+  }
+
+  /****************************************** compareTo ******************************************/
+  @Override
+  public int compareTo( DateTime other )
+  {
+    long sign = m_milliseconds - other.m_milliseconds;
+    if ( sign > 0 )
+      return 1;
+    if ( sign < 0 )
+      return -1;
+    return 0;
   }
 
 }

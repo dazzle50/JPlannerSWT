@@ -93,7 +93,7 @@ public class JPlanner
     StackTraceElement[] stack = new Throwable().getStackTrace();
     System.out.println( DateTime.now() + "======================= STACK =======================" );
     for ( int i = 1; i < stack.length; i++ )
-      System.out.println( stack[i] );
+      System.out.println( "\t" + stack[i] );
     System.out.println( DateTime.now() + "===================== STACK END =====================" );
   }
 

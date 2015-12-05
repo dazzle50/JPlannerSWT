@@ -18,6 +18,8 @@
 
 package rjc.jplanner.model;
 
+import java.text.DecimalFormat;
+
 /*************************************************************************************************/
 /********************************** Quantity of time with units **********************************/
 /*************************************************************************************************/
@@ -90,12 +92,9 @@ public class TimeSpan
   @Override
   public String toString()
   {
-    // returns string representation, suppressing any ".0" on number
-    String str = Double.toString( m_num );
-    if ( str.substring( str.length() - 2 ).equals( ".0" ) )
-      str = str.substring( 0, str.length() - 2 );
-
-    return str + " " + m_units;
+    DecimalFormat df = new DecimalFormat( "0" );
+    df.setMaximumFractionDigits( 3 );
+    return df.format( m_num ) + " " + m_units;
   }
 
   /******************************************** units ********************************************/

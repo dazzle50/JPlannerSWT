@@ -338,8 +338,8 @@ public class Calendar
     return "Normal " + ( num + 1 - SECTION_NORMAL1 );
   }
 
-  /****************************************** workDown *******************************************/
-  public DateTime workDown( DateTime dt )
+  /***************************************** roundDown *******************************************/
+  public DateTime roundDown( DateTime dt )
   {
     // return date-time if working, otherwise next future working date-time
     Date date = dt.date();
@@ -359,8 +359,8 @@ public class Calendar
     return new DateTime( date, newTime );
   }
 
-  /******************************************** workUp *********************************************/
-  public DateTime workUp( DateTime dt )
+  /******************************************* roundUp *******************************************/
+  public DateTime roundUp( DateTime dt )
   {
     // return date-time if working, otherwise last past working date-time
     Date date = dt.date();
@@ -612,6 +612,34 @@ public class Calendar
 
     // if fraction, add years and months
     return workMonths( start.plusYears( (int) whole ), 12.0 * fraction );
+  }
+
+  /***************************************** workBetween *****************************************/
+  public TimeSpan workBetween( DateTime start, DateTime end )
+  {
+    // return number of work equivalent days between the two date-times
+    Date sd = start.date();
+    Time st = start.time();
+    Day day = day( sd );
+
+    Date ed = end.date();
+    Time et = end.time();
+
+    // if start date same as end date, just work in day
+    if ( sd.equals( ed ) )
+      return new TimeSpan( day.workDone( et ) - day.workDone( st ), TimeSpan.UNIT_DAYS );
+
+    // add together work across the days
+    double work = day.workToGo( st );
+    sd.increment();
+    while ( !sd.equals( ed ) )
+    {
+      work += day( sd ).work();
+      sd.increment();
+    }
+    work += day( ed ).workDone( et );
+
+    return new TimeSpan( work, TimeSpan.UNIT_DAYS );
   }
 
   /******************************************** index ********************************************/

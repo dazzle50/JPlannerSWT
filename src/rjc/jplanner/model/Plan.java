@@ -97,16 +97,16 @@ public class Plan
     tasks.initialise();
 
     m_calendar = calendar( 0 );
-    m_start = m_calendar.workUp( new DateTime( Date.now(), Time.fromMilliseconds( 0 ) ) );
+    m_start = m_calendar.roundUp( new DateTime( Date.now(), Time.MIN_VALUE ) );
   }
 
   /************************************** tasksNotNullCount **************************************/
   public int tasksNotNullCount()
   {
-    // return number of not-null tasks in plan
+    // return number of not-null tasks in plan (skipping special task 0)
     int count = 0;
-    for ( int i = 0; i < tasks.size(); i++ )
-      if ( !tasks.get( i ).isNull() )
+    for ( int id = 1; id < tasks.size(); id++ )
+      if ( !tasks.get( id ).isNull() )
         count++;
 
     return count;
@@ -115,10 +115,10 @@ public class Plan
   /************************************ resourcesNotNullCount ************************************/
   public int resourcesNotNullCount()
   {
-    // return number of not-null resources in plan
+    // return number of not-null resources in plan (skipping special resource 0)
     int count = 0;
-    for ( int i = 0; i < resources.size(); i++ )
-      if ( !resources.get( i ).isNull() )
+    for ( int id = 1; id < resources.size(); id++ )
+      if ( !resources.get( id ).isNull() )
         count++;
 
     return count;
@@ -221,66 +221,30 @@ public class Plan
   /****************************************** earliest *******************************************/
   public DateTime earliest()
   {
-    // return start date-time of earliest starting plan task
-    DateTime earliest = null;
-    DateTime start = null;
+    // return start date-time of earliest starting plan task, or null if no tasks
+    DateTime earliest = DateTime.MAX_VALUE;
 
     for ( Task task : tasks )
-    {
-      // if task is null, skip
-      if ( task.isNull() )
-        continue;
-
-      // if task is summary, skip
-      if ( task.isSummary() )
-        continue;
-
-      // if earliest is null, this must be earliest so far
-      if ( earliest == null )
-      {
+      if ( !task.isNull() && !task.isSummary() && task.start().isLessThan( earliest ) )
         earliest = task.start();
-        continue;
-      }
 
-      // check is task start is earlier
-      start = task.start();
-      if ( start.isLessThan( earliest ) )
-        earliest = start;
-    }
-
+    if ( earliest == DateTime.MAX_VALUE )
+      return null;
     return earliest;
   }
 
   /********************************************* end *********************************************/
   public DateTime end()
   {
-    // return end date-time of latest ending plan task
-    DateTime latest = null;
-    DateTime end = null;
+    // return end date-time of latest ending plan task, or null if no tasks
+    DateTime latest = DateTime.MIN_VALUE;
 
     for ( Task task : tasks )
-    {
-      // if task is null, skip
-      if ( task.isNull() )
-        continue;
-
-      // if task is summary, skip
-      if ( task.isSummary() )
-        continue;
-
-      // if latest is null, this must be latest so far
-      if ( latest == null )
-      {
+      if ( !task.isNull() && !task.isSummary() && latest.isLessThan( task.end() ) )
         latest = task.end();
-        continue;
-      }
 
-      // check is task end is later
-      end = task.end();
-      if ( latest.isLessThan( end ) )
-        latest = end;
-    }
-
+    if ( latest == DateTime.MIN_VALUE )
+      return null;
     return latest;
   }
 
@@ -467,11 +431,6 @@ public class Plan
 
     m_filename = filename;
     m_fileLocation = fileloc;
-
-    // setup special task 0
-    Task task = JPlanner.plan.task( 0 );
-    task.setData( Task.SECTION_TITLE, "PROJECT" );
-    task.setIndent( -1 );
   }
 
   /***************************************** loadXmlPlan *****************************************/

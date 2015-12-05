@@ -69,15 +69,22 @@ public class Tasks extends ArrayList<Task>
   /****************************************** initialise *****************************************/
   public void initialise()
   {
-    // initialise list with default tasks
+    // initialise list with default tasks (including special task 0)
     clear();
     for ( int count = 0; count <= 20; count++ )
       add( new Task() );
 
+    setupTaskZero();
+  }
+
+  /**************************************** setupTaskZero ****************************************/
+  public void setupTaskZero()
+  {
     // setup special task 0
     Task task = get( 0 );
     task.setData( Task.SECTION_TITLE, "PROJECT" );
     task.setIndent( -1 );
+    task.setSummaryEnd( Integer.MAX_VALUE );
   }
 
   /******************************************* loadXML *******************************************/
@@ -91,6 +98,7 @@ public class Tasks extends ArrayList<Task>
       // if reached end of task data, return
       if ( xsr.isEndElement() && xsr.getLocalName().equals( XmlLabels.XML_TASK_DATA ) )
       {
+        setupTaskZero();
         updateSummaryMarkers();
         return;
       }

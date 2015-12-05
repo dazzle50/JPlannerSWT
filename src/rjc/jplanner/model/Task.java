@@ -461,11 +461,11 @@ public class Task implements Comparable<Task>
     {
       // milestone
       if ( hasToStart )
-        m_start = planCal.workDown( startDueToPredecessors() );
+        m_start = planCal.roundDown( startDueToPredecessors() );
       else if ( hasToFinish )
-        m_start = planCal.workDown( endDueToPredecessors() );
+        m_start = planCal.roundDown( endDueToPredecessors() );
       else
-        m_start = planCal.workUp( JPlanner.plan.start() );
+        m_start = planCal.roundUp( JPlanner.plan.start() );
 
       m_end = m_start;
     }
@@ -474,18 +474,18 @@ public class Task implements Comparable<Task>
       // not milestone
       if ( hasToStart )
       {
-        m_start = planCal.workUp( startDueToPredecessors() );
-        m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
+        m_start = planCal.roundUp( startDueToPredecessors() );
+        m_end = planCal.roundDown( planCal.workTimeSpan( m_start, m_duration ) );
       }
       else if ( hasToFinish )
       {
-        m_end = planCal.workDown( endDueToPredecessors() );
-        m_start = planCal.workUp( planCal.workTimeSpan( m_end, m_duration.minus() ) );
+        m_end = planCal.roundDown( endDueToPredecessors() );
+        m_start = planCal.roundUp( planCal.workTimeSpan( m_end, m_duration.minus() ) );
       }
       else
       {
-        m_start = planCal.workUp( JPlanner.plan.start() );
-        m_end = planCal.workDown( planCal.workTimeSpan( m_start, m_duration ) );
+        m_start = planCal.roundUp( JPlanner.plan.start() );
+        m_end = planCal.roundDown( planCal.workTimeSpan( m_start, m_duration ) );
       }
     }
 
@@ -506,22 +506,42 @@ public class Task implements Comparable<Task>
     // return task or summary end date-time
     if ( isSummary() )
     {
-      int here = this.index();
-      DateTime e = new DateTime( Long.MIN_VALUE );
-
       // loop through each subtask
-      for ( int t = here + 1; t <= m_summaryEnd; t++ )
+      DateTime end = DateTime.MIN_VALUE;
+      for ( int id = index() + 1; id <= m_summaryEnd; id++ )
       {
         // if task isn't summary & isn't null, check if its end is after current latest
-        Task task = JPlanner.plan.task( t );
-        if ( !task.isSummary() && !task.isNull() && e.isLessThan( task.m_end ) )
-          e = task.m_end;
+        Task task = JPlanner.plan.task( id );
+        if ( !task.isNull() && !task.isSummary() && end.isLessThan( task.m_end ) )
+          end = task.m_end;
       }
 
-      return e;
+      return end;
     }
 
     return m_end;
+  }
+
+  /******************************************** start ********************************************/
+  public DateTime start()
+  {
+    // return task or summary start date-time
+    if ( isSummary() )
+    {
+      // loop through each subtask
+      DateTime start = DateTime.MAX_VALUE;
+      for ( int id = index() + 1; id <= m_summaryEnd; id++ )
+      {
+        // if task isn't summary & isn't null, check if its start is before current earliest
+        Task task = JPlanner.plan.task( id );
+        if ( !task.isNull() && !task.isSummary() && task.m_start.isLessThan( start ) )
+          start = task.m_start;
+      }
+
+      return start;
+    }
+
+    return m_start;
   }
 
   /******************************************** work *********************************************/
@@ -530,7 +550,8 @@ public class Task implements Comparable<Task>
     // return task or summary work time-span
     if ( isSummary() )
     {
-      //TODO
+      // TODO return JPlanner.plan.resources.work( this );
+
       return new TimeSpan();
     }
 
@@ -542,36 +563,9 @@ public class Task implements Comparable<Task>
   {
     // return task or summary work time-span
     if ( isSummary() )
-    {
-      //TODO
-      return new TimeSpan();
-    }
+      return JPlanner.plan.calendar().workBetween( start(), end() );
 
     return m_duration;
-  }
-
-  /******************************************** start ********************************************/
-  public DateTime start()
-  {
-    // return task or summary start date-time
-    if ( isSummary() )
-    {
-      int here = this.index();
-      DateTime s = new DateTime( Long.MAX_VALUE );
-
-      // loop through each subtask
-      for ( int t = here + 1; t <= m_summaryEnd; t++ )
-      {
-        // if task isn't summary & isn't null, check if its start is before current earliest
-        Task task = JPlanner.plan.task( t );
-        if ( !task.isSummary() && !task.isNull() && task.m_start.isLessThan( s ) )
-          s = task.m_start;
-      }
-
-      return s;
-    }
-
-    return m_start;
   }
 
   /************************************ startDueToPredecessors ***********************************/

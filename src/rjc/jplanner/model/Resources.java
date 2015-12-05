@@ -38,7 +38,7 @@ public class Resources extends ArrayList<Resource>
   /**************************************** initialise *******************************************/
   public void initialise()
   {
-    // initialise list with default resources
+    // initialise list with default resources (including special resource 0)
     clear();
     for ( int count = 0; count <= 10; count++ )
       add( new Resource() );

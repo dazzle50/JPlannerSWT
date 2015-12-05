@@ -44,6 +44,8 @@ public class Resource
   private Calendar        m_calendar;           // calendar for resource
   private String          m_comment;            // free text
 
+  public ResourceWork     m_work;               // resource work on specified tasks
+
   public static final int SECTION_INITIALS = 0;
   public static final int SECTION_NAME     = 1;
   public static final int SECTION_ORG      = 2;
@@ -63,6 +65,7 @@ public class Resource
   {
     // initialise private variables
     m_availability = 1.0;
+    m_work = new ResourceWork( this );
   }
 
   /**************************************** constructor ******************************************/
@@ -115,6 +118,22 @@ public class Resource
           JPlanner.trace( "Unhandled attribute '" + xsr.getAttributeLocalName( i ) + "'" );
           break;
       }
+  }
+
+  /**************************************** toStringShort ****************************************/
+  public String toStringShort()
+  {
+    // short string summary
+    return "Resource@" + Integer.toHexString( hashCode() ) + " [" + m_initials + "]";
+  }
+
+  /****************************************** toString *******************************************/
+  @Override
+  public String toString()
+  {
+    // string summary
+    return "Resource@" + Integer.toHexString( hashCode() ) + " [" + m_initials + ", " + m_name + ", " + m_org + ", "
+        + m_group + ", " + m_role + ", " + m_alias + ", " + m_start + ", " + m_end + ", " + m_availability + "]";
   }
 
   /****************************************** toString *******************************************/
@@ -312,6 +331,28 @@ public class Resource
       return true;
 
     return false;
+  }
+
+  /******************************************** start ********************************************/
+  public DateTime start()
+  {
+    if ( m_start == null )
+      return DateTime.MIN_VALUE;
+    return new DateTime( m_start, Time.MIN_VALUE );
+  }
+
+  /********************************************* end *********************************************/
+  public DateTime end()
+  {
+    if ( m_end == null )
+      return DateTime.MAX_VALUE;
+    return new DateTime( m_end, Time.MAX_VALUE );
+  }
+
+  /****************************************** available ******************************************/
+  public double available()
+  {
+    return m_availability;
   }
 
 }
