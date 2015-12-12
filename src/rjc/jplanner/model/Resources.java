@@ -92,4 +92,24 @@ public class Resources extends ArrayList<Resource>
     return false;
   }
 
+  /*************************************** clearAllocations **************************************/
+  public void clearAllocations()
+  {
+    // remove work allocations from all resources
+    for ( Resource res : this )
+      res.m_work.clear();
+  }
+
+  /****************************************** listForTag *****************************************/
+  public ArrayList<Resource> listForTag( String tag )
+  {
+    // TODO Auto-generated method stub
+    ArrayList<Resource> list = new ArrayList<Resource>();
+    for ( Resource res : this )
+      if ( res.isAssignable( tag ) )
+        list.add( res );
+
+    return list;
+  }
+
 }

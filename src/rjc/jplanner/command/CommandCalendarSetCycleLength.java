@@ -80,8 +80,8 @@ public class CommandCalendarSetCycleLength implements IUndoCommand
   @Override
   public void update()
   {
-    // update calendar tables
-    JPlanner.gui.updateCalendars();
+    // reset calendar tables because number of row might have changed
+    JPlanner.gui.resetCalendarTables();
 
     // re-schedule plan (which in turn will also update gui)
     JPlanner.gui.schedule();

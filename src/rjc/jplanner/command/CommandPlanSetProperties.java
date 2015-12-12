@@ -85,11 +85,11 @@ public class CommandPlanSetProperties implements IUndoCommand
   @Override
   public void update()
   {
-    // update plan properties & tables on gui
+    // update plan properties & tables on gui, mostly just for possible format changes
     JPlanner.gui.properties().updateFromPlan();
-    JPlanner.gui.updateTasks();
-    JPlanner.gui.updateResources();
-    JPlanner.gui.updateCalendars();
+    JPlanner.gui.redrawTaskTables();
+    JPlanner.gui.redrawResourceTables();
+    JPlanner.gui.redrawCalendarTables();
 
     // if start or calendar changed, re-schedule plan (which in turn will also update gui)
     if ( !m_oldStart.equals( m_newStart ) || !m_oldCal.equals( m_newCal ) )

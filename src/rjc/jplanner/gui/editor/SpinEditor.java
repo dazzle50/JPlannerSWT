@@ -297,7 +297,7 @@ public class SpinEditor extends Composite implements ModifyListener, VerifyListe
   }
 
   /****************************************** stepUp *********************************************/
-  private void stepUp()
+  protected void stepUp()
   {
     // increase value by step and update display
     m_value += m_step;
@@ -305,7 +305,7 @@ public class SpinEditor extends Composite implements ModifyListener, VerifyListe
   }
 
   /***************************************** stepDown ********************************************/
-  private void stepDown()
+  protected void stepDown()
   {
     // decrease value by step and update display
     m_value -= m_step;
@@ -313,7 +313,7 @@ public class SpinEditor extends Composite implements ModifyListener, VerifyListe
   }
 
   /****************************************** pageUp *********************************************/
-  private void pageUp()
+  protected void pageUp()
   {
     // increase value by page and update display
     m_value += m_page;
@@ -321,7 +321,7 @@ public class SpinEditor extends Composite implements ModifyListener, VerifyListe
   }
 
   /***************************************** pageDown ********************************************/
-  private void pageDown()
+  protected void pageDown()
   {
     // decrease value by page and update display
     m_value -= m_page;

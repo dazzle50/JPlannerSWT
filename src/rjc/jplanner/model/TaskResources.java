@@ -150,4 +150,16 @@ public class TaskResources
     return error.toString();
   }
 
+  /******************************************** assign *******************************************/
+  public void assign( Task task )
+  {
+    // TODO Auto-generated method stub !!!!!!!!!!!!!!!!!!!!!
+    for ( Assignment ass : m_res )
+    {
+      ArrayList<Resource> res = JPlanner.plan.resources.listForTag( ass.tag );
+
+    }
+
+  }
+
 }

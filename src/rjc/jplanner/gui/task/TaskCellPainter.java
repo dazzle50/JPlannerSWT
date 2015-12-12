@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.Rectangle;
 
 import rjc.jplanner.JPlanner;
 import rjc.jplanner.gui.table.XCellPainter;
-import rjc.jplanner.gui.table.XNatTable;
 import rjc.jplanner.model.Task;
 
 /*************************************************************************************************/
@@ -37,15 +36,6 @@ public class TaskCellPainter extends XCellPainter
 {
   private static int INDENT_SIZE    = 14;
   private static int INDENT_INITIAL = 14;
-
-  private XNatTable  m_xnattable;
-
-  /**************************************** constructor ******************************************/
-  public TaskCellPainter( XNatTable xnattable )
-  {
-    // keep record of XNatTable for future reference
-    m_xnattable = xnattable;
-  }
 
   /**************************************** getTextBounds ****************************************/
   @Override
@@ -99,7 +89,10 @@ public class TaskCellPainter extends XCellPainter
     gc.drawLine( x + 2, y, x + 6, y );
 
     // if next row is hidden draw expand mark (plus sign in box)
-    if ( m_xnattable.isRowHidden( cell.getRowIndex() + 1 ) )
+    int pos = cell.getRowPosition();
+    int index1 = cell.getLayer().getRowIndexByPosition( pos );
+    int index2 = cell.getLayer().getRowIndexByPosition( pos + 1 );
+    if ( index2 - index1 != 1 )
       gc.drawLine( x + 4, y - 2, x + 4, y + 2 );
   }
 

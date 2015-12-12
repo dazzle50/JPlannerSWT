@@ -142,6 +142,20 @@ public class Time
     return buf.toString();
   }
 
+  /****************************************** toString *******************************************/
+  public String toStringShort()
+  {
+    // convert to string to "hh:mm" format
+    StringBuilder buf = new StringBuilder( 6 );
+    int hour = hours();
+    int minute = minutes();
+
+    buf.append( hour < 10 ? "0" : "" ).append( hour );
+    buf.append( minute < 10 ? ":0" : ":" ).append( minute );
+
+    return buf.toString();
+  }
+
   /********************************************* now *********************************************/
   public static Time now()
   {
@@ -171,6 +185,13 @@ public class Time
   public boolean equals( Time other )
   {
     return m_milliseconds == other.m_milliseconds;
+  }
+
+  /*************************************** addMilliseconds ***************************************/
+  public Time addMilliseconds( int ms )
+  {
+    m_milliseconds += ms;
+    return this;
   }
 
 }

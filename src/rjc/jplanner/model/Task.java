@@ -498,6 +498,9 @@ public class Task implements Comparable<Task>
       m_gantt.setSummary( start(), end() );
     else
       m_gantt.setTask( m_start, m_end );
+
+    // set resource allocations
+    m_resources.assign( this );
   }
 
   /********************************************* end *********************************************/

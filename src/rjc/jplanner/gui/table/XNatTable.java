@@ -34,6 +34,7 @@ import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.config.IConfiguration;
 import org.eclipse.nebula.widgets.nattable.config.IEditableRule;
+import org.eclipse.nebula.widgets.nattable.coordinate.PositionCoordinate;
 import org.eclipse.nebula.widgets.nattable.coordinate.Range;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 import org.eclipse.nebula.widgets.nattable.edit.EditConfigAttributes;
@@ -192,23 +193,13 @@ public class XNatTable extends NatTable
         int[] widthT = { 110, 25, 200, 60, 140, 140, 60, 110, 110, 110, 60, 140, 60, 200 };
         buildTable( body, colh, rowh, label, widthT, 2 * GanttScale.GANTTSCALE_HEIGHT );
         addKeyListener( m_indentOutdentListener );
-        addConfiguration( new AbstractRegistryConfiguration()
-        {
-          @Override
-          public void configureRegistry( IConfigRegistry reg )
-          {
-            // specialist tasks cell painter label config with reference to this table
-            reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter( XNatTable.this ),
-                DisplayMode.NORMAL, LABEL_TASK_PAINTER );
-          }
-        } );
-        configure();
         collapsedTasks = new HashSet<Task>();
         break;
 
       default:
         throw new IllegalArgumentException( "type " + type );
     }
+    JPlanner.trace( this.toString() );
   }
 
   /***************************************** toString ********************************************/
@@ -257,6 +248,8 @@ public class XNatTable extends NatTable
               LABEL_CALENDAR_PAINTER );
           reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new ResourceCellPainter(), DisplayMode.NORMAL,
               LABEL_RESOURCE_PAINTER );
+          reg.registerConfigAttribute( CellConfigAttributes.CELL_PAINTER, new TaskCellPainter(), DisplayMode.NORMAL,
+              LABEL_TASK_PAINTER );
 
           // Cell editors
           reg.registerConfigAttribute( EditConfigAttributes.CELL_EDITOR, new DayCellEditor(), DisplayMode.EDIT,
@@ -461,14 +454,15 @@ public class XNatTable extends NatTable
   public void setRowHeight( int row, int height )
   {
     // set width of specified column
-    bodyDataLayer.setRowHeightByPosition( row, height );
+    int pos = viewport.getRowPositionByIndex( row );
+    bodyDataLayer.setRowHeightByPosition( pos, height );
   }
 
   /*************************************** getRowMiddleY *****************************************/
-  public int getRowMiddleY( int index )
+  public int getRowMiddleY( int row )
   {
     // return middle-y of specified row index
-    int pos = viewport.getRowPositionByIndex( index );
+    int pos = viewport.getRowPositionByIndex( row );
     return viewport.getStartYOfRowPosition( pos ) + viewport.getRowHeightByPosition( pos ) / 2;
   }
 
@@ -483,7 +477,7 @@ public class XNatTable extends NatTable
   private void setColumnWidth( int col, int width )
   {
     // set width of specified column
-    bodyDataLayer.setColumnWidthByPosition( col, width );
+    bodyDataLayer.setColumnWidthByPosition( viewport.getColumnPositionByIndex( col ), width );
   }
 
   /*********************************** setRowsHeightToDefault ************************************/
@@ -638,8 +632,8 @@ public class XNatTable extends NatTable
     }
   }
 
-  /************************************* expandCollapseList **************************************/
-  private Collection<Integer> expandCollapseList( int row )
+  /************************************ getExpandCollapseList ************************************/
+  private Collection<Integer> getExpandCollapseList( int row )
   {
     // construct list of rows to be hidden or shown for specified summary row
     ArrayList<Integer> list = new ArrayList<Integer>();
@@ -661,7 +655,7 @@ public class XNatTable extends NatTable
   public void expandSummary( int row )
   {
     // expand task summary
-    rowHideShowLayer.showRowIndexes( expandCollapseList( row ) );
+    rowHideShowLayer.showRowIndexes( getExpandCollapseList( row ) );
     collapsedTasks.remove( JPlanner.plan.task( row ) );
   }
 
@@ -669,8 +663,22 @@ public class XNatTable extends NatTable
   public void collapseSummary( int row )
   {
     // collapse task summary
-    rowHideShowLayer.hideRowIndexes( expandCollapseList( row ) );
+    rowHideShowLayer.hideRowIndexes( getExpandCollapseList( row ) );
     collapsedTasks.add( JPlanner.plan.task( row ) );
+  }
+
+  /******************************************** reset ********************************************/
+  public void reset()
+  {
+    // refresh the table but keep selected cells
+    PositionCoordinate[] pcs = selectionLayer.getSelectedCellPositions();
+    PositionCoordinate last = selectionLayer.getLastSelectedCellPosition();
+    refresh();
+
+    for ( PositionCoordinate pc : pcs )
+      selectionLayer.selectCell( pc.columnPosition, pc.rowPosition, false, true );
+    if ( last != null )
+      selectionLayer.setLastSelectedCell( last.columnPosition, last.rowPosition );
   }
 
 }

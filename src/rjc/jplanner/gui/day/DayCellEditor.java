@@ -41,6 +41,8 @@ public class DayCellEditor extends XAbstractCellEditor
   @Override
   public Control createEditor( int row, int col )
   {
+    Day day = JPlanner.plan.day( row );
+
     // create editor based on column
     if ( col == Day.SECTION_NAME )
     {
@@ -78,7 +80,7 @@ public class DayCellEditor extends XAbstractCellEditor
 
     if ( col == Day.SECTION_WORK )
     {
-      double value = JPlanner.plan.day( row ).work();
+      double value = day.work();
       SpinEditor spin = new SpinEditor( parent, value, false );
       spin.setMinMaxStepPageDPs( 0.0, 10.0, 0.1, 1.0, 2 );
       return spin;
@@ -86,16 +88,24 @@ public class DayCellEditor extends XAbstractCellEditor
 
     if ( col == Day.SECTION_PERIODS )
     {
-      double value = JPlanner.plan.day( row ).numPeriods();
+      double value = day.numPeriods();
       SpinEditor spin = new SpinEditor( parent, value, false );
-      spin.setMinMaxStepPageDPs( 0.0, 9.0, 1.0, 1.0, 0 );
+      double max = 9.0;
+      if ( day.end().hours() > 23 )
+        max = 1.0;
+      spin.setMinMaxStepPageDPs( 0.0, max, 1.0, 1.0, 0 );
       return spin;
     }
 
     // none of above, therefore must be a work-period start or end time
-    // TODO..................
-    String time = JPlanner.plan.day( row ).toString( col );
-    TimeEditor editor = new TimeEditor( parent, time, Time.fromHours( 0.0 ), Time.fromHours( 24.0 ) );
+    Time min = Time.MIN_VALUE;
+    Time max = Time.MAX_VALUE;
+    if ( col > Day.SECTION_START1 )
+      min = Time.fromString( day.toString( col - 1 ) ).addMilliseconds( 60 * 1000 );
+    if ( col < day.numPeriods() * 2 + Day.SECTION_START1 - 1 )
+      max = Time.fromString( day.toString( col + 1 ) ).addMilliseconds( -60 * 1000 );
+
+    TimeEditor editor = new TimeEditor( parent, day.toString( col ), min, max );
 
     return editor;
   }

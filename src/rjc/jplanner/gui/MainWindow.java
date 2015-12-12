@@ -317,7 +317,7 @@ public class MainWindow extends Shell
 
     // update gui
     properties().updateFromPlan();
-    updateTasks();
+    redrawTaskTables();
     m_tabWidgets.forEach( tabs -> tabs.gantt().updatePlot() );
   }
 
@@ -701,8 +701,8 @@ public class MainWindow extends Shell
     return m_mainTabWidget.notes();
   }
 
-  /***************************************** refreshGui ******************************************/
-  public void refreshGui( boolean reset )
+  /****************************************** resetGui *******************************************/
+  public void resetGui()
   {
     // update window titles and plan tab
     updateWindowTitles();
@@ -710,57 +710,80 @@ public class MainWindow extends Shell
     notes().updateFromPlan();
 
     // if reset set all table row heights to default
-    if ( reset )
-    {
-      m_tabWidgets.forEach( tabs -> tabs.tasks().setRowsHeightToDefault() );
-      m_tabWidgets.forEach( tabs -> tabs.tasks().hideRow( 0 ) );
-      m_tabWidgets.forEach( tabs -> tabs.resources().setRowsHeightToDefault() );
-      m_tabWidgets.forEach( tabs -> tabs.resources().hideRow( 0 ) );
-      m_tabWidgets.forEach( tabs -> tabs.calendars().setRowsHeightToDefault() );
-      m_tabWidgets.forEach( tabs -> tabs.days().setRowsHeightToDefault() );
-    }
-
-    // refresh tasks resources calendars day-types tables
-    m_tabWidgets.forEach( tabs -> tabs.tasks().refresh() );
-    m_tabWidgets.forEach( tabs -> tabs.resources().refresh() );
-    m_tabWidgets.forEach( tabs -> tabs.calendars().refresh() );
-    m_tabWidgets.forEach( tabs -> tabs.days().refresh() );
-
-    // update gantts including reseting to default parameters if requested
-    if ( reset )
-      m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
+    m_tabWidgets.forEach( tabs -> tabs.tasks().setRowsHeightToDefault() );
+    m_tabWidgets.forEach( tabs -> tabs.tasks().hideRow( 0 ) );
+    m_tabWidgets.forEach( tabs -> tabs.gantt().setDefault() );
     m_tabWidgets.forEach( tabs -> tabs.gantt().updateAll() );
+    resetTaskTables();
+
+    m_tabWidgets.forEach( tabs -> tabs.resources().setRowsHeightToDefault() );
+    m_tabWidgets.forEach( tabs -> tabs.resources().hideRow( 0 ) );
+    resetResourceTables();
+
+    m_tabWidgets.forEach( tabs -> tabs.calendars().setRowsHeightToDefault() );
+    resetCalendarTables();
+
+    m_tabWidgets.forEach( tabs -> tabs.days().setRowsHeightToDefault() );
+    resetDayTypeTables();
 
     // update undo-stack window if exists
     if ( undoWindow != null )
       undoWindow.setList();
   }
 
-  /***************************************** updateTasks *****************************************/
-  public void updateTasks()
+  /*************************************** resetTaskTables ***************************************/
+  public void resetTaskTables()
   {
-    // update all tasks tables
+    // reset all tasks tables, needed if number of columns or rows changing etc
+    m_tabWidgets.forEach( tabs -> tabs.tasks().reset() );
+  }
+
+  /************************************* resetResourceTables *************************************/
+  public void resetResourceTables()
+  {
+    // reset all resources tables, needed if number of columns or rows changing etc
+    m_tabWidgets.forEach( tabs -> tabs.resources().reset() );
+  }
+
+  /************************************* resetCalendarTables *************************************/
+  public void resetCalendarTables()
+  {
+    // reset all calendars tables, needed if number of columns or rows changing etc
+    m_tabWidgets.forEach( tabs -> tabs.calendars().reset() );
+  }
+
+  /************************************** resetDayTypeTables *************************************/
+  public void resetDayTypeTables()
+  {
+    // reset all day-type tables, needed if number of columns or rows changing etc
+    m_tabWidgets.forEach( tabs -> tabs.days().reset() );
+  }
+
+  /***************************************** updateTasks *****************************************/
+  public void redrawTaskTables()
+  {
+    // redraw all tasks tables
     m_tabWidgets.forEach( tabs -> tabs.tasks().redraw() );
   }
 
   /*************************************** updateResources ***************************************/
-  public void updateResources()
+  public void redrawResourceTables()
   {
-    // update all resource tables
+    // redraw all resource tables
     m_tabWidgets.forEach( tabs -> tabs.resources().redraw() );
   }
 
   /*************************************** updateCalendars ***************************************/
-  public void updateCalendars()
+  public void redrawCalendarTables()
   {
-    // update all calendar tables
+    // redraw all calendar tables
     m_tabWidgets.forEach( tabs -> tabs.calendars().redraw() );
   }
 
   /****************************************** updateDays *****************************************/
-  public void updateDays()
+  public void redrawDayTypeTables()
   {
-    // update all day-type tables
+    // redraw all day-type tables
     m_tabWidgets.forEach( tabs -> tabs.days().redraw() );
   }
 
@@ -793,7 +816,7 @@ public class MainWindow extends Shell
     JPlanner.plan.initialise();
 
     // update gui
-    refreshGui( true );
+    resetGui();
     message( "New plan" );
   }
 
@@ -885,7 +908,7 @@ public class MainWindow extends Shell
       }
 
       // load display data
-      refreshGui( true );
+      resetGui();
       loadDisplayData( xsr );
 
       fis.close();
@@ -896,7 +919,6 @@ public class MainWindow extends Shell
       // some sort of exception thrown
       message( "Failed to load '" + file.getPath() + "'" );
       JPlanner.plan = oldPlan;
-      refreshGui( false );
       exception.printStackTrace();
       return false;
     }

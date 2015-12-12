@@ -532,6 +532,7 @@ public class Plan
   {
     // schedule the plan!
     JPlanner.trace( "============================== SCHEDULE started ==============================" );
+    resources.clearAllocations();
     tasks.schedule();
     JPlanner.trace( "============================== SCHEDULE finished ==============================" );
   }

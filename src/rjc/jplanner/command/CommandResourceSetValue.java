@@ -63,7 +63,7 @@ public class CommandResourceSetValue implements IUndoCommand
   public void update()
   {
     // update resources tables
-    JPlanner.gui.updateResources();
+    JPlanner.gui.redrawResourceTables();
 
     // if initials and old value was null, update properties so it shows new count of resources
     if ( m_section == Resource.SECTION_INITIALS && m_oldValue == null )

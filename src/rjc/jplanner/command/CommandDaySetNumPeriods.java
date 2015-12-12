@@ -66,6 +66,8 @@ public class CommandDaySetNumPeriods implements IUndoCommand
         increment = 0.5;
       else if ( increment >= 10.0 / 60.0 )
         increment = 10.0 / 60.0;
+      else if ( increment >= 5.0 / 60.0 )
+        increment = 5.0 / 60.0;
       else if ( increment >= 1.0 / 60.0 )
         increment = 1.0 / 60.0;
 
@@ -105,8 +107,8 @@ public class CommandDaySetNumPeriods implements IUndoCommand
   @Override
   public void update()
   {
-    // update day-types table
-    JPlanner.gui.updateDays();
+    // reset day-types table because number of columns might have changed
+    JPlanner.gui.resetDayTypeTables();
 
     // re-schedule plan (which in turn will also update gui)
     JPlanner.gui.schedule();
